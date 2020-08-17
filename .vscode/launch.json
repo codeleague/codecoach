@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "dev:debug",
+      "type": "node",
+      "request": "attach",
+      "restart": true,
+      "port": 5858,
+      "outFiles": [],
+      "sourceMaps": true
+    },
+  ]
+}

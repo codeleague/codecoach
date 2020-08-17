@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="CI" type="CompoundRunConfigurationType">
+    <toRun name="Build" type="js.build_tools.npm" />
+    <toRun name="lint" type="js.build_tools.npm" />
+    <toRun name="All Tests" type="JavaScriptTestRunnerJest" />
+    <method v="2" />
+  </configuration>
+</component>

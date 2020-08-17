@@ -1,0 +1,65 @@
+import { spawn } from 'child_process';
+import { resolve } from 'path';
+
+import { AgentConfig } from '../Config/@types';
+import { Agent } from './@interfaces/agent.interface';
+
+export const WarningFile = 'dotnetbuild.wrn';
+export const ErrorFile = 'dotnetbuild.err';
+
+export class CSharpAgent implements Agent {
+  private readonly execPath: string;
+  private readonly target?: string;
+  private readonly debug: boolean;
+  private readonly cwd: string;
+  private readonly warningOutFile: string;
+  private readonly errorOutFile: string;
+
+  constructor(loader: AgentConfig) {
+    const { execPath, debug, target, cwd } = loader;
+    this.execPath = execPath;
+    this.target = target;
+    this.debug = debug ?? false;
+    this.cwd = cwd;
+    this.errorOutFile = resolve(cwd, ErrorFile);
+    this.warningOutFile = resolve(cwd, WarningFile);
+  }
+
+  private getBuildArgs(): string[] {
+    const args: string[] = [
+      'build',
+      '--nologo',
+      '-p:ActiveRulesets="Coding Standards"',
+      '-p:GenerateFullPaths=true',
+      '--no-incremental',
+      `-flp1:logfile=${this.warningOutFile};warningsonly;`,
+      `-flp2:logfile=${this.errorOutFile};errorsonly;`,
+    ];
+
+    if (this.target) args.push(resolve(this.cwd, this.target));
+
+    return args;
+  }
+
+  async buildAndGetLogFiles(): Promise<string[]> {
+    await new Promise((resolve, reject) => {
+      const buildArgs = this.getBuildArgs();
+      const process = spawn(this.execPath, buildArgs);
+
+      // **must add for consume stdout for get data, close events
+      process.stdout.once('data', () => console.log('DotnetBuild...'));
+      process.on('close', () => resolve());
+      process.on('error', (err) => reject(new Error('Agent error:' + err)));
+
+      // debug log
+      if (this.debug) {
+        console.log('Task running...');
+        console.log(this.execPath);
+        console.log('Agent param', buildArgs);
+        process.stdout.on('data', (msg) => console.log('DotnetBuild: ', msg.toString()));
+      }
+    });
+
+    return [this.warningOutFile, this.errorOutFile];
+  }
+}
