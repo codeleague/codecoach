@@ -1,0 +1,19 @@
+{
+  "forceConsitentCasingInFileNames": true,
+  "noImplicitReturns": true,
+  "strict": true,
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es6",
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "outDir": "dist",
+    "baseUrl": "."
+  },
+  "lib": ["es2019"],
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}
