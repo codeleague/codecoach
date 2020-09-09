@@ -351,3 +351,6 @@ MigrationBackup/
 
 # Build output
 dist/
+
+# build logs
+/tmp
