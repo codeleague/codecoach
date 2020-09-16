@@ -8,10 +8,12 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "target": "es6",
+    "lib": ["ES2019"],
     "sourceMap": true,
     "noImplicitAny": true,
     "outDir": "dist",
-    "baseUrl": "."
+    "baseUrl": ".",
+    "strictNullChecks": true
   },
   "lib": ["es2019"],
   "include": ["src/**/*.ts"],

@@ -18,5 +18,5 @@ jobs:
         run: |
           yarn install # or yarn install
           yarn run lint # or yarn lint
-          yarn run test # or yarn test
+          yarn run test --ci # or yarn test --ci
           yarn run build # or yarn build
