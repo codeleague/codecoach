@@ -16,6 +16,9 @@ describe('Config test', () => {
 
   it('should ignore correctly ignore key', () => {
     const IGNORE_KEY: envEnum[] = [envEnum.PROVIDER_TOKEN, envEnum.AGENT_VERBOSITY];
-    new Config({ path: PATH_MOCK_INVALID_ENV, ignoreEnv: IGNORE_KEY });
+    const config = new Config({ path: PATH_MOCK_INVALID_ENV, ignoreEnv: IGNORE_KEY });
+    expect(config.getProvider().token).toBe('');
+    expect(config.getAgent().verbosity).toBe('');
+    expect(config.getProvider().prId).toBe(9);
   });
 });

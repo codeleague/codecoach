@@ -1,41 +1,47 @@
 import { Octokit } from '@octokit/rest';
 import {
-  PullsListReviewsResponseData,
   IssuesListCommentsResponseData,
-  PullsListFilesResponseData,
   PullsGetResponseData,
+  PullsListFilesResponseData,
   PullsListReviewCommentsResponseData,
 } from '@octokit/types';
-import { Issues, ReportType, Issue } from 'src/Report/Report';
+import * as path from 'path';
+import { join } from 'path';
+import slash from 'slash';
+import { Issue, Issues, ReportType } from 'src/Report/Report';
+import { LogSeverity } from '../Parser/Log';
 import { Git } from './Git';
 import { Provider } from './Provider';
 import { ProviderCustomConfigType } from './ProviderCustomConfigType';
-import * as path from 'path';
-import slash from 'slash';
-import { resolve } from 'path';
-import { LogSeverity } from '../Parser/Log';
+import { URL } from 'url';
 
 const MAX_REVIEWS_PER_PAGE = 100;
 const PROJECT_ROOT = 'sample/csharp/';
+const GITHUB_API_URL = 'https://api.github.com';
+const GITHUB_REPO_URL = 'https://github.com/';
 
 export class GithubProvider extends Provider {
   adapter: Octokit;
   constructor(config: ProviderCustomConfigType) {
     super(config);
     this.config.provider = 'github';
-    this.config.baseUrl = config.baseUrl || 'https://api.github.com';
+    this.config.apiUrl = config.apiUrl || GITHUB_API_URL;
+    this.config.repoUrl = config.repoUrl || GITHUB_REPO_URL;
 
     this.adapter = new Octokit({
       auth: this.config.token,
       userAgent: this.config.userAgent,
       timeZone: this.config.timeZone,
-      baseUrl: this.config.baseUrl,
+      baseUrl: this.config.apiUrl,
     });
   }
   async clone(): Promise<void> {
     try {
       const config = {
-        src: 'https://github.com/' + this.config.owner + '/' + this.config.repo,
+        src: new URL(
+          join(...[this.config.owner, this.config.repo]),
+          this.config.repoUrl,
+        ).toString(),
         prId: this.config.prId,
         dest: './tmp',
       };

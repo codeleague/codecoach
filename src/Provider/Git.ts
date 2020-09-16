@@ -1,7 +1,9 @@
 import { exec } from 'child_process';
-import { promisify } from 'util';
 import { join } from 'path';
 import rimraf from 'rimraf';
+import { promisify } from 'util';
+import GitInterface, { CommandSequence, GitConfig } from './@interfaces/git.interface';
+import { GitConfigConstructor } from './@types/git.config.constructor';
 
 const DEFAULT_CLONE_PATH = 'tmp';
 const WORK_DIR = '../../';
@@ -13,21 +15,7 @@ const GIT_CHECKOUT = 'checkout';
 
 const PULLS = (n: number) => `pull/${n}/head`;
 
-type Command = { cmd: string[]; cwd: string };
-type CommandSequence = Command[];
-
-export type GitConfigConstructor = {
-  src: string;
-  dest?: string;
-  prId: number;
-};
-export type GitConfig = {
-  src: string;
-  dest: string;
-  prId: number;
-};
-
-export class Git {
+export class Git implements GitInterface {
   config: GitConfig;
   commands: CommandSequence;
 

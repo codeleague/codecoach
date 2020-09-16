@@ -1,8 +1,9 @@
 import { Report, ReportType } from 'src/Report/Report';
 import { IProviderConfig } from './IProviderConfig';
-import { ProviderCustomConfigType } from './ProviderCustomConfigType';
+import { ProviderCustomConfigType as ProviderCustomConfigLoaderType } from './ProviderCustomConfigType';
 
-export type ProviderConfigType = IProviderConfig & ProviderCustomConfigType;
+export type ProviderConfigType = IProviderConfig &
+  ProviderCustomConfigLoaderType & { repoUrl: string; baseUrl: string };
 export interface IProvider {
   clone(): Promise<void>;
   report(reportData: Report): Promise<void>;
@@ -16,7 +17,7 @@ export class Provider implements IProvider {
   config: ProviderConfigType;
   adapter: unknown;
 
-  constructor(config: ProviderCustomConfigType) {
+  constructor(config: ProviderCustomConfigLoaderType) {
     this.config = config as ProviderConfigType;
     this.config.workDir = config.workDir || WORK_DIR;
     this.config.userAgent = config.userAgent || USER_AGENT;

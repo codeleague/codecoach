@@ -1,7 +1,8 @@
 import { existsSync, mkdir, writeFile } from 'fs';
 import { join } from 'path';
 import { promisify } from 'util';
-import { Git, GitConfigConstructor } from './Git';
+import { Git } from './Git';
+import { GitConfigConstructor } from './@types/git.config.constructor';
 
 const DEFAULT_CLONE_PATH = 'tmp';
 const DEFAULT_CLONE_ALIAS_PATH = './repo';
