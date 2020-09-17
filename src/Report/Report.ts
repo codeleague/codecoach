@@ -30,25 +30,11 @@ export class Report {
       lineOffset: log.lineOffset,
     };
   }
-  private static generateOverviewMsg(
-    nOfLogs: number,
-    nOfErrors: number,
-    nOfWarnings: number,
-    nOfInfos: number,
-  ): string {
-    return `
-    CodeCoach reports ${nOfLogs} issue(s)
-    ${nOfErrors} error(s)
-    ${nOfWarnings} warning(s)
-    ${nOfInfos} info(s)
-    `;
-  }
   private static selectLogType(logs: Log[], type: LogSeverity) {
     return logs.filter((f) => f.severity === type).map(this.mapLogToComment);
   }
 
   static parse(logs: Log[]): ReportType {
-    const nOfLogs = logs.length;
     const warningLogs: Issue[] = this.selectLogType(logs, LogSeverity.warning);
     const warning: Issues = {
       n: warningLogs.length,
@@ -67,7 +53,7 @@ export class Report {
       issues: infoLogs,
     };
     return {
-      overviewMsg: this.generateOverviewMsg(nOfLogs, error.n, warning.n, info.n),
+      overviewMsg: '',
       warning,
       error,
       info,

@@ -8,7 +8,7 @@ import {
 import * as path from 'path';
 import { join } from 'path';
 import slash from 'slash';
-import { Issue, Issues, ReportType } from 'src/Report/Report';
+import { Issue, Issues, ReportType } from '../Report/Report';
 import { LogSeverity } from '../Parser/Log';
 import { Git } from './Git';
 import { Provider } from './Provider';
@@ -187,7 +187,7 @@ export class GithubProvider extends Provider {
     let emoji = '';
     switch (severity) {
       case LogSeverity.error:
-        emoji = ':exclamation:';
+        emoji = ':rotating_light:';
         break;
       case LogSeverity.warning:
         emoji = ':warning:';
@@ -231,7 +231,29 @@ export class GithubProvider extends Provider {
       }),
     );
   }
-  async report({ overviewMsg, error, warning, info }: ReportType): Promise<void> {
+  private generateOverviewMessage(
+    nOfErrors: number,
+    nOfWarnings: number,
+    nOfInfos: number,
+  ): string {
+    const errorOverview = this.getComment(`${nOfErrors} error(s)`, LogSeverity.error);
+    const warningOverview = this.getComment(
+      `${nOfWarnings} warning(s)`,
+      LogSeverity.warning,
+    );
+    const infoOverview = this.getComment(`${nOfInfos} info(s)`, LogSeverity.info);
+    return `CodeCoach reports ${nOfErrors + nOfWarnings + nOfInfos} issue(s)
+${errorOverview}
+${warningOverview}
+${infoOverview}
+    `;
+  }
+  async report({
+    overviewMsg,
+    error: errors,
+    warning: warnings,
+    info: infos,
+  }: ReportType): Promise<void> {
     try {
       const { owner, repo, prId } = this.config;
       await this.updateComment(owner, repo, prId);
@@ -246,30 +268,46 @@ export class GithubProvider extends Provider {
       const touchedFiles = (await this.listTouchedFiles())
         .filter((src: string) => src.startsWith(PROJECT_ROOT))
         .map((src: string) => src.replace(PROJECT_ROOT, ''));
-      error = this.getIssueOnTouchedFiles(error, touchedFiles);
-      warning = this.getIssueOnTouchedFiles(warning, touchedFiles);
-      info = this.getIssueOnTouchedFiles(info, touchedFiles);
 
-      await this.createCommentForEachFile(
-        info,
-        LogSeverity.info,
-        pullRequestDetail.head.sha,
-      );
-      await this.createCommentForEachFile(
-        warning,
-        LogSeverity.warning,
-        pullRequestDetail.head.sha,
-      );
-      await this.createCommentForEachFile(
-        error,
-        LogSeverity.error,
-        pullRequestDetail.head.sha,
-      );
+      const groupTouchedFiles = [
+        {
+          issues: this.getIssueOnTouchedFiles(errors, touchedFiles),
+          severity: LogSeverity.error,
+        },
+        {
+          issues: this.getIssueOnTouchedFiles(warnings, touchedFiles),
+          severity: LogSeverity.warning,
+        },
+        {
+          issues: this.getIssueOnTouchedFiles(infos, touchedFiles),
+          severity: LogSeverity.info,
+        },
+      ];
+      for await (const el of groupTouchedFiles) {
+        const { issues, severity } = el;
+        const filteredIssues = this.getIssueOnTouchedFiles(issues, touchedFiles);
+        await this.createCommentForEachFile(
+          filteredIssues,
+          severity,
+          pullRequestDetail.head.sha,
+        );
+      }
+
+      const [
+        errorsOnTouchedFiles,
+        warningsOnTouchedFiles,
+        infosOnTouchedFiles,
+      ] = groupTouchedFiles;
+
       await this.adapter.issues.createComment({
         owner,
         repo,
         issue_number: prId,
-        body: overviewMsg,
+        body: this.generateOverviewMessage(
+          errorsOnTouchedFiles.issues.n,
+          warningsOnTouchedFiles.issues.n,
+          infosOnTouchedFiles.issues.n,
+        ),
       });
     } catch (err) {
       throw Error(err);
