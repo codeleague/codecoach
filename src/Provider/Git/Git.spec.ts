@@ -2,11 +2,12 @@ import { existsSync, mkdir, writeFile } from 'fs';
 import { join } from 'path';
 import { promisify } from 'util';
 import GitLoaderType from '../@types/git.loader.type';
+import {
+  DEFAULT_CLONE_ALIAS_PATH,
+  DEFAULT_CLONE_PATH,
+  WORK_DIR,
+} from '../constants/git.constant';
 import { Git } from './Git';
-
-const DEFAULT_CLONE_PATH = 'tmp';
-const DEFAULT_CLONE_ALIAS_PATH = './repo';
-const WORK_DIR = '../../';
 
 describe('Git tests', () => {
   const config: GitLoaderType = {
@@ -58,5 +59,11 @@ describe('Git tests', () => {
     await git.clearRepo();
     const repoExist = existsSync(PROJECT_PATH);
     expect(repoExist).toBe(false);
+  });
+
+  it('The git constant should define correctly', () => {
+    expect(WORK_DIR).toBe('../../../');
+    expect(DEFAULT_CLONE_PATH).toBe('tmp');
+    expect(DEFAULT_CLONE_ALIAS_PATH).toBe('./repo');
   });
 });

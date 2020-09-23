@@ -5,14 +5,15 @@ import { promisify } from 'util';
 import GitInterface, { CommandSequence } from '../@interfaces/git.interface';
 import GitConfigType from '../@types/git.config.type';
 import GitLoaderType from '../@types/git.loader.type';
-
-const DEFAULT_CLONE_PATH = 'tmp';
-const WORK_DIR = '../../';
-const DEFAULT_CLONE_ALIAS_PATH = './repo';
-const GIT_EXEC = 'git';
-const GIT_CLONE = 'clone';
-const GIT_FETCH = 'fetch';
-const GIT_CHECKOUT = 'checkout';
+import {
+  DEFAULT_CLONE_PATH,
+  DEFAULT_CLONE_ALIAS_PATH,
+  GIT_EXEC,
+  GIT_CLONE,
+  GIT_FETCH,
+  GIT_CHECKOUT,
+  WORK_DIR,
+} from '../constants/git.constant';
 
 const PULLS = (n: number) => `pull/${n}/head`;
 
