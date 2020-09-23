@@ -7,11 +7,15 @@ import { Parser } from './Parser/Parser';
 import { GithubProvider } from './Provider/Github.provider';
 import { ProviderCustomConfigType } from './Provider/ProviderCustomConfigType';
 import { Report } from './Report/Report';
-const DOTNET_PATH = `dotnet`;
 
-const BYPASS_BUILD = true;
-const WARN_FILE_PATH = 'tmp/dotnetbuild.wrn';
-const ERR_FILE_PATH = 'tmp/dotnetbuild.err';
+import {
+  BYPASS_BUILD,
+  WARN_FILE_PATH,
+  ERR_FILE_PATH,
+  LOG_OUTPUT_PATH,
+  LINE_SPLITTER,
+  DOTNET_PATH,
+} from './app.constant';
 
 (async () => {
   try {
@@ -28,17 +32,14 @@ const ERR_FILE_PATH = 'tmp/dotnetbuild.err';
 
     console.log('parsing');
 
-    const LOG_OUTPUT_PATH = 'tmp/dotnetbuild.json';
-    const LINE_SPLITTER = '\r\n';
-
-    const WARN_FILE = await File.readFileHelper(WARN_FILE_PATH);
-    const warnLogs = new Parser<CSharpParserType>(WARN_FILE)
+    const warnFileLog = await File.readFileHelper(WARN_FILE_PATH);
+    const warnLogs = new Parser<CSharpParserType>(warnFileLog)
       .setLineSplitter(LINE_SPLITTER)
       .mapLabel(CSharpParser)
       .getLabled();
 
-    const ERR_FILE = await File.readFileHelper(ERR_FILE_PATH);
-    const errorLogs = new Parser<CSharpParserType>(ERR_FILE)
+    const errFileLog = await File.readFileHelper(ERR_FILE_PATH);
+    const errorLogs = new Parser<CSharpParserType>(errFileLog)
       .setLineSplitter(LINE_SPLITTER)
       .mapLabel(CSharpParser)
       .getLabled();
