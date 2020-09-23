@@ -2,8 +2,9 @@ import { exec } from 'child_process';
 import { join } from 'path';
 import rimraf from 'rimraf';
 import { promisify } from 'util';
-import GitInterface, { CommandSequence, GitConfig } from './@interfaces/git.interface';
-import { GitConfigConstructor } from './@types/git.config.constructor';
+import GitInterface, { CommandSequence } from '../@interfaces/git.interface';
+import GitConfigType from '../@types/git.config.type';
+import GitLoaderType from '../@types/git.loader.type';
 
 const DEFAULT_CLONE_PATH = 'tmp';
 const WORK_DIR = '../../';
@@ -16,10 +17,10 @@ const GIT_CHECKOUT = 'checkout';
 const PULLS = (n: number) => `pull/${n}/head`;
 
 export class Git implements GitInterface {
-  config: GitConfig;
+  config: GitConfigType;
   commands: CommandSequence;
 
-  constructor(config: GitConfigConstructor) {
+  constructor(config: GitLoaderType) {
     this.config = {
       ...config,
       dest: config.dest || DEFAULT_CLONE_PATH,

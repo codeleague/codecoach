@@ -1,27 +1,12 @@
-import { LogSeverity, Log } from '../Parser/Log';
+import { IssuesType } from './@types/issues.type';
+import ReportInterface from './@interfaces/report.interface';
+import LogSeverity from '../Parser/@enums/log.severity.enum';
+import LogType from '../Parser/@types/log.type';
+import IssueType from './@types/Issue.type';
+import ReportType from './@types/report.type';
 
-export type ReportType = {
-  overviewMsg: string;
-  warning: Issues;
-  error: Issues;
-  info: Issues;
-};
-
-export type Issues = {
-  n: number;
-  issues: Issue[];
-};
-
-export type Issue = {
-  msg: string;
-  severity: LogSeverity;
-  source: string;
-  line?: number;
-  lineOffset?: number;
-};
-
-export class Report {
-  private static mapLogToComment(log: Log): Issue {
+export class Report implements ReportInterface {
+  private static mapLogToComment(log: LogType): IssueType {
     return {
       msg: log.msg,
       severity: log.severity,
@@ -30,25 +15,25 @@ export class Report {
       lineOffset: log.lineOffset,
     };
   }
-  private static selectLogType(logs: Log[], type: LogSeverity) {
+  private static selectLogType(logs: LogType[], type: LogSeverity) {
     return logs.filter((f) => f.severity === type).map(this.mapLogToComment);
   }
 
-  static parse(logs: Log[]): ReportType {
-    const warningLogs: Issue[] = this.selectLogType(logs, LogSeverity.warning);
-    const warning: Issues = {
+  static parse(logs: LogType[]): ReportType {
+    const warningLogs: IssueType[] = this.selectLogType(logs, LogSeverity.warning);
+    const warning: IssuesType = {
       n: warningLogs.length,
       issues: warningLogs,
     };
 
-    const errorLogs: Issue[] = this.selectLogType(logs, LogSeverity.error);
-    const error: Issues = {
+    const errorLogs: IssueType[] = this.selectLogType(logs, LogSeverity.error);
+    const error: IssuesType = {
       n: errorLogs.length,
       issues: errorLogs,
     };
 
-    const infoLogs: Issue[] = this.selectLogType(logs, LogSeverity.info);
-    const info: Issues = {
+    const infoLogs: IssueType[] = this.selectLogType(logs, LogSeverity.info);
+    const info: IssuesType = {
       n: infoLogs.length,
       issues: infoLogs,
     };

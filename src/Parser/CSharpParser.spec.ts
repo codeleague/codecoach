@@ -1,5 +1,5 @@
+import LogSeverity from './@enums/log.severity.enum';
 import CSharpParser, { CSharpParserType } from './CSharpParser';
-import { LogSeverity } from './Log';
 
 describe('CSharpParser tests', () => {
   const mock = [

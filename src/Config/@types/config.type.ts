@@ -1,6 +1,6 @@
-import { AgentSettings } from 'src/Agent/Agent';
-import { ProviderCustomConfigType } from 'src/Provider/ProviderCustomConfigType';
+import AgentLoaderType from '../../Agent/@types/agent.loader.type';
+import ProviderLoaderType from '../../Provider/@types/provider.loader.type';
 export type ConfigType = {
-  provider: ProviderCustomConfigType;
-  agent: AgentSettings;
+  provider: ProviderLoaderType;
+  agent: AgentLoaderType;
 };
