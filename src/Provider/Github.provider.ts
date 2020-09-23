@@ -8,31 +8,42 @@ import {
 import * as path from 'path';
 import { join } from 'path';
 import slash from 'slash';
-import { Issue, Issues, ReportType } from '../Report/Report';
-import { LogSeverity } from '../Parser/Log';
-import { Git } from './Git';
-import { Provider } from './Provider';
-import { ProviderCustomConfigType } from './ProviderCustomConfigType';
+import { IssuesType } from '../Report/@types/issues.type';
+import { Git } from './Git/Git';
 import { URL } from 'url';
+import GithubProviderInterface from './@interfaces/github.provider.interface';
+import ProviderLoaderType from './@types/provider.loader.type';
+import ProviderConfigType from './@types/provider.config.type';
+import { TIME_ZONE, USER_AGENT, WORK_DIR } from './constants/provider.constant';
+import {
+  GITHUB_API_URL,
+  GITHUB_REPO_URL,
+  MAX_REVIEWS_PER_PAGE,
+  PROJECT_ROOT,
+} from './constants/github.provider.constant';
+import LogSeverity from '../Parser/@enums/log.severity.enum';
+import IssueType from '../Report/@types/Issue.type';
+import ReportType from '../Report/@types/report.type';
 
-const MAX_REVIEWS_PER_PAGE = 100;
-const PROJECT_ROOT = 'sample/csharp/';
-const GITHUB_API_URL = 'https://api.github.com';
-const GITHUB_REPO_URL = 'https://github.com/';
-
-export class GithubProvider extends Provider {
+export class GithubProvider implements GithubProviderInterface {
   adapter: Octokit;
-  constructor(config: ProviderCustomConfigType) {
-    super(config);
-    this.config.provider = 'github';
-    this.config.apiUrl = config.apiUrl || GITHUB_API_URL;
-    this.config.repoUrl = config.repoUrl || GITHUB_REPO_URL;
+  config: ProviderConfigType;
+
+  constructor(config: ProviderLoaderType) {
+    this.config = {
+      ...config,
+      baseUrl: config.apiUrl || GITHUB_API_URL, // for api
+      repoUrl: config.repoUrl || GITHUB_REPO_URL, // for clone
+      workDir: config.workDir || WORK_DIR,
+      userAgent: config.userAgent || USER_AGENT,
+      timeZone: config.timeZone || TIME_ZONE,
+    };
 
     this.adapter = new Octokit({
       auth: this.config.token,
       userAgent: this.config.userAgent,
       timeZone: this.config.timeZone,
-      baseUrl: this.config.apiUrl,
+      baseUrl: this.config.baseUrl,
     });
   }
   async clone(): Promise<void> {
@@ -149,7 +160,7 @@ export class GithubProvider extends Provider {
     }
   }
 
-  private perFileComment(data: Issues): string[] {
+  private perFileComment(data: IssuesType): string[] {
     return data.issues.map((e) =>
       this.templatePerFileComment(e.source, e.severity, e.msg, e.line, e.lineOffset),
     );
@@ -167,8 +178,8 @@ export class GithubProvider extends Provider {
     });
     return touchedFiles.map((t) => t.filename);
   }
-  getIssueOnTouchedFiles(data: Issues, touchedFiles: string[]): Issues {
-    const issueOnTouchedFiles = data.issues.filter((issue: Issue) =>
+  getIssueOnTouchedFiles(data: IssuesType, touchedFiles: string[]): IssuesType {
+    const issueOnTouchedFiles = data.issues.filter((issue: IssueType) =>
       touchedFiles.includes(issue.source),
     );
     return {
@@ -176,8 +187,8 @@ export class GithubProvider extends Provider {
       n: issueOnTouchedFiles.length,
     };
   }
-  getNoLineIssues(data: Issues): Issues {
-    const noLine = data.issues.filter((issue: Issue) => issue.line === null);
+  getNoLineIssues(data: IssuesType): IssuesType {
+    const noLine = data.issues.filter((issue: IssueType) => issue.line === null);
     return {
       issues: noLine,
       n: noLine.length,
@@ -199,13 +210,13 @@ export class GithubProvider extends Provider {
     return `${emoji} ${msg}`;
   }
   async createCommentForEachFile(
-    data: Issues,
+    data: IssuesType,
     severity: LogSeverity,
     commit_id: string,
   ): Promise<void> {
     const { owner, repo, prId } = this.config;
     await Promise.all(
-      data.issues.map(async (issue: Issue) => {
+      data.issues.map(async (issue: IssueType) => {
         if (issue.line) {
           await this.adapter.pulls.createReviewComment({
             owner,

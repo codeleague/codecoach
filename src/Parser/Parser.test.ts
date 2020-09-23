@@ -6,7 +6,7 @@ describe('Parser test', () => {
   test3:cannot:labled
   `;
   type MockParser = { src: string } | undefined;
-  const parser = new Parser<MockParser>(mock).setLineSplitter('\n');
+  const parser = new Parser<MockParser>({ source: mock }).setLineSplitter('\n');
   const mockMapLabel = (e: string): MockParser => {
     const extract = e.match(/(.+)\/(.+)\/(.+)/);
     if (extract)

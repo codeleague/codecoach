@@ -1,7 +1,8 @@
-import { Log, LogSeverity } from './Log';
 import * as path from 'path';
+import LogSeverity from './@enums/log.severity.enum';
+import LogType from './@types/log.type';
 
-export type CSharpParserType = Log;
+export type CSharpParserType = LogType;
 
 const msgToDetail = (
   msg: string,

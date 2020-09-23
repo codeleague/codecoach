@@ -1,18 +1,22 @@
-type Splitter = string | RegExp;
-export class Parser<T> {
-  private source: string;
-  private lineSplitter: Splitter;
+import ParserInterface from './@interfaces/parser.interface';
+import { SplitterType } from './@types/splitter.type';
+import ParserLoaderType from './@types/parser.loader.type';
 
-  private lineSplitted: string[];
-  private lineLabled: T[];
+export class Parser<T> implements ParserInterface<T> {
+  source: string;
+  lineSplitter: SplitterType;
 
-  constructor(source: string) {
+  lineSplitted: string[];
+  lineLabled: T[];
+
+  constructor(loader: ParserLoaderType) {
+    const { source } = loader;
     this.source = source;
     this.lineSplitter = '\r\n';
     return this;
   }
 
-  setLineSplitter(sep?: Splitter): Parser<T> {
+  setLineSplitter(sep?: SplitterType): Parser<T> {
     this.lineSplitter = sep || this.lineSplitter;
     this.lineSplitted = this.source
       .split(this.lineSplitter)

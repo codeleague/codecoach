@@ -1,16 +1,22 @@
-import { Agent, AgentLogVerbosity } from './Agent';
+import { Agent } from './Agent';
 import { join } from 'path';
+import { AgentVerbosityEnum } from './@enums/agent.verbosity.enum';
+import AgentLoaderType from './@types/agent.loader.type';
 
 const WORK_DIR = '../../';
 
 describe('Agent tests', () => {
-  const agent = new Agent('test', {
-    target: 'test.sln',
-    warnFilePath: 'tmp/msbuild.warn',
-    errorFilePath: 'tmp/msbuild.err',
-    rebuild: true,
-    verbosity: AgentLogVerbosity.quite,
-  });
+  const agentLoader: AgentLoaderType = {
+    execPath: 'test',
+    settings: {
+      target: 'test.sln',
+      warnFilePath: 'tmp/msbuild.warn',
+      errorFilePath: 'tmp/msbuild.err',
+      rebuild: true,
+      verbosity: AgentVerbosityEnum.quite,
+    },
+  };
+  const agent = new Agent(agentLoader);
 
   it('Construct the agent and parse setting', () => {
     const flp1 = join(__dirname, WORK_DIR, 'tmp', 'msbuild.warn;warningsonly;');

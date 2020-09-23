@@ -1,15 +1,15 @@
 import { existsSync, mkdir, writeFile } from 'fs';
 import { join } from 'path';
 import { promisify } from 'util';
+import GitLoaderType from '../@types/git.loader.type';
 import { Git } from './Git';
-import { GitConfigConstructor } from './@types/git.config.constructor';
 
 const DEFAULT_CLONE_PATH = 'tmp';
 const DEFAULT_CLONE_ALIAS_PATH = './repo';
 const WORK_DIR = '../../';
 
 describe('Git tests', () => {
-  const config: GitConfigConstructor = {
+  const config: GitLoaderType = {
     src: 'https://github.com/yee2542/git-101',
     prId: 5,
   };

@@ -1,11 +1,13 @@
-export interface IProviderConfig {
-  provider: string;
+type ProviderConfigType = {
   token: string;
   owner: string;
   repo: string;
+  repoUrl: string;
   baseUrl: string;
   prId: number;
-  workDir?: string;
+  workDir: string;
   userAgent: string;
   timeZone: string;
-}
+};
+
+export default ProviderConfigType;

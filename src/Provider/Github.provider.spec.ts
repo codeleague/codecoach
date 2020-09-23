@@ -1,14 +1,14 @@
-import { GithubProvider } from './Github.provider';
-import { ProviderCustomConfigType } from './ProviderCustomConfigType';
-import { Octokit } from '@octokit/rest';
-import nock from 'nock';
-import { ReportType, Issues } from '../Report/Report';
 import { OctokitResponse, PullsListFilesResponseData } from '@octokit/types';
-import { LogSeverity } from '../Parser/Log';
+import nock from 'nock';
+import { IssuesType } from '../Report/@types/issues.type';
+import ProviderLoaderType from './@types/provider.loader.type';
+import { GithubProvider } from './Github.provider';
+import LogSeverity from '../Parser/@enums/log.severity.enum';
+import ReportType from '../Report/@types/report.type';
 
 const BASE_URL = 'https://api.github.com';
 
-const CONFIG_PROVIDER: ProviderCustomConfigType = {
+const CONFIG_PROVIDER: ProviderLoaderType = {
   owner: 'codeleague',
   repo: 'codecoach',
   token: ' ',
@@ -83,7 +83,7 @@ describe('GitHub Provider', () => {
   });
 
   it('getIssueOnTouchedFiles should return filtered Issues when the issue files in the list of touched files', async () => {
-    const mockIssues: Issues = {
+    const mockIssues: IssuesType = {
       n: 2,
       issues: [
         {
@@ -112,7 +112,7 @@ describe('GitHub Provider', () => {
   });
 
   it('getIssueOnTouchedFiles should return empty list when no issue files in common in the list of touched files', async () => {
-    const mockIssues: Issues = {
+    const mockIssues: IssuesType = {
       n: 2,
       issues: [
         {
@@ -132,7 +132,7 @@ describe('GitHub Provider', () => {
       ],
     };
     const mockTouchedFiles: string[] = [];
-    const filteredIssues = await githubProvider.getIssueOnTouchedFiles(
+    const filteredIssues = githubProvider.getIssueOnTouchedFiles(
       mockIssues,
       mockTouchedFiles,
     );

@@ -1,13 +1,9 @@
+import GitConfigType from '../@types/git.config.type';
+
 type Command = { cmd: string[]; cwd: string };
 export type CommandSequence = Command[];
-export type GitConfig = {
-  src: string;
-  dest: string;
-  prId: number;
-};
-
 export default interface GitInterface {
-  config: GitConfig;
+  config: GitConfigType;
   commands: CommandSequence;
 
   clone: () => Promise<void>;

@@ -1,7 +1,7 @@
-export type ProviderCustomConfigType = {
+type ProviderLoaderType = {
+  token: string;
   owner: string;
   repo: string;
-  token: string;
   apiUrl?: string;
   repoUrl?: string;
   prId: number;
@@ -9,3 +9,4 @@ export type ProviderCustomConfigType = {
   userAgent?: string;
   timeZone?: string;
 };
+export default ProviderLoaderType;

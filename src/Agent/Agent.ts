@@ -1,40 +1,33 @@
 import { spawn, ChildProcessWithoutNullStreams } from 'child_process';
 import { join } from 'path';
-
-const DEFAULT_WARN_FILE = 'tmp/dotnetbuild.wrn';
-const DEFAULT_ERR_FILE = 'tmp/dotnetbuild.err';
-const WORK_DIR = '../../';
+import { AgentVerbosityEnum } from './@enums/agent.verbosity.enum';
+import AgentInterface from './@interfaces/agent.interface';
+import AgentLoaderType from './@types/agent.loader.type';
+import { DEFAULT_ERR_FILE, DEFAULT_WARN_FILE, WORK_DIR } from './agent.constant';
 
 export type AgentSettings = {
   target: string;
   warnFilePath?: string;
   errorFilePath?: string;
   rebuild: boolean;
-  verbosity: AgentLogVerbosity;
+  verbosity: AgentVerbosityEnum;
   optional?: string[];
 };
-
-export enum AgentLogVerbosity {
-  quite = 'q',
-  minimal = 'm',
-  normal = 'n',
-  detailed = 'detailed',
-  diag = 'diagnostic',
-}
 
 enum LogServerity {
   warn = 'warningsonly',
   error = 'errorsonly',
 }
 
-export class Agent {
+export class Agent implements AgentInterface {
   execPath: string;
   settings: AgentSettings;
   parseSetting: string[];
   process: ChildProcessWithoutNullStreams;
   debug = false;
 
-  constructor(execPath: string, settings: AgentSettings, debug?: boolean) {
+  constructor(loader: AgentLoaderType) {
+    const { execPath, settings, debug } = loader;
     this.execPath = execPath;
     this.settings = settings;
     this.parseSetting = this.settingsParse(settings);

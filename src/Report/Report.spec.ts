@@ -1,8 +1,9 @@
 import { Report } from './Report';
-import { Log, LogSeverity } from 'src/Parser/Log';
+import LogSeverity from '../Parser/@enums/log.severity.enum';
+import LogType from '../Parser/@types/log.type';
 
 describe('Report test', () => {
-  const mockLogs: Log[] = [
+  const mockLogs: LogType[] = [
     {
       log:
         'Broken.cs(6,8): warning AG0030: Prevent use of dynamic [C:\\Users\\kthuswongsa\\Documents\\codecoach\\sample\\csharp\\broken.csproj]',

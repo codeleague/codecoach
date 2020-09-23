@@ -1,10 +1,10 @@
 import dotenv from 'dotenv';
+import { AgentVerbosityEnum } from '../Agent/@enums/agent.verbosity.enum';
 import envEnum from './@enums/env.enum';
 import { ConfigInterface } from './@interfaces/config.interface';
 import { ConfigLoaderType as ConfigConstructorLoaderType } from './@types/config.loader.type';
 import { ConfigType } from './@types/config.type';
 import envType from './@types/env.type';
-import { AgentLogVerbosity } from 'src/Agent/Agent';
 
 const DEFAULT_IGNORE_KEYS: envEnum[] = [
   envEnum.PROVIDER_API_URL,
@@ -46,11 +46,14 @@ export default class Config implements ConfigInterface {
 
   getAgent(): ConfigType['agent'] {
     return {
-      target: this.env.AGENT_PROJECT_TARGET,
-      warnFilePath: this.env.AGENT_WARN_LOG_PATH,
-      errorFilePath: this.env.AGENT_ERROR_LOG_PATH,
-      verbosity: this.env.AGENT_VERBOSITY as AgentLogVerbosity,
-      rebuild: Boolean(this.env.AGENT_REBUILD),
+      execPath: this.env.AGENT_PATH,
+      settings: {
+        target: this.env.AGENT_PROJECT_TARGET,
+        warnFilePath: this.env.AGENT_WARN_LOG_PATH,
+        errorFilePath: this.env.AGENT_ERROR_LOG_PATH,
+        verbosity: this.env.AGENT_VERBOSITY as AgentVerbosityEnum,
+        rebuild: Boolean(this.env.AGENT_REBUILD),
+      },
     };
   }
 }
