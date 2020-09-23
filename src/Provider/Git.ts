@@ -71,8 +71,8 @@ export class Git implements GitInterface {
       for (const command of commands) {
         const process = promisify(exec);
         const git = await process(command.cmd.join(' '), { cwd: command.cwd });
-        console.log('err', git.stderr);
-        console.log('output', git.stdout);
+        if (git.stderr) console.log('std:', git.stderr);
+        if (git.stdout) console.log('std:', git.stdout);
       }
     } catch (err) {
       throw new Error(err);
