@@ -4,20 +4,28 @@ import Config from './Config/Config';
 import { File } from './File';
 import CSharpParser, { CSharpParserType } from './Parser/CSharpParser';
 import { Parser } from './Parser/Parser';
+import ProviderLoaderType from './Provider/@types/provider.loader.type';
 import { GithubProvider } from './Provider/Github.provider';
 import { Report } from './Report/Report';
 
-import {
-  APP_WARN_FILE_PATH,
-  APP_ERR_FILE_PATH,
-  APP_LOG_OUTPUT_PATH,
-  APP_LINE_SPLITTER,
-} from './app.constant';
-import ProviderLoaderType from './Provider/@types/provider.loader.type';
+export type AppConfigType = {
+  warnFilePath: string;
+  errFilePath: string;
+  logFilePath: string;
+  lineSplitter: string;
+};
+
+export type AppConfigLoader = AppConfigType;
 
 (async () => {
   try {
     const config = new Config();
+    const {
+      logFilePath: appLogFilePath,
+      warnFilePath: appWarnFilePath,
+      errFilePath: appErrFilePath,
+      lineSplitter: appLineSplitter,
+    } = config.getApp();
     const configProvider: ProviderLoaderType = config.getProvider();
     const provider = new GithubProvider(configProvider);
 
@@ -28,15 +36,15 @@ import ProviderLoaderType from './Provider/@types/provider.loader.type';
 
     console.log('parsing');
 
-    const warnFileLog = await File.readFileHelper(APP_WARN_FILE_PATH);
+    const warnFileLog = await File.readFileHelper(appWarnFilePath);
     const warnLogs = new Parser<CSharpParserType>({ source: warnFileLog })
-      .setLineSplitter(APP_LINE_SPLITTER)
+      .setLineSplitter(appLineSplitter)
       .mapLabel(CSharpParser)
       .getLabled();
 
-    const errFileLog = await File.readFileHelper(APP_ERR_FILE_PATH);
+    const errFileLog = await File.readFileHelper(appErrFilePath);
     const errorLogs = new Parser<CSharpParserType>({ source: errFileLog })
-      .setLineSplitter(APP_LINE_SPLITTER)
+      .setLineSplitter(appLineSplitter)
       .mapLabel(CSharpParser)
       .getLabled();
 
@@ -44,7 +52,7 @@ import ProviderLoaderType from './Provider/@types/provider.loader.type';
     console.log(utils.inspect(logs, false, null));
     const reportData = Report.parse(logs);
     provider.report(reportData);
-    await File.writeFileHelper(APP_LOG_OUTPUT_PATH, JSON.stringify(logs, null, 2));
+    await File.writeFileHelper(appLogFilePath, JSON.stringify(logs, null, 2));
     console.log('write file dotnetbuild log complete');
   } catch (err) {
     throw Error(err);

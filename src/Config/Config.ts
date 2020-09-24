@@ -5,6 +5,7 @@ import { ConfigInterface } from './@interfaces/config.interface';
 import { ConfigLoaderType as ConfigConstructorLoaderType } from './@types/config.loader.type';
 import { ConfigType } from './@types/config.type';
 import envType from './@types/env.type';
+import { join } from 'path';
 
 const DEFAULT_IGNORE_KEYS: envEnum[] = [
   envEnum.PROVIDER_API_URL,
@@ -33,6 +34,23 @@ export default class Config implements ConfigInterface {
       const isIgnored = ignoreKeys?.includes(key);
       return isValid || isIgnored;
     });
+  }
+
+  getApp(): ConfigType['app'] {
+    const APP_WORK_DIR = '/tmp';
+    return {
+      warnFilePath:
+        (this.env.APP_WARN_FILE_PATH &&
+          join(APP_WORK_DIR, this.env.APP_WARN_FILE_PATH)) ||
+        '',
+      errFilePath:
+        (this.env.APP_ERR_FILE_PATH && join(APP_WORK_DIR, this.env.APP_ERR_FILE_PATH)) ||
+        '',
+      logFilePath:
+        (this.env.APP_LOG_FILE_PATH && join(APP_WORK_DIR, this.env.APP_LOG_FILE_PATH)) ||
+        '',
+      lineSplitter: this.env.APP_LOG_LINE_SPLITTER,
+    };
   }
 
   getProvider(): ConfigType['provider'] {

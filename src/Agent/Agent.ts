@@ -3,7 +3,13 @@ import { join } from 'path';
 import { AgentVerbosityEnum } from './@enums/agent.verbosity.enum';
 import AgentInterface from './@interfaces/agent.interface';
 import AgentLoaderType from './@types/agent.loader.type';
-import { DEFAULT_ERR_FILE, DEFAULT_WARN_FILE, WORK_DIR } from './agent.constant';
+import {
+  AGENT_ALIAS_PATH,
+  AGENT_TARGET_BUILD_ALIAS_PATH,
+  DEFAULT_ERR_FILE,
+  DEFAULT_WARN_FILE,
+  AGENT_WORK_DIR,
+} from './agent.constant';
 
 export type AgentSettings = {
   target: string;
@@ -37,7 +43,7 @@ export class Agent implements AgentInterface {
   }
 
   private pathJoin(paths: string): string {
-    return join(__dirname, WORK_DIR, paths);
+    return join(__dirname, AGENT_WORK_DIR, AGENT_ALIAS_PATH, paths);
   }
 
   private settingsParse(settings: AgentSettings): string[] {
@@ -78,7 +84,8 @@ export class Agent implements AgentInterface {
     );
     fileLoggerN++;
 
-    if (settings.target) config.push(this.pathJoin(settings.target));
+    if (settings.target)
+      config.push(this.pathJoin(AGENT_TARGET_BUILD_ALIAS_PATH + settings.target));
 
     return config;
   }

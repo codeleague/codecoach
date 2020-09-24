@@ -1,3 +1,4 @@
+import { join } from 'path';
 import envEnum from './@enums/env.enum';
 import Config from './Config';
 const PATH_MOCK_VALID_ENV = 'src/test/env/Config.valid.spec.env';
@@ -20,5 +21,20 @@ describe('Config test', () => {
     expect(config.getProvider().token).toBe('');
     expect(config.getAgent().settings.verbosity).toBe('');
     expect(config.getProvider().prId).toBe(9);
+    expect(Object.keys(config.getApp()).length).toBe(4);
+    expect(config.getApp().logFilePath).toBe('');
+  });
+
+  it('should parsing app env path correctly', () => {
+    const config = new Config({ path: PATH_MOCK_VALID_ENV });
+    const appConfig = config.getApp();
+    const expectWarnFilePath = join(...['/tmp', 'dotnetbuild.wrn']);
+    const expectErrorFilePath = join(...['/tmp', 'dotnetbuild.err']);
+    const expectLogFilePath = join(...['/tmp', 'dotnetbuild.json']);
+    const expectLineSplitter = '\\r\\n';
+    expect(appConfig.warnFilePath).toBe(expectWarnFilePath);
+    expect(appConfig.errFilePath).toBe(expectErrorFilePath);
+    expect(appConfig.logFilePath).toBe(expectLogFilePath);
+    expect(appConfig.lineSplitter).toBe(expectLineSplitter);
   });
 });
