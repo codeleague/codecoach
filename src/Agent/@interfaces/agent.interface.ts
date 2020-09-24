@@ -3,6 +3,7 @@ import { AgentSettings } from '../Agent';
 
 export default interface AgentInterface {
   execPath: string;
+  buildBypass: boolean;
   settings: AgentSettings;
   parseSetting: string[];
   process: ChildProcessWithoutNullStreams;

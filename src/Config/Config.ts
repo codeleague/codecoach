@@ -9,6 +9,8 @@ import envType from './@types/env.type';
 const DEFAULT_IGNORE_KEYS: envEnum[] = [
   envEnum.PROVIDER_API_URL,
   envEnum.PROVIDER_REPO_URL,
+  envEnum.AGENT_BUILD_BYPASS,
+  envEnum.PROVIDER_GIT_CLONE_BYPASS,
 ];
 export default class Config implements ConfigInterface {
   env: envType;
@@ -41,18 +43,20 @@ export default class Config implements ConfigInterface {
       apiUrl: this.env.PROVIDER_API_URL,
       repoUrl: this.env.PROVIDER_REPO_URL,
       prId: Number(this.env.PROVIDER_PR_NUMBER),
+      gitCloneBypass: this.env.PROVIDER_GIT_CLONE_BYPASS === 'true',
     };
   }
 
   getAgent(): ConfigType['agent'] {
     return {
       execPath: this.env.AGENT_PATH,
+      buildBypass: this.env.AGENT_BUILD_BYPASS === 'true',
       settings: {
         target: this.env.AGENT_PROJECT_TARGET,
         warnFilePath: this.env.AGENT_WARN_LOG_PATH,
         errorFilePath: this.env.AGENT_ERROR_LOG_PATH,
         verbosity: this.env.AGENT_VERBOSITY as AgentVerbosityEnum,
-        rebuild: Boolean(this.env.AGENT_REBUILD),
+        rebuild: this.env.AGENT_REBUILD === 'true',
       },
     };
   }

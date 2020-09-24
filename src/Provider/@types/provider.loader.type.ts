@@ -8,5 +8,6 @@ type ProviderLoaderType = {
   workDir?: string;
   userAgent?: string;
   timeZone?: string;
+  gitCloneBypass?: boolean;
 };
 export default ProviderLoaderType;

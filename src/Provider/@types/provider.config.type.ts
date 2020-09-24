@@ -8,6 +8,7 @@ type ProviderConfigType = {
   workDir: string;
   userAgent: string;
   timeZone: string;
+  gitCloneBypass: boolean;
 };
 
 export default ProviderConfigType;

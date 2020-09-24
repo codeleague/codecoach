@@ -24,12 +24,14 @@ export class Agent implements AgentInterface {
   settings: AgentSettings;
   parseSetting: string[];
   process: ChildProcessWithoutNullStreams;
+  buildBypass: boolean;
   debug = false;
 
   constructor(loader: AgentLoaderType) {
-    const { execPath, settings, debug } = loader;
+    const { execPath, settings, debug, buildBypass } = loader;
     this.execPath = execPath;
     this.settings = settings;
+    this.buildBypass = buildBypass || false;
     this.parseSetting = this.settingsParse(settings);
     debug && (this.debug = debug);
   }
@@ -83,6 +85,10 @@ export class Agent implements AgentInterface {
 
   async runTask(): Promise<void> {
     return new Promise((resolve, reject) => {
+      if (this.buildBypass) {
+        console.log('bypass agent build');
+        return resolve();
+      }
       const process = spawn(this.execPath, this.parseSetting);
 
       // **must add for consume stdout for get data, close events

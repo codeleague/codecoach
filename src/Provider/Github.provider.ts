@@ -18,12 +18,13 @@ import { TIME_ZONE, USER_AGENT, WORK_DIR } from './constants/provider.constant';
 import {
   GITHUB_API_URL,
   GITHUB_REPO_URL,
-  MAX_REVIEWS_PER_PAGE,
-  PROJECT_ROOT,
+  GITHUB_PROVIDER_MAX_REVIEWS_PER_PAGE,
+  GITHUB_PROVIDER_PROJECT_ROOT,
 } from './constants/github.provider.constant';
 import LogSeverity from '../Parser/@enums/log.severity.enum';
 import IssueType from '../Report/@types/Issue.type';
 import ReportType from '../Report/@types/report.type';
+import GitLoaderType from './@types/git.loader.type';
 
 export class GithubProvider implements GithubProviderInterface {
   adapter: Octokit;
@@ -37,6 +38,7 @@ export class GithubProvider implements GithubProviderInterface {
       workDir: config.workDir || WORK_DIR,
       userAgent: config.userAgent || USER_AGENT,
       timeZone: config.timeZone || TIME_ZONE,
+      gitCloneBypass: config.gitCloneBypass || false, // for git
     };
 
     this.adapter = new Octokit({
@@ -48,14 +50,16 @@ export class GithubProvider implements GithubProviderInterface {
   }
   async clone(): Promise<void> {
     try {
-      const config = {
+      const config: GitLoaderType = {
         src: new URL(
           join(...[this.config.owner, this.config.repo]),
           this.config.repoUrl,
         ).toString(),
         prId: this.config.prId,
         dest: './tmp',
+        cloneBypass: this.config.gitCloneBypass,
       };
+
       const git = new Git(config);
       await git.clone();
     } catch (err) {
@@ -71,7 +75,7 @@ export class GithubProvider implements GithubProviderInterface {
       owner,
       repo,
       issue_number: prId,
-      per_page: MAX_REVIEWS_PER_PAGE,
+      per_page: GITHUB_PROVIDER_MAX_REVIEWS_PER_PAGE,
     });
     if (!headers.link) {
       return firstPageComments;
@@ -94,7 +98,7 @@ export class GithubProvider implements GithubProviderInterface {
           owner,
           repo,
           issue_number: prId,
-          per_page: MAX_REVIEWS_PER_PAGE,
+          per_page: GITHUB_PROVIDER_MAX_REVIEWS_PER_PAGE,
           page: pageIndex,
         });
       });
@@ -110,7 +114,7 @@ export class GithubProvider implements GithubProviderInterface {
       owner,
       repo,
       pull_number: prId,
-      per_page: MAX_REVIEWS_PER_PAGE,
+      per_page: GITHUB_PROVIDER_MAX_REVIEWS_PER_PAGE,
     });
     return response.data;
   }
@@ -224,7 +228,7 @@ export class GithubProvider implements GithubProviderInterface {
             pull_number: prId,
             body: this.getComment(issue.msg, severity),
             commit_id: commit_id,
-            path: slash(path.join(PROJECT_ROOT, issue.source)),
+            path: slash(path.join(GITHUB_PROVIDER_PROJECT_ROOT, issue.source)),
             line: issue.line,
             side: 'RIGHT',
           });
@@ -235,7 +239,7 @@ export class GithubProvider implements GithubProviderInterface {
             pull_number: prId,
             body: this.getComment(issue.msg, severity),
             commit_id: commit_id,
-            path: slash(path.join(PROJECT_ROOT, issue.source)),
+            path: slash(path.join(GITHUB_PROVIDER_PROJECT_ROOT, issue.source)),
             position: 1,
           });
         }
@@ -277,8 +281,8 @@ ${infoOverview}
       });
 
       const touchedFiles = (await this.listTouchedFiles())
-        .filter((src: string) => src.startsWith(PROJECT_ROOT))
-        .map((src: string) => src.replace(PROJECT_ROOT, ''));
+        .filter((src: string) => src.startsWith(GITHUB_PROVIDER_PROJECT_ROOT))
+        .map((src: string) => src.replace(GITHUB_PROVIDER_PROJECT_ROOT, ''));
 
       const groupTouchedFiles = [
         {

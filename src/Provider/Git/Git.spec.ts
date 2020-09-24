@@ -3,9 +3,9 @@ import { join } from 'path';
 import { promisify } from 'util';
 import GitLoaderType from '../@types/git.loader.type';
 import {
-  DEFAULT_CLONE_ALIAS_PATH,
-  DEFAULT_CLONE_PATH,
-  WORK_DIR,
+  GIT_DEFAULT_CLONE_ALIAS_PATH,
+  GIT_DEFAULT_CLONE_PATH,
+  GIT_WORK_DIR,
 } from '../constants/git.constant';
 import { Git } from './Git';
 
@@ -14,12 +14,12 @@ describe('Git tests', () => {
     src: 'https://github.com/yee2542/git-101',
     prId: 5,
   };
-  const ROOT_PATH = join(__dirname, WORK_DIR, DEFAULT_CLONE_PATH);
+  const ROOT_PATH = join(__dirname, GIT_WORK_DIR, GIT_DEFAULT_CLONE_PATH);
   const PROJECT_PATH = join(
     __dirname,
-    WORK_DIR,
-    DEFAULT_CLONE_PATH,
-    DEFAULT_CLONE_ALIAS_PATH,
+    GIT_WORK_DIR,
+    GIT_DEFAULT_CLONE_PATH,
+    GIT_DEFAULT_CLONE_ALIAS_PATH,
   );
   const git = new Git(config);
 
@@ -28,9 +28,9 @@ describe('Git tests', () => {
     const cloneCwd = git.commands[0].cwd;
     const cloneTargerPath = join(
       __dirname,
-      WORK_DIR,
-      DEFAULT_CLONE_PATH,
-      DEFAULT_CLONE_ALIAS_PATH,
+      GIT_WORK_DIR,
+      GIT_DEFAULT_CLONE_PATH,
+      GIT_DEFAULT_CLONE_ALIAS_PATH,
     );
 
     const fetchCommand = git.commands[1].cmd.join(' ');
@@ -62,8 +62,8 @@ describe('Git tests', () => {
   });
 
   it('The git constant should define correctly', () => {
-    expect(WORK_DIR).toBe('../../../');
-    expect(DEFAULT_CLONE_PATH).toBe('tmp');
-    expect(DEFAULT_CLONE_ALIAS_PATH).toBe('./repo');
+    expect(GIT_WORK_DIR).toBe('../../../');
+    expect(GIT_DEFAULT_CLONE_PATH).toBe('tmp');
+    expect(GIT_DEFAULT_CLONE_ALIAS_PATH).toBe('./repo');
   });
 });

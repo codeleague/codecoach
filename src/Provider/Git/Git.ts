@@ -6,13 +6,13 @@ import GitInterface, { CommandSequence } from '../@interfaces/git.interface';
 import GitConfigType from '../@types/git.config.type';
 import GitLoaderType from '../@types/git.loader.type';
 import {
-  DEFAULT_CLONE_PATH,
-  DEFAULT_CLONE_ALIAS_PATH,
+  GIT_DEFAULT_CLONE_PATH,
+  GIT_DEFAULT_CLONE_ALIAS_PATH,
   GIT_EXEC,
   GIT_CLONE,
   GIT_FETCH,
   GIT_CHECKOUT,
-  WORK_DIR,
+  GIT_WORK_DIR,
 } from '../constants/git.constant';
 
 const PULLS = (n: number) => `pull/${n}/head`;
@@ -24,15 +24,16 @@ export class Git implements GitInterface {
   constructor(config: GitLoaderType) {
     this.config = {
       ...config,
-      dest: config.dest || DEFAULT_CLONE_PATH,
+      dest: config.dest || GIT_DEFAULT_CLONE_PATH,
+      cloneBypass: config.cloneBypass || false,
     };
 
-    const ROOT_PATH = join(__dirname, WORK_DIR, DEFAULT_CLONE_PATH);
+    const ROOT_PATH = join(__dirname, GIT_WORK_DIR, GIT_DEFAULT_CLONE_PATH);
     const PROJECT_PATH = join(
       __dirname,
-      WORK_DIR,
+      GIT_WORK_DIR,
       this.config.dest,
-      DEFAULT_CLONE_ALIAS_PATH,
+      GIT_DEFAULT_CLONE_ALIAS_PATH,
     );
     const commands: CommandSequence = [
       //   clone
@@ -54,9 +55,9 @@ export class Git implements GitInterface {
   async clearRepo(): Promise<void> {
     const PROJECT_PATH = join(
       __dirname,
-      WORK_DIR,
+      GIT_WORK_DIR,
       this.config.dest,
-      DEFAULT_CLONE_ALIAS_PATH,
+      GIT_DEFAULT_CLONE_ALIAS_PATH,
     );
     return new Promise((resolve, rejects) => {
       rimraf(PROJECT_PATH, (err) => {
@@ -68,6 +69,10 @@ export class Git implements GitInterface {
 
   async clone(): Promise<void> {
     try {
+      if (this.config.cloneBypass) {
+        console.log('Git clone bypass');
+        return;
+      }
       const commands = this.commands;
       await this.clearRepo();
       for (const command of commands) {
