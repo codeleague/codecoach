@@ -5,6 +5,17 @@ const PATH_MOCK_VALID_ENV = 'src/test/env/Config.valid.spec.env';
 const PATH_MOCK_INVALID_ENV = 'src/test/env/Config.invalid.spec.env';
 
 describe('Config test', () => {
+  const OLD_ENV = process.env;
+
+  beforeEach(() => {
+    jest.resetModules(); // most important - it clears the cache
+    process.env = { ...OLD_ENV }; // make a copy
+  });
+
+  afterAll(() => {
+    process.env = OLD_ENV; // restore old env
+  });
+
   it('should validate .env format correctly', () => {
     const config = new Config({ path: PATH_MOCK_VALID_ENV });
     const valid = config.validate(config.env, []);

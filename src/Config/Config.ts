@@ -18,7 +18,18 @@ export default class Config implements ConfigInterface {
   ignoreKeys?: envEnum[];
 
   constructor(options?: ConfigConstructorLoaderType) {
-    const config = dotenv.config({ path: options?.path }).parsed as envType;
+    const dotenvConfig = dotenv.config({ path: options?.path }).parsed as envType;
+    const configKeys = Object.keys(envEnum);
+    let config = {} as envType;
+    for (const key of configKeys) {
+      const _key = key as envEnum;
+      config = {
+        ...config,
+        [_key]: process.env[_key] || dotenvConfig[_key],
+      };
+    }
+    console.log('ENV configuration');
+    console.log(config);
     this.env = config;
     this.ignoreKeys = options?.ignoreEnv || DEFAULT_IGNORE_KEYS;
 
