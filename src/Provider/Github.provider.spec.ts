@@ -5,6 +5,7 @@ import ProviderLoaderType from './@types/provider.loader.type';
 import { GithubProvider } from './Github.provider';
 import LogSeverity from '../Parser/@enums/log.severity.enum';
 import ReportType from '../Report/@types/report.type';
+import IssueType from '../Report/@types/Issue.type';
 
 const BASE_URL = 'https://api.github.com';
 
@@ -82,7 +83,7 @@ describe('GitHub Provider', () => {
     expect(touchedFiles).toStrictEqual(mockTouchedFiles);
   });
 
-  it('getIssueOnTouchedFiles should return filtered Issues when the issue files in the list of touched files', async () => {
+  it('getIssueOnTouchedFiles should return filtered Issues when the issue files are in the list of touched files', async () => {
     const mockIssues: IssuesType = {
       n: 2,
       issues: [
@@ -103,7 +104,7 @@ describe('GitHub Provider', () => {
       ],
     };
     const mockTouchedFiles = ['file1.cs'];
-    const filteredIssues = await githubProvider.getIssueOnTouchedFiles(
+    const filteredIssues = await githubProvider.filterIssuesByTouchedFiles(
       mockIssues,
       mockTouchedFiles,
     );
@@ -132,11 +133,63 @@ describe('GitHub Provider', () => {
       ],
     };
     const mockTouchedFiles: string[] = [];
-    const filteredIssues = githubProvider.getIssueOnTouchedFiles(
+    const filteredIssues = githubProvider.filterIssuesByTouchedFiles(
       mockIssues,
       mockTouchedFiles,
     );
     expect(filteredIssues.issues.length).toBe(0);
     expect(filteredIssues.n).toBe(0);
+  });
+
+  it('getTouchedIssuesBySeverityMap should return number of touched issues by severity correctly', async () => {
+    const mockTouchedFiles: string[] = ['file1.cs'];
+    const mockErrorIssues: IssuesType = {
+      n: 2,
+      issues: [
+        {
+          msg: '',
+          severity: LogSeverity.error,
+          source: 'file1.cs',
+          line: 1,
+          lineOffset: 0,
+        },
+        {
+          msg: '',
+          severity: LogSeverity.error,
+          source: 'file2.cs',
+          line: 2,
+          lineOffset: 3,
+        },
+      ],
+    };
+    const mockWarningIssues: IssuesType = {
+      n: 2,
+      issues: [
+        {
+          msg: '',
+          severity: LogSeverity.warning,
+          source: 'file2.cs',
+          line: 1,
+          lineOffset: 0,
+        },
+        {
+          msg: '',
+          severity: LogSeverity.warning,
+          source: 'file2.cs',
+          line: 2,
+          lineOffset: 3,
+        },
+      ],
+    };
+    const mockInfoIssues: IssuesType = { n: 0, issues: [] };
+    const touchedIssuesBySeverityMap = githubProvider.getTouchedIssuesBySeverityMap(
+      mockTouchedFiles,
+      mockErrorIssues,
+      mockWarningIssues,
+      mockInfoIssues,
+    );
+    expect(touchedIssuesBySeverityMap.error.n).toBe(1);
+    expect(touchedIssuesBySeverityMap.warning.n).toBe(0);
+    expect(touchedIssuesBySeverityMap.info.n).toBe(0);
   });
 });

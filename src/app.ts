@@ -49,9 +49,9 @@ export type AppConfigLoader = AppConfigType;
       .getLabled();
 
     const logs = [...warnLogs, ...errorLogs];
-    console.log(utils.inspect(logs, false, null));
+    // console.log(utils.inspect(logs, false, null));
     const reportData = Report.parse(logs);
-    provider.report(reportData);
+    await provider.report(reportData);
     await File.writeFileHelper(appLogFilePath, JSON.stringify(logs, null, 2));
     console.log('write file dotnetbuild log complete');
   } catch (err) {

@@ -18,9 +18,8 @@ interface GithubProviderInterface extends ProviderInterface<Octokit> {
   listAllReviewComments(): Promise<PullsListReviewCommentsResponseData>;
   updateComment(owner: string, repo: string, prId: number): Promise<void>;
   listTouchedFiles(): Promise<string[]>;
-  getIssueOnTouchedFiles(data: IssuesType, touchedFiles: string[]): IssuesType;
-  getNoLineIssues(data: IssuesType): IssuesType;
-  getComment(msg: string, severity: LogSeverity): string;
+  filterIssuesByTouchedFiles(data: IssuesType, touchedFiles: string[]): IssuesType;
+  createMessageWithEmoji(msg: string, severity: LogSeverity): string;
   createCommentForEachFile(
     data: IssuesType,
     severity: LogSeverity,

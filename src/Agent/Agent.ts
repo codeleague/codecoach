@@ -59,7 +59,12 @@ export class Agent implements AgentInterface {
 
     const config: string[] = [];
     // default setting
-    const DEFAULT_SETINGS = ['build', '--nologo', '-p:ActiveRulesets="Coding Standards"'];
+    const DEFAULT_SETINGS = [
+      'build',
+      '--nologo',
+      '-p:ActiveRulesets="Coding Standards"',
+      '-p:GenerateFullPaths=true',
+    ];
     config.push(...DEFAULT_SETINGS);
 
     // read from config

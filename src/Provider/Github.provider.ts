@@ -2,29 +2,25 @@ import { Octokit } from '@octokit/rest';
 import {
   IssuesListCommentsResponseData,
   PullsGetResponseData,
-  PullsListFilesResponseData,
   PullsListReviewCommentsResponseData,
 } from '@octokit/types';
-import * as path from 'path';
 import { join } from 'path';
-import slash from 'slash';
-import { IssuesType } from '../Report/@types/issues.type';
-import { Git } from './Git/Git';
 import { URL } from 'url';
-import GithubProviderInterface from './@interfaces/github.provider.interface';
-import ProviderLoaderType from './@types/provider.loader.type';
-import ProviderConfigType from './@types/provider.config.type';
-import { TIME_ZONE, USER_AGENT, WORK_DIR } from './constants/provider.constant';
-import {
-  GITHUB_API_URL,
-  GITHUB_REPO_URL,
-  GITHUB_PROVIDER_MAX_REVIEWS_PER_PAGE,
-  GITHUB_PROVIDER_PROJECT_ROOT,
-} from './constants/github.provider.constant';
 import LogSeverity from '../Parser/@enums/log.severity.enum';
 import IssueType from '../Report/@types/Issue.type';
+import { IssuesType } from '../Report/@types/issues.type';
 import ReportType from '../Report/@types/report.type';
+import GithubProviderInterface from './@interfaces/github.provider.interface';
 import GitLoaderType from './@types/git.loader.type';
+import ProviderConfigType from './@types/provider.config.type';
+import ProviderLoaderType from './@types/provider.loader.type';
+import {
+  GITHUB_API_URL,
+  GITHUB_PROVIDER_MAX_REVIEWS_PER_PAGE,
+  GITHUB_REPO_URL,
+} from './constants/github.provider.constant';
+import { TIME_ZONE, USER_AGENT, WORK_DIR } from './constants/provider.constant';
+import { Git } from './Git/Git';
 
 export class GithubProvider implements GithubProviderInterface {
   adapter: Octokit;
@@ -48,6 +44,7 @@ export class GithubProvider implements GithubProviderInterface {
       baseUrl: this.config.baseUrl,
     });
   }
+
   async clone(): Promise<void> {
     try {
       const config: GitLoaderType = {
@@ -66,6 +63,7 @@ export class GithubProvider implements GithubProviderInterface {
       throw new Error(err);
     }
   }
+
   async listAllPageComments(
     owner: string,
     repo: string,
@@ -150,39 +148,17 @@ export class GithubProvider implements GithubProviderInterface {
     return;
   }
 
-  private templatePerFileComment(
-    source: string,
-    serverity: string,
-    msg: string,
-    line?: number,
-    lineOffset?: number,
-  ): string {
-    if (line && lineOffset) {
-      return `${source}: ${serverity} ${msg}`;
-    } else {
-      return `${source}: (${line}, ${lineOffset}) ${serverity} ${msg}`;
-    }
-  }
-
-  private perFileComment(data: IssuesType): string[] {
-    return data.issues.map((e) =>
-      this.templatePerFileComment(e.source, e.severity, e.msg, e.line, e.lineOffset),
-    );
-  }
-
   async listTouchedFiles(): Promise<string[]> {
-    // const await
     const { owner, repo, prId } = this.config;
-    const {
-      data: touchedFiles,
-    }: { data: PullsListFilesResponseData } = await this.adapter.pulls.listFiles({
+    const { data: touchedFiles } = await this.adapter.pulls.listFiles({
       owner,
       repo,
       pull_number: prId,
     });
     return touchedFiles.map((t) => t.filename);
   }
-  getIssueOnTouchedFiles(data: IssuesType, touchedFiles: string[]): IssuesType {
+
+  filterIssuesByTouchedFiles(data: IssuesType, touchedFiles: string[]): IssuesType {
     const issueOnTouchedFiles = data.issues.filter((issue: IssueType) =>
       touchedFiles.includes(issue.source),
     );
@@ -191,14 +167,8 @@ export class GithubProvider implements GithubProviderInterface {
       n: issueOnTouchedFiles.length,
     };
   }
-  getNoLineIssues(data: IssuesType): IssuesType {
-    const noLine = data.issues.filter((issue: IssueType) => issue.line === null);
-    return {
-      issues: noLine,
-      n: noLine.length,
-    };
-  }
-  getComment(msg: string, severity: LogSeverity): string {
+
+  createMessageWithEmoji(msg: string, severity: LogSeverity): string {
     let emoji = '';
     switch (severity) {
       case LogSeverity.error:
@@ -213,56 +183,90 @@ export class GithubProvider implements GithubProviderInterface {
     }
     return `${emoji} ${msg}`;
   }
+
   async createCommentForEachFile(
     data: IssuesType,
     severity: LogSeverity,
     commit_id: string,
   ): Promise<void> {
     const { owner, repo, prId } = this.config;
-    await Promise.all(
-      data.issues.map(async (issue: IssueType) => {
-        if (issue.line) {
-          await this.adapter.pulls.createReviewComment({
-            owner,
-            repo,
-            pull_number: prId,
-            body: this.getComment(issue.msg, severity),
-            commit_id: commit_id,
-            path: slash(path.join(GITHUB_PROVIDER_PROJECT_ROOT, issue.source)),
-            line: issue.line,
-            side: 'RIGHT',
-          });
-        } else {
-          await this.adapter.pulls.createReviewComment({
-            owner,
-            repo,
-            pull_number: prId,
-            body: this.getComment(issue.msg, severity),
-            commit_id: commit_id,
-            path: slash(path.join(GITHUB_PROVIDER_PROJECT_ROOT, issue.source)),
-            position: 1,
-          });
-        }
-      }),
-    );
+    try {
+      await Promise.all(
+        data.issues.map(async (issue: IssueType) => {
+          if (issue.line) {
+            await this.adapter.pulls.createReviewComment({
+              mediaType: {
+                previews: ['comfort-fade'],
+              },
+              owner,
+              repo,
+              pull_number: prId,
+              body: this.createMessageWithEmoji(issue.msg, severity),
+              commit_id: commit_id,
+              path: issue.source,
+              line: issue.line,
+              side: 'RIGHT',
+            });
+          } else {
+            await this.adapter.pulls.createReviewComment({
+              owner,
+              repo,
+              pull_number: prId,
+              body: this.createMessageWithEmoji(issue.msg, severity),
+              commit_id: commit_id,
+              path: issue.source,
+              position: 1,
+            });
+          }
+        }),
+      );
+    } catch (err) {
+      console.trace(err);
+      throw Error(err);
+    }
   }
+
   private generateOverviewMessage(
     nOfErrors: number,
     nOfWarnings: number,
     nOfInfos: number,
   ): string {
-    const errorOverview = this.getComment(`${nOfErrors} error(s)`, LogSeverity.error);
-    const warningOverview = this.getComment(
+    const errorOverview = this.createMessageWithEmoji(
+      `${nOfErrors} error(s)`,
+      LogSeverity.error,
+    );
+    const warningOverview = this.createMessageWithEmoji(
       `${nOfWarnings} warning(s)`,
       LogSeverity.warning,
     );
-    const infoOverview = this.getComment(`${nOfInfos} info(s)`, LogSeverity.info);
+    const infoOverview = this.createMessageWithEmoji(
+      `${nOfInfos} info(s)`,
+      LogSeverity.info,
+    );
     return `CodeCoach reports ${nOfErrors + nOfWarnings + nOfInfos} issue(s)
 ${errorOverview}
 ${warningOverview}
 ${infoOverview}
     `;
   }
+
+  getTouchedIssuesBySeverityMap(
+    touchedFiles: string[],
+    error: IssuesType,
+    warning: IssuesType,
+    info: IssuesType,
+  ): {
+    [LogSeverity.error]: IssuesType;
+    [LogSeverity.warning]: IssuesType;
+    [LogSeverity.info]: IssuesType;
+  } {
+    return {
+      [LogSeverity.error]: this.filterIssuesByTouchedFiles(error, touchedFiles),
+      [LogSeverity.warning]: this.filterIssuesByTouchedFiles(warning, touchedFiles),
+      [LogSeverity.info]: this.filterIssuesByTouchedFiles(info, touchedFiles),
+    };
+  }
+
   async report({
     overviewMsg,
     error: errors,
@@ -280,48 +284,33 @@ ${infoOverview}
         pull_number: prId,
       });
 
-      const touchedFiles = (await this.listTouchedFiles())
-        .filter((src: string) => src.startsWith(GITHUB_PROVIDER_PROJECT_ROOT))
-        .map((src: string) => src.replace(GITHUB_PROVIDER_PROJECT_ROOT, ''));
+      const touchedIssuesBySeverity = this.getTouchedIssuesBySeverityMap(
+        await this.listTouchedFiles(),
+        errors,
+        warnings,
+        infos,
+      );
 
-      const groupTouchedFiles = [
-        {
-          issues: this.getIssueOnTouchedFiles(errors, touchedFiles),
-          severity: LogSeverity.error,
-        },
-        {
-          issues: this.getIssueOnTouchedFiles(warnings, touchedFiles),
-          severity: LogSeverity.warning,
-        },
-        {
-          issues: this.getIssueOnTouchedFiles(infos, touchedFiles),
-          severity: LogSeverity.info,
-        },
-      ];
-      for await (const el of groupTouchedFiles) {
-        const { issues, severity } = el;
-        const filteredIssues = this.getIssueOnTouchedFiles(issues, touchedFiles);
-        await this.createCommentForEachFile(
-          filteredIssues,
-          severity,
-          pullRequestDetail.head.sha,
-        );
+      const severities = [LogSeverity.error, LogSeverity.warning, LogSeverity.info];
+
+      for (const severity of severities) {
+        if (severity !== LogSeverity.unknown) {
+          await this.createCommentForEachFile(
+            touchedIssuesBySeverity[severity],
+            severity,
+            pullRequestDetail.head.sha,
+          );
+        }
       }
-
-      const [
-        errorsOnTouchedFiles,
-        warningsOnTouchedFiles,
-        infosOnTouchedFiles,
-      ] = groupTouchedFiles;
 
       await this.adapter.issues.createComment({
         owner,
         repo,
         issue_number: prId,
         body: this.generateOverviewMessage(
-          errorsOnTouchedFiles.issues.n,
-          warningsOnTouchedFiles.issues.n,
-          infosOnTouchedFiles.issues.n,
+          touchedIssuesBySeverity.error.n,
+          touchedIssuesBySeverity.warning.n,
+          touchedIssuesBySeverity.info.n,
         ),
       });
     } catch (err) {

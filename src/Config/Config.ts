@@ -49,6 +49,7 @@ export default class Config implements ConfigInterface {
 
   getApp(): ConfigType['app'] {
     const APP_WORK_DIR = '/tmp';
+    const env_line_splitter = this.env.APP_LOG_LINE_SPLITTER;
     return {
       warnFilePath:
         (this.env.APP_WARN_FILE_PATH &&
@@ -60,7 +61,12 @@ export default class Config implements ConfigInterface {
       logFilePath:
         (this.env.APP_LOG_FILE_PATH && join(APP_WORK_DIR, this.env.APP_LOG_FILE_PATH)) ||
         '',
-      lineSplitter: this.env.APP_LOG_LINE_SPLITTER,
+      lineSplitter:
+        env_line_splitter === 'CRLF'
+          ? '\r\n'
+          : env_line_splitter === 'LF'
+          ? '\n'
+          : env_line_splitter,
     };
   }
 

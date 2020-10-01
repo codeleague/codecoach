@@ -38,6 +38,7 @@ describe('Agent tests', () => {
       'build',
       '--nologo',
       '-p:ActiveRulesets="Coding Standards"',
+      '-p:GenerateFullPaths=true',
       '--no-incremental',
       '-flp1:logfile=' + flp1,
       '-flp2:logfile=' + flp2,

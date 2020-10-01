@@ -3,18 +3,18 @@ import CSharpParser, { CSharpParserType } from './CSharpParser';
 
 describe('CSharpParser tests', () => {
   const mock = [
-    `1:7>BookingApi/Mappers/Request/PaymentAmountMapperTests.cs(24,17): warning CS0219: The variable 'moneyInUsd' is assigned but its value is never used [C:/Users/kthuswongsa/Documents/Agoda.Gateway/Tests/PCI/Agoda.Gateway.Pci.External.Tests/Agoda.Gateway.Pci.External.Tests.csproj]`,
-    `1:7>CSC : error CS5001: Program does not contain a static 'Main' method suitable for an entry point [C:/Users/bpuangthamaw/Documents/GitHub/codecoach/sample/csharp/broken.csproj]`,
+    `1:7>C:\\source\\codeleague\\codecoach\\tmp\\repo\\Broken.cs(6,8): warning AG0030: Prevent use of dynamic [C:\\source\\codeleague\\codecoach\\tmp\\repo\\Broken.csproj]`,
+    `1:7>CSC : error CS5001: Program does not contain a static 'Main' method suitable for an entry point [C:\\source\\codeleague\\codecoach\\tmp\\repo\\Broken.csproj]`,
   ];
 
   it('Should parse correctly when (line, offset) is provided', () => {
     const result = CSharpParser(mock[0]);
     expect(result).toEqual({
-      source: `BookingApi/Mappers/Request/PaymentAmountMapperTests.cs`,
+      source: `Broken.cs`,
       severity: LogSeverity.warning,
-      line: 24,
-      lineOffset: 17,
-      msg: `CS0219: The variable 'moneyInUsd' is assigned but its value is never used`,
+      line: 6,
+      lineOffset: 8,
+      msg: `AG0030: Prevent use of dynamic`,
       log: mock[0],
     } as CSharpParserType);
   });
@@ -22,8 +22,10 @@ describe('CSharpParser tests', () => {
   it('Should parse correctly when (line, offset) is not provided', () => {
     const result = CSharpParser(mock[1]);
     expect(result).toEqual({
-      source: `broken.csproj`,
+      source: `Broken.csproj`,
       severity: LogSeverity.error,
+      line: undefined,
+      lineOffset: undefined,
       msg: `CS5001: Program does not contain a static 'Main' method suitable for an entry point`,
       log: mock[1],
     } as CSharpParserType);
