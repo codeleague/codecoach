@@ -1,5 +1,7 @@
-import { writeFile, readFile } from 'fs/promises';
+import { promises } from 'fs';
 import { resolve } from 'path';
+
+const { readFile, writeFile } = promises;
 
 export abstract class File {
   static async readFileHelper(path: string): Promise<string> {
