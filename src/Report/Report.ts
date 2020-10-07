@@ -15,6 +15,7 @@ export class Report implements ReportInterface {
       lineOffset: log.lineOffset,
     };
   }
+
   private static selectLogType(logs: LogType[], type: LogSeverity) {
     return logs.filter((f) => f.severity === type).map(this.mapLogToComment);
   }

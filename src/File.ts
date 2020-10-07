@@ -1,18 +1,10 @@
-import { writeFile, readFile } from 'fs';
-import { join } from 'path';
-import { promisify } from 'util';
-
-const WORK_DIR = '../';
+import { writeFile, readFile } from 'fs/promises';
+import { resolve } from 'path';
 
 export abstract class File {
-  private static pathJoin(path: string) {
-    return join(__dirname, WORK_DIR, path);
-  }
-
   static async readFileHelper(path: string): Promise<string> {
     try {
-      const file = promisify(readFile);
-      const data = await file(this.pathJoin(path));
+      const data = await readFile(resolve(path));
       return data.toString();
     } catch (err) {
       throw new Error(`Read file error:${err}`);
@@ -21,9 +13,7 @@ export abstract class File {
 
   static async writeFileHelper(path: string, data: string): Promise<void> {
     try {
-      const file = promisify(writeFile);
-      await file(this.pathJoin(path), data);
-      return;
+      await writeFile(resolve(path), data);
     } catch (err) {
       throw new Error(`Write file error:${err}`);
     }

@@ -1,5 +1,5 @@
 export enum AgentVerbosityEnum {
-  quite = 'q',
+  quiet = 'q',
   minimal = 'm',
   normal = 'n',
   detailed = 'detailed',

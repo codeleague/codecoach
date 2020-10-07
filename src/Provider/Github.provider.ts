@@ -4,32 +4,28 @@ import {
   PullsGetResponseData,
   PullsListReviewCommentsResponseData,
 } from '@octokit/types';
-import { join } from 'path';
-import { URL } from 'url';
 import LogSeverity from '../Parser/@enums/log.severity.enum';
 import IssueType from '../Report/@types/Issue.type';
 import { IssuesType } from '../Report/@types/issues.type';
 import ReportType from '../Report/@types/report.type';
 import GithubProviderInterface from './@interfaces/github.provider.interface';
-import GitLoaderType from './@types/git.loader.type';
-import ProviderConfigType from './@types/provider.config.type';
-import ProviderLoaderType from './@types/provider.loader.type';
+import ProviderInternalConfig from './@types/providerInternalConfig';
+import { ProviderConfig } from '../Config/@types';
 import {
   GITHUB_API_URL,
   GITHUB_PROVIDER_MAX_REVIEWS_PER_PAGE,
   GITHUB_REPO_URL,
 } from './constants/github.provider.constant';
 import { TIME_ZONE, USER_AGENT, WORK_DIR } from './constants/provider.constant';
-import { Git } from './Git/Git';
 
 export class GithubProvider implements GithubProviderInterface {
   adapter: Octokit;
-  config: ProviderConfigType;
+  config: ProviderInternalConfig;
 
-  constructor(config: ProviderLoaderType) {
+  constructor(config: ProviderConfig) {
     this.config = {
       ...config,
-      baseUrl: config.apiUrl || GITHUB_API_URL, // for api
+      baseUrl: config.baseUrl || GITHUB_API_URL, // for api
       repoUrl: config.repoUrl || GITHUB_REPO_URL, // for clone
       workDir: config.workDir || WORK_DIR,
       userAgent: config.userAgent || USER_AGENT,
@@ -43,25 +39,6 @@ export class GithubProvider implements GithubProviderInterface {
       timeZone: this.config.timeZone,
       baseUrl: this.config.baseUrl,
     });
-  }
-
-  async clone(): Promise<void> {
-    try {
-      const config: GitLoaderType = {
-        src: new URL(
-          join(...[this.config.owner, this.config.repo]),
-          this.config.repoUrl,
-        ).toString(),
-        prId: this.config.prId,
-        dest: './tmp',
-        cloneBypass: this.config.gitCloneBypass,
-      };
-
-      const git = new Git(config);
-      await git.clone();
-    } catch (err) {
-      throw new Error(err);
-    }
   }
 
   async listAllPageComments(

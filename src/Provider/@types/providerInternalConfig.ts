@@ -1,9 +1,9 @@
-type ProviderConfigType = {
+type ProviderInternalConfig = {
   token: string;
   owner: string;
   repo: string;
-  repoUrl: string;
   baseUrl: string;
+  repoUrl: string;
   prId: number;
   workDir: string;
   userAgent: string;
@@ -11,4 +11,4 @@ type ProviderConfigType = {
   gitCloneBypass: boolean;
 };
 
-export default ProviderConfigType;
+export default ProviderInternalConfig;

@@ -1,11 +1,16 @@
 import dotenv from 'dotenv';
 import { AgentVerbosityEnum } from '../Agent/@enums/agent.verbosity.enum';
 import envEnum from './@enums/env.enum';
-import { ConfigInterface } from './@interfaces/config.interface';
-import { ConfigLoaderType as ConfigConstructorLoaderType } from './@types/config.loader.type';
-import { ConfigType } from './@types/config.type';
-import envType from './@types/env.type';
-import { join } from 'path';
+import { AgentConfig, AppConfig, ConfigObject, ProviderConfig } from './@types';
+import {
+  DEFAULT_ERR_FILE,
+  DEFAULT_LOG_FILE,
+  DEFAULT_WARN_FILE,
+} from './constants/defaults';
+import { CRLF, LF, TRUE } from './constants/literals';
+
+// todo: make configs command line arguments
+dotenv.config();
 
 const DEFAULT_IGNORE_KEYS: envEnum[] = [
   envEnum.PROVIDER_API_URL,
@@ -13,86 +18,64 @@ const DEFAULT_IGNORE_KEYS: envEnum[] = [
   envEnum.AGENT_BUILD_BYPASS,
   envEnum.PROVIDER_GIT_CLONE_BYPASS,
 ];
-export default class Config implements ConfigInterface {
-  env: envType;
-  ignoreKeys?: envEnum[];
 
-  constructor(options?: ConfigConstructorLoaderType) {
-    const dotenvConfig = dotenv.config({ path: options?.path }).parsed as envType;
-    const configKeys = Object.keys(envEnum);
-    let config = {} as envType;
-    for (const key of configKeys) {
-      const _key = key as envEnum;
-      config = {
-        ...config,
-        [_key]: process.env[_key] || dotenvConfig[_key],
-      };
-    }
-    console.log('ENV configuration');
-    console.log(config);
-    this.env = config;
-    this.ignoreKeys = options?.ignoreEnv || DEFAULT_IGNORE_KEYS;
+const configKeys = Object.keys(envEnum) as envEnum[];
 
-    const valid = this.validate(config, this.ignoreKeys);
-    if (!valid) throw new Error('.env file is not valid');
-    return;
-  }
+export const validateConfig = (
+  env: NodeJS.ProcessEnv,
+  ignoreKeys: envEnum[] = DEFAULT_IGNORE_KEYS,
+): boolean =>
+  configKeys.every((key) => {
+    const isValid = env[key] !== '';
+    const isIgnored = ignoreKeys?.includes(key) ?? false;
+    return isValid || isIgnored;
+  });
 
-  validate(configs: envType, ignoreKeys: envEnum[]): boolean {
-    const keys = Object.keys(configs) as envEnum[];
-    return keys.every((key) => {
-      const isValid = configs[key] !== '';
-      const isIgnored = ignoreKeys?.includes(key);
-      return isValid || isIgnored;
-    });
-  }
+export const buildProviderConfig = (env: NodeJS.ProcessEnv): ProviderConfig => ({
+  owner: env[envEnum.PROVIDER_OWNER] as string,
+  repo: env[envEnum.PROVIDER_REPO] as string,
+  token: env[envEnum.PROVIDER_TOKEN] as string,
+  baseUrl: env[envEnum.PROVIDER_API_URL],
+  repoUrl: env[envEnum.PROVIDER_REPO_URL],
+  prId: Number(env[envEnum.PROVIDER_PR_NUMBER]),
+  gitCloneBypass: env[envEnum.PROVIDER_GIT_CLONE_BYPASS] === TRUE,
+});
 
-  getApp(): ConfigType['app'] {
-    const APP_WORK_DIR = '/tmp';
-    const env_line_splitter = this.env.APP_LOG_LINE_SPLITTER;
-    return {
-      warnFilePath:
-        (this.env.APP_WARN_FILE_PATH &&
-          join(APP_WORK_DIR, this.env.APP_WARN_FILE_PATH)) ||
-        '',
-      errFilePath:
-        (this.env.APP_ERR_FILE_PATH && join(APP_WORK_DIR, this.env.APP_ERR_FILE_PATH)) ||
-        '',
-      logFilePath:
-        (this.env.APP_LOG_FILE_PATH && join(APP_WORK_DIR, this.env.APP_LOG_FILE_PATH)) ||
-        '',
-      lineSplitter:
-        env_line_splitter === 'CRLF'
-          ? '\r\n'
-          : env_line_splitter === 'LF'
-          ? '\n'
-          : env_line_splitter,
-    };
-  }
+export const buildAgentConfig = (env: NodeJS.ProcessEnv): AgentConfig => ({
+  execPath: env[envEnum.AGENT_PATH] as string,
+  buildBypass: env[envEnum.AGENT_BUILD_BYPASS] === TRUE,
+  settings: {
+    target: env[envEnum.AGENT_PROJECT_TARGET] as string,
+    warnFilePath: env[envEnum.WARN_FILE] || DEFAULT_WARN_FILE,
+    errorFilePath: env[envEnum.ERR_FILE] || DEFAULT_ERR_FILE,
+    verbosity: env[envEnum.AGENT_VERBOSITY] as AgentVerbosityEnum,
+    rebuild: env[envEnum.AGENT_REBUILD] === TRUE,
+  },
+});
 
-  getProvider(): ConfigType['provider'] {
-    return {
-      owner: this.env.PROVIDER_OWNER,
-      repo: this.env.PROVIDER_REPO,
-      token: this.env.PROVIDER_TOKEN,
-      apiUrl: this.env.PROVIDER_API_URL,
-      repoUrl: this.env.PROVIDER_REPO_URL,
-      prId: Number(this.env.PROVIDER_PR_NUMBER),
-      gitCloneBypass: this.env.PROVIDER_GIT_CLONE_BYPASS === 'true',
-    };
-  }
+export const buildAppConfig = (env: NodeJS.ProcessEnv): AppConfig => {
+  const env_line_splitter = env[envEnum.LOG_LINE_SPLITTER] ?? LF;
+  const warnFilePath = env[envEnum.WARN_FILE] || DEFAULT_WARN_FILE;
+  const errFilePath = env[envEnum.ERR_FILE] || DEFAULT_ERR_FILE;
+  const logFilePath = env[envEnum.LOG_FILE] || DEFAULT_LOG_FILE;
+  const lineSplitter =
+    env_line_splitter === CRLF
+      ? '\r\n'
+      : env_line_splitter === LF
+      ? '\n'
+      : env_line_splitter;
 
-  getAgent(): ConfigType['agent'] {
-    return {
-      execPath: this.env.AGENT_PATH,
-      buildBypass: this.env.AGENT_BUILD_BYPASS === 'true',
-      settings: {
-        target: this.env.AGENT_PROJECT_TARGET,
-        warnFilePath: this.env.AGENT_WARN_LOG_PATH,
-        errorFilePath: this.env.AGENT_ERROR_LOG_PATH,
-        verbosity: this.env.AGENT_VERBOSITY as AgentVerbosityEnum,
-        rebuild: this.env.AGENT_REBUILD === 'true',
-      },
-    };
-  }
+  return { warnFilePath, errFilePath, logFilePath, lineSplitter };
+};
+
+if (!validateConfig(process.env)) {
+  throw new Error('.env file is not valid');
 }
+
+const config: ConfigObject = Object.freeze({
+  agent: buildAgentConfig(process.env),
+  app: buildAppConfig(process.env),
+  provider: buildProviderConfig(process.env),
+});
+
+export default config;

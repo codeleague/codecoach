@@ -1,22 +1,28 @@
 name: CI
 
-on: [push]
+on:
+  pull_request:
+    branches:
+      - master
 
 jobs:
   build:
     name: Build
     runs-on: ubuntu-18.04
-    strategy:
-      matrix:
-        node_version: [14]
 
     steps:
       - uses: actions/checkout@v1
-      - name: Use Node.js ${{ matrix.node_version }}
+      - name: Use Node.js 14-latest
         uses: actions/setup-node@v1
-      - name: run CI
-        run: |
-          yarn install # or yarn install
-          yarn run lint # or yarn lint
-          yarn run test --ci # or yarn test --ci
-          yarn run build # or yarn build
+        with:
+          node-version: '14.x'
+      - name: Cache node_modules
+        uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: yarn-${{ hashFiles('yarn.lock') }}
+          restore-keys: yarn-
+      - run: yarn
+      - run: yarn lint
+      - run: yarn test --ci
+      - run: yarn build

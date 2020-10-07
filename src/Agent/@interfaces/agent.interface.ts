@@ -1,9 +1,8 @@
 import { ChildProcessWithoutNullStreams } from 'child_process';
-import { AgentSettings } from '../Agent';
+import { AgentSettings } from '../@types/agentSettings';
 
 export default interface AgentInterface {
   execPath: string;
-  buildBypass: boolean;
   settings: AgentSettings;
   parseSetting: string[];
   process: ChildProcessWithoutNullStreams;

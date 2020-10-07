@@ -9,7 +9,6 @@ import LogSeverity from '../../Parser/@enums/log.severity.enum';
 import ReportType from '../../Report/@types/report.type';
 
 interface GithubProviderInterface extends ProviderInterface<Octokit> {
-  clone(): Promise<void>;
   listAllPageComments(
     owner: string,
     repo: string,

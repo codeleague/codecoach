@@ -1,118 +1,85 @@
 import { spawn, ChildProcessWithoutNullStreams } from 'child_process';
-import { join } from 'path';
-import { AgentVerbosityEnum } from './@enums/agent.verbosity.enum';
+import { resolve } from 'path';
+import { REPO_DIR, ROOT_DIR } from '../app.constants';
 import AgentInterface from './@interfaces/agent.interface';
-import AgentLoaderType from './@types/agent.loader.type';
-import {
-  AGENT_ALIAS_PATH,
-  AGENT_TARGET_BUILD_ALIAS_PATH,
-  DEFAULT_ERR_FILE,
-  DEFAULT_WARN_FILE,
-  AGENT_WORK_DIR,
-} from './agent.constant';
-
-export type AgentSettings = {
-  target: string;
-  warnFilePath?: string;
-  errorFilePath?: string;
-  rebuild: boolean;
-  verbosity: AgentVerbosityEnum;
-  optional?: string[];
-};
-
-enum LogServerity {
-  warn = 'warningsonly',
-  error = 'errorsonly',
-}
+import { AgentConfig } from '../Config/@types';
+import { AgentSettings } from './@types/agentSettings';
+import { LogSeverity } from './@enums/LogSeverity';
 
 export class Agent implements AgentInterface {
   execPath: string;
   settings: AgentSettings;
   parseSetting: string[];
   process: ChildProcessWithoutNullStreams;
-  buildBypass: boolean;
   debug = false;
 
-  constructor(loader: AgentLoaderType) {
-    const { execPath, settings, debug, buildBypass } = loader;
+  constructor(loader: AgentConfig) {
+    const { execPath, settings, debug } = loader;
     this.execPath = execPath;
     this.settings = settings;
-    this.buildBypass = buildBypass || false;
-    this.parseSetting = this.settingsParse(settings);
+    this.parseSetting = Agent.settingsParse(settings);
     debug && (this.debug = debug);
   }
 
-  private pathJoin(paths: string): string {
-    return join(__dirname, AGENT_WORK_DIR, AGENT_ALIAS_PATH, paths);
+  private static pathJoin(...paths: string[]): string {
+    return resolve(ROOT_DIR, ...paths);
   }
 
-  private settingsParse(settings: AgentSettings): string[] {
+  private static fileLoggerConfig(
+    n: number,
+    path: string,
+    severity: LogSeverity,
+  ): string {
+    return `-flp${n}:logfile=${path};${severity};`;
+  }
+
+  private static settingsParse(settings: AgentSettings): string[] {
     // for flp Msbuild.exe setting
     let fileLoggerN = 1;
-    const fileLoggerConfig = (
-      n: number,
-      path: string,
-      serverity: LogServerity,
-    ): string => {
-      return `-flp${n}:logfile=${path};${serverity};`;
-    };
 
-    const config: string[] = [];
-    // default setting
-    const DEFAULT_SETINGS = [
+    // default settings
+    const config: string[] = [
       'build',
       '--nologo',
       '-p:ActiveRulesets="Coding Standards"',
       '-p:GenerateFullPaths=true',
     ];
-    config.push(...DEFAULT_SETINGS);
 
     // read from config
     if (settings.rebuild) config.push('--no-incremental');
 
     // warn file
     config.push(
-      fileLoggerConfig(
+      Agent.fileLoggerConfig(
         fileLoggerN,
-        this.pathJoin(settings.warnFilePath || DEFAULT_WARN_FILE),
-        LogServerity.warn,
+        Agent.pathJoin(settings.warnFilePath),
+        LogSeverity.warn,
       ),
     );
     fileLoggerN++;
 
     config.push(
-      fileLoggerConfig(
+      Agent.fileLoggerConfig(
         fileLoggerN,
-        this.pathJoin(settings.errorFilePath || DEFAULT_ERR_FILE),
-        LogServerity.error,
+        Agent.pathJoin(settings.errorFilePath),
+        LogSeverity.error,
       ),
     );
     fileLoggerN++;
 
-    if (settings.target)
-      config.push(this.pathJoin(AGENT_TARGET_BUILD_ALIAS_PATH + settings.target));
+    if (settings.target) config.push(Agent.pathJoin(REPO_DIR, settings.target));
 
     return config;
   }
 
   async runTask(): Promise<void> {
     return new Promise((resolve, reject) => {
-      if (this.buildBypass) {
-        console.log('bypass agent build');
-        return resolve();
-      }
       const process = spawn(this.execPath, this.parseSetting);
 
       // **must add for consume stdout for get data, close events
       process.stdout.once('data', () => console.log('DotnetBuild...'));
-
-      process.on('close', async () => {
-        return resolve();
-      });
-
-      process.on('error', (err) => {
-        return reject('Agent error:' + err);
-      });
+      process.on('close', () => resolve());
+      process.on('error', (err) => reject('Agent error:' + err));
 
       // debug log
       if (this.debug) {

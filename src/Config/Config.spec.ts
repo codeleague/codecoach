@@ -1,51 +1,94 @@
-import { join } from 'path';
 import envEnum from './@enums/env.enum';
-import Config from './Config';
-const PATH_MOCK_VALID_ENV = 'src/test/env/Config.valid.spec.env';
-const PATH_MOCK_INVALID_ENV = 'src/test/env/Config.invalid.spec.env';
+import {
+  validateConfig,
+  buildAppConfig,
+  buildProviderConfig,
+  buildAgentConfig,
+} from './Config';
 
-describe('Config test', () => {
-  const OLD_ENV = process.env;
+const invalidEnv = {
+  PROVIDER: 'GitHub',
+  PROVIDER_OWNER: 'codeleague',
+  PROVIDER_TOKEN: '',
+  PROVIDER_REPO: 'codecoach',
+  PROVIDER_PR_NUMBER: '9',
+  AGENT_PATH: 'dotnet',
+  AGENT_PROJECT_TARGET: 'tmp/repo/sample/csharp/broken.csproj',
+  AGENT_REBUILD: 'true',
+  AGENT_VERBOSITY: '',
+};
 
-  beforeEach(() => {
-    jest.resetModules(); // most important - it clears the cache
-    process.env = { ...OLD_ENV }; // make a copy
+const validEnv = {
+  LOG_FILE: 'dotnetbuild.json',
+  WARN_FILE: 'dotnetbuild.wrn',
+  ERR_FILE: 'dotnetbuild.err',
+  LOG_LINE_SPLITTER: '\r\n',
+  PROVIDER: 'GitHub',
+  PROVIDER_OWNER: 'codeleague',
+  PROVIDER_TOKEN: '14caf0652275c36160bbfa62347d785212a31b37',
+  PROVIDER_REPO: 'codecoach',
+  PROVIDER_PR_NUMBER: '9',
+  AGENT_PATH: 'dotnet',
+  AGENT_PROJECT_TARGET: 'tmp/repo/sample/csharp/broken.csproj',
+  AGENT_REBUILD: 'true',
+  AGENT_VERBOSITY: 'q',
+  AGENT_BUILD_BYPASS: 'true',
+};
+
+describe('Config', () => {
+  describe('validate', () => {
+    it('should return true for valid configs', () => {
+      expect(validateConfig(validEnv)).toBeTruthy();
+    });
+
+    it('should return false for invalid configs', () => {
+      expect(validateConfig(invalidEnv)).toBeFalsy();
+    });
+
+    it('should ignore specified keys', () => {
+      const IGNORE_KEY: envEnum[] = [envEnum.PROVIDER_TOKEN, envEnum.AGENT_VERBOSITY];
+      expect(validateConfig(invalidEnv, IGNORE_KEY)).toBeTruthy();
+    });
   });
 
-  afterAll(() => {
-    process.env = OLD_ENV; // restore old env
+  describe('buildProviderConfig', () => {
+    it('should parse valid configs correctly', () => {
+      const providerConfig = buildProviderConfig(validEnv);
+      expect(providerConfig.prId).toBe(9);
+    });
+
+    it('should parse invalid configs', () => {
+      const providerConfig = buildProviderConfig(invalidEnv);
+      expect(providerConfig.token).toBe('');
+    });
   });
 
-  it('should validate .env format correctly', () => {
-    const config = new Config({ path: PATH_MOCK_VALID_ENV });
-    const valid = config.validate(config.env, []);
-    expect(valid).toBe(true);
+  describe('buildAgentConfig', () => {
+    it('should parse valid configs correctly', () => {
+      const agentConfig = buildAgentConfig(validEnv);
+      expect(agentConfig.buildBypass).toBeTruthy();
+      expect(agentConfig.settings.rebuild).toBeTruthy();
+    });
+
+    it('should parse invalid configs', () => {
+      const agentConfig = buildAgentConfig(invalidEnv);
+      expect(agentConfig.settings.verbosity).toBe('');
+    });
   });
 
-  it('should invalid .env format should throw error', () => {
-    expect(() => new Config({ path: PATH_MOCK_INVALID_ENV })).toThrowError();
-  });
+  describe('buildAppConfig', () => {
+    it('should parse valid configs correctly', () => {
+      const appConfig = buildAppConfig(validEnv);
+      const expectLineSplitter = '\r\n';
+      expect(appConfig.warnFilePath).toBe(validEnv.WARN_FILE);
+      expect(appConfig.errFilePath).toBe(validEnv.ERR_FILE);
+      expect(appConfig.logFilePath).toBe(validEnv.LOG_FILE);
+      expect(appConfig.lineSplitter).toBe(expectLineSplitter);
+    });
 
-  it('should ignore correctly ignore key', () => {
-    const IGNORE_KEY: envEnum[] = [envEnum.PROVIDER_TOKEN, envEnum.AGENT_VERBOSITY];
-    const config = new Config({ path: PATH_MOCK_INVALID_ENV, ignoreEnv: IGNORE_KEY });
-    expect(config.getProvider().token).toBe('');
-    expect(config.getAgent().settings.verbosity).toBe('');
-    expect(config.getProvider().prId).toBe(9);
-    expect(Object.keys(config.getApp()).length).toBe(4);
-    expect(config.getApp().logFilePath).toBe('');
-  });
-
-  it('should parsing app env path correctly', () => {
-    const config = new Config({ path: PATH_MOCK_VALID_ENV });
-    const appConfig = config.getApp();
-    const expectWarnFilePath = join(...['/tmp', 'dotnetbuild.wrn']);
-    const expectErrorFilePath = join(...['/tmp', 'dotnetbuild.err']);
-    const expectLogFilePath = join(...['/tmp', 'dotnetbuild.json']);
-    const expectLineSplitter = '\\r\\n';
-    expect(appConfig.warnFilePath).toBe(expectWarnFilePath);
-    expect(appConfig.errFilePath).toBe(expectErrorFilePath);
-    expect(appConfig.logFilePath).toBe(expectLogFilePath);
-    expect(appConfig.lineSplitter).toBe(expectLineSplitter);
+    it('should parse invalid configs', () => {
+      const appConfig = buildAppConfig(invalidEnv);
+      expect(Object.keys(appConfig).length).toBe(4);
+    });
   });
 });
