@@ -52,13 +52,13 @@ async function parseBuildData(): Promise<LogType[]> {
 
   const warnFileLog = await File.readFileHelper(join(ROOT_DIR, Config.app.warnFilePath));
   const warnLogs = new Parser<CSharpParserType>({ source: warnFileLog })
-    .setLineSplitter(Config.app.lineSplitter)
+    .setLineSplitter()
     .mapLabel(CSharpParser)
     .getLabled();
 
   const errFileLog = await File.readFileHelper(join(ROOT_DIR, Config.app.errFilePath));
   const errorLogs = new Parser<CSharpParserType>({ source: errFileLog })
-    .setLineSplitter(Config.app.lineSplitter)
+    .setLineSplitter()
     .mapLabel(CSharpParser)
     .getLabled();
 

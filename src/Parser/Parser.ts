@@ -1,6 +1,7 @@
 import ParserInterface from './@interfaces/parser.interface';
 import { SplitterType } from './@types/splitter.type';
 import ParserLoaderType from './@types/parser.loader.type';
+import lineBreakUtil from './utils/lineBreak.util';
 
 export class Parser<T> implements ParserInterface<T> {
   source: string;
@@ -17,7 +18,8 @@ export class Parser<T> implements ParserInterface<T> {
   }
 
   setLineSplitter(sep?: SplitterType): Parser<T> {
-    this.lineSplitter = sep || this.lineSplitter;
+    const detectedLineSplitter = lineBreakUtil(this.source);
+    this.lineSplitter = sep || detectedLineSplitter;
     this.lineSplitted = this.source
       .split(this.lineSplitter)
       .map((e) => e.trim())

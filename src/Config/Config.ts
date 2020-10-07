@@ -7,7 +7,7 @@ import {
   DEFAULT_LOG_FILE,
   DEFAULT_WARN_FILE,
 } from './constants/defaults';
-import { CRLF, LF, TRUE } from './constants/literals';
+import { TRUE } from './constants/literals';
 
 // todo: make configs command line arguments
 dotenv.config();
@@ -54,18 +54,11 @@ export const buildAgentConfig = (env: NodeJS.ProcessEnv): AgentConfig => ({
 });
 
 export const buildAppConfig = (env: NodeJS.ProcessEnv): AppConfig => {
-  const env_line_splitter = env[envEnum.LOG_LINE_SPLITTER] ?? LF;
   const warnFilePath = env[envEnum.WARN_FILE] || DEFAULT_WARN_FILE;
   const errFilePath = env[envEnum.ERR_FILE] || DEFAULT_ERR_FILE;
   const logFilePath = env[envEnum.LOG_FILE] || DEFAULT_LOG_FILE;
-  const lineSplitter =
-    env_line_splitter === CRLF
-      ? '\r\n'
-      : env_line_splitter === LF
-      ? '\n'
-      : env_line_splitter;
 
-  return { warnFilePath, errFilePath, logFilePath, lineSplitter };
+  return { warnFilePath, errFilePath, logFilePath };
 };
 
 if (!validateConfig(process.env)) {

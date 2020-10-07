@@ -22,7 +22,6 @@ const validEnv = {
   LOG_FILE: 'dotnetbuild.json',
   WARN_FILE: 'dotnetbuild.wrn',
   ERR_FILE: 'dotnetbuild.err',
-  LOG_LINE_SPLITTER: '\r\n',
   PROVIDER: 'GitHub',
   PROVIDER_OWNER: 'codeleague',
   PROVIDER_TOKEN: '14caf0652275c36160bbfa62347d785212a31b37',
@@ -79,16 +78,14 @@ describe('Config', () => {
   describe('buildAppConfig', () => {
     it('should parse valid configs correctly', () => {
       const appConfig = buildAppConfig(validEnv);
-      const expectLineSplitter = '\r\n';
       expect(appConfig.warnFilePath).toBe(validEnv.WARN_FILE);
       expect(appConfig.errFilePath).toBe(validEnv.ERR_FILE);
       expect(appConfig.logFilePath).toBe(validEnv.LOG_FILE);
-      expect(appConfig.lineSplitter).toBe(expectLineSplitter);
     });
 
     it('should parse invalid configs', () => {
       const appConfig = buildAppConfig(invalidEnv);
-      expect(Object.keys(appConfig).length).toBe(4);
+      expect(Object.keys(appConfig).length).toBe(3);
     });
   });
 });
