@@ -18,7 +18,6 @@ interface GithubProviderInterface extends ProviderInterface<Octokit> {
   updateComment(owner: string, repo: string, prId: number): Promise<void>;
   listTouchedFiles(): Promise<string[]>;
   filterIssuesByTouchedFiles(data: IssuesType, touchedFiles: string[]): IssuesType;
-  createMessageWithEmoji(msg: string, severity: LogSeverity): string;
   createCommentForEachFile(
     data: IssuesType,
     severity: LogSeverity,

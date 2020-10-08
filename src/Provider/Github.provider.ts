@@ -11,6 +11,7 @@ import { IssuesType } from '../Report/@types/issues.type';
 import ReportType from '../Report/@types/report.type';
 import GithubProviderInterface from './@interfaces/github.provider.interface';
 import { GITHUB_PROVIDER_MAX_REVIEWS_PER_PAGE } from './constants/github.provider.constant';
+import { MessageUtil } from './utils/message.util';
 
 export class GithubProvider implements GithubProviderInterface {
   adapter: Octokit;
@@ -131,22 +132,6 @@ export class GithubProvider implements GithubProviderInterface {
     };
   }
 
-  createMessageWithEmoji(msg: string, severity: LogSeverity): string {
-    let emoji = '';
-    switch (severity) {
-      case LogSeverity.error:
-        emoji = ':rotating_light:';
-        break;
-      case LogSeverity.warning:
-        emoji = ':warning:';
-        break;
-      case LogSeverity.info:
-        emoji = ':information_source:';
-        break;
-    }
-    return `${emoji} ${msg}`;
-  }
-
   async createCommentForEachFile(
     data: IssuesType,
     severity: LogSeverity,
@@ -164,7 +149,7 @@ export class GithubProvider implements GithubProviderInterface {
               owner,
               repo,
               pull_number: prId,
-              body: this.createMessageWithEmoji(issue.msg, severity),
+              body: MessageUtil.createMessageWithEmoji(issue.msg, severity),
               commit_id: commit_id,
               path: issue.source,
               line: issue.line,
@@ -175,7 +160,7 @@ export class GithubProvider implements GithubProviderInterface {
               owner,
               repo,
               pull_number: prId,
-              body: this.createMessageWithEmoji(issue.msg, severity),
+              body: MessageUtil.createMessageWithEmoji(issue.msg, severity),
               commit_id: commit_id,
               path: issue.source,
               position: 1,
@@ -194,15 +179,15 @@ export class GithubProvider implements GithubProviderInterface {
     nOfWarnings: number,
     nOfInfos: number,
   ): string {
-    const errorOverview = this.createMessageWithEmoji(
+    const errorOverview = MessageUtil.createMessageWithEmoji(
       `${nOfErrors} error(s)`,
       LogSeverity.error,
     );
-    const warningOverview = this.createMessageWithEmoji(
+    const warningOverview = MessageUtil.createMessageWithEmoji(
       `${nOfWarnings} warning(s)`,
       LogSeverity.warning,
     );
-    const infoOverview = this.createMessageWithEmoji(
+    const infoOverview = MessageUtil.createMessageWithEmoji(
       `${nOfInfos} info(s)`,
       LogSeverity.info,
     );
