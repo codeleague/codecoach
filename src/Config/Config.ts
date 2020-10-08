@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import { AgentVerbosityEnum } from '../Agent/@enums/agent.verbosity.enum';
 import envEnum from './@enums/env.enum';
 import { AgentConfig, AppConfig, ConfigObject, ProviderConfig } from './@types';
 import {
@@ -49,7 +50,13 @@ export const buildProviderConfig = (env: NodeJS.ProcessEnv): ProviderConfig => (
 export const buildAgentConfig = (env: NodeJS.ProcessEnv): AgentConfig => ({
   execPath: env[envEnum.AGENT_PATH] as string,
   buildBypass: env[envEnum.AGENT_BUILD_BYPASS] === TRUE,
-  target: env[envEnum.AGENT_PROJECT_TARGET],
+  settings: {
+    target: env[envEnum.AGENT_PROJECT_TARGET] as string,
+    warnFilePath: env[envEnum.WARN_FILE] || DEFAULT_WARN_FILE,
+    errorFilePath: env[envEnum.ERR_FILE] || DEFAULT_ERR_FILE,
+    verbosity: env[envEnum.AGENT_VERBOSITY] as AgentVerbosityEnum,
+    rebuild: env[envEnum.AGENT_REBUILD] === TRUE,
+  },
 });
 
 export const buildAppConfig = (env: NodeJS.ProcessEnv): AppConfig => {
