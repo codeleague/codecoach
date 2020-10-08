@@ -1,6 +1,6 @@
 import LogSeverity from '../@enums/log.severity.enum';
 
-type LogType = {
+export type LogType = {
   log: string;
   msg: string;
   severity: LogSeverity;
@@ -8,4 +8,3 @@ type LogType = {
   line?: number;
   lineOffset?: number;
 };
-export default LogType;

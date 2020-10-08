@@ -6,6 +6,10 @@ import {
   DEFAULT_ERR_FILE,
   DEFAULT_LOG_FILE,
   DEFAULT_WARN_FILE,
+  GITHUB_API_URL,
+  GITHUB_REPO_URL,
+  TIME_ZONE,
+  USER_AGENT,
 } from './constants/defaults';
 import { TRUE } from './constants/literals';
 
@@ -35,10 +39,12 @@ export const buildProviderConfig = (env: NodeJS.ProcessEnv): ProviderConfig => (
   owner: env[envEnum.PROVIDER_OWNER] as string,
   repo: env[envEnum.PROVIDER_REPO] as string,
   token: env[envEnum.PROVIDER_TOKEN] as string,
-  baseUrl: env[envEnum.PROVIDER_API_URL],
-  repoUrl: env[envEnum.PROVIDER_REPO_URL],
+  baseUrl: env[envEnum.PROVIDER_API_URL] || GITHUB_API_URL,
+  repoUrl: env[envEnum.PROVIDER_REPO_URL] || GITHUB_REPO_URL,
   prId: Number(env[envEnum.PROVIDER_PR_NUMBER]),
   gitCloneBypass: env[envEnum.PROVIDER_GIT_CLONE_BYPASS] === TRUE,
+  userAgent: USER_AGENT,
+  timeZone: TIME_ZONE,
 });
 
 export const buildAgentConfig = (env: NodeJS.ProcessEnv): AgentConfig => ({

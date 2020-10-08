@@ -4,40 +4,26 @@ import {
   PullsGetResponseData,
   PullsListReviewCommentsResponseData,
 } from '@octokit/types';
+import { ProviderConfig } from '../Config/@types';
 import LogSeverity from '../Parser/@enums/log.severity.enum';
 import IssueType from '../Report/@types/Issue.type';
 import { IssuesType } from '../Report/@types/issues.type';
 import ReportType from '../Report/@types/report.type';
 import GithubProviderInterface from './@interfaces/github.provider.interface';
-import ProviderInternalConfig from './@types/providerInternalConfig';
-import { ProviderConfig } from '../Config/@types';
-import {
-  GITHUB_API_URL,
-  GITHUB_PROVIDER_MAX_REVIEWS_PER_PAGE,
-  GITHUB_REPO_URL,
-} from './constants/github.provider.constant';
-import { TIME_ZONE, USER_AGENT, WORK_DIR } from './constants/provider.constant';
+import { GITHUB_PROVIDER_MAX_REVIEWS_PER_PAGE } from './constants/github.provider.constant';
 
 export class GithubProvider implements GithubProviderInterface {
   adapter: Octokit;
-  config: ProviderInternalConfig;
+  config: ProviderConfig;
 
   constructor(config: ProviderConfig) {
-    this.config = {
-      ...config,
-      baseUrl: config.baseUrl || GITHUB_API_URL, // for api
-      repoUrl: config.repoUrl || GITHUB_REPO_URL, // for clone
-      workDir: config.workDir || WORK_DIR,
-      userAgent: config.userAgent || USER_AGENT,
-      timeZone: config.timeZone || TIME_ZONE,
-      gitCloneBypass: config.gitCloneBypass || false, // for git
-    };
+    this.config = config;
 
     this.adapter = new Octokit({
-      auth: this.config.token,
-      userAgent: this.config.userAgent,
-      timeZone: this.config.timeZone,
-      baseUrl: this.config.baseUrl,
+      auth: config.token,
+      userAgent: config.userAgent,
+      timeZone: config.timeZone,
+      baseUrl: config.baseUrl,
     });
   }
 

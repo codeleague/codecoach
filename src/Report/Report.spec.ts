@@ -1,6 +1,6 @@
+import { LogType } from '../Parser';
 import { Report } from './Report';
 import LogSeverity from '../Parser/@enums/log.severity.enum';
-import LogType from '../Parser/@types/log.type';
 
 describe('Report test', () => {
   const mockLogs: LogType[] = [

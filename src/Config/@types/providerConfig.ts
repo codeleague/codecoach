@@ -1,7 +1,11 @@
-import ProviderInternalConfig from '../../Provider/@types/providerInternalConfig';
-import { Optional } from '../../@utilTypes/Optional';
-
-export type ProviderConfig = Optional<
-  ProviderInternalConfig,
-  'baseUrl' | 'repoUrl' | 'workDir' | 'userAgent' | 'timeZone' | 'gitCloneBypass'
->;
+export type ProviderConfig = {
+  token: string;
+  owner: string;
+  repo: string;
+  baseUrl: string;
+  repoUrl: string;
+  prId: number;
+  userAgent: string;
+  timeZone: string;
+  gitCloneBypass: boolean;
+};

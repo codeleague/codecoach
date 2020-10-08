@@ -4,9 +4,7 @@ import { Agent } from './Agent/Agent';
 import { ROOT_DIR } from './app.constants';
 import Config from './Config/Config';
 import { File } from './File';
-import LogType from './Parser/@types/log.type';
-import CSharpParser, { CSharpParserType } from './Parser/CSharpParser';
-import { Parser } from './Parser/Parser';
+import { CSharpParser, LogType } from './Parser';
 import GitConfigType from './Provider/@types/git.config.type';
 import { Git } from './Provider/Git/Git';
 import { GithubProvider } from './Provider/Github.provider';
@@ -29,7 +27,8 @@ import { Report } from './Report/Report';
 
     console.log('write file dotnetbuild log complete');
   } catch (err) {
-    throw Error(err);
+    console.error(err);
+    process.exit(1);
   }
 })();
 
@@ -51,18 +50,9 @@ async function parseBuildData(): Promise<LogType[]> {
   console.log('parsing');
 
   const warnFileLog = await File.readFileHelper(join(ROOT_DIR, Config.app.warnFilePath));
-  const warnLogs = new Parser<CSharpParserType>({ source: warnFileLog })
-    .setLineSplitter()
-    .mapLabel(CSharpParser)
-    .getLabled();
-
   const errFileLog = await File.readFileHelper(join(ROOT_DIR, Config.app.errFilePath));
-  const errorLogs = new Parser<CSharpParserType>({ source: errFileLog })
-    .setLineSplitter()
-    .mapLabel(CSharpParser)
-    .getLabled();
 
-  return [...warnLogs, ...errorLogs];
+  return new CSharpParser().withContent(warnFileLog).withContent(errFileLog).getLogs();
 }
 
 async function build(): Promise<void> {

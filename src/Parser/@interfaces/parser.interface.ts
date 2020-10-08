@@ -1,15 +1,6 @@
-import { SplitterType } from '../@types/splitter.type';
+import { LogType } from '..';
 
-interface ParserInterface<T> {
-  source: string;
-  lineSplitter: SplitterType;
-  lineSplitted: string[];
-  lineLabled: T[];
-
-  setLineSplitter(sep?: SplitterType): ParserInterface<T>;
-  getLineSplit(): string[];
-  mapLabel(parser: (line: string, index: number, arr: string[]) => T): ParserInterface<T>;
-  getLabled(): T[];
+export interface Parser {
+  withContent(content: string): Parser;
+  getLogs(): LogType[];
 }
-
-export default ParserInterface;

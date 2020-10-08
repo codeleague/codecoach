@@ -1,11 +1,10 @@
+import { LogType } from '../Parser';
 import { IssuesType } from './@types/issues.type';
-import ReportInterface from './@interfaces/report.interface';
 import LogSeverity from '../Parser/@enums/log.severity.enum';
-import LogType from '../Parser/@types/log.type';
 import IssueType from './@types/Issue.type';
 import ReportType from './@types/report.type';
 
-export class Report implements ReportInterface {
+export class Report {
   private static mapLogToComment(log: LogType): IssueType {
     return {
       msg: log.msg,

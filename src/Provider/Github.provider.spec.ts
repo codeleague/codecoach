@@ -13,6 +13,11 @@ const CONFIG_PROVIDER: ProviderConfig = {
   repo: 'codecoach',
   token: ' ',
   prId: 9,
+  baseUrl: '',
+  repoUrl: '',
+  userAgent: '',
+  timeZone: '',
+  gitCloneBypass: false,
 };
 
 const MOCK_REPORT: ReportType = {

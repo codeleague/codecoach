@@ -1,8 +1,8 @@
-import ProviderInternalConfig from '../@types/providerInternalConfig';
+import { ProviderConfig } from '../../Config/@types';
 
 interface ProviderInterface<T> {
   adapter: T;
-  config: ProviderInternalConfig;
+  config: ProviderConfig;
 }
 
 export default ProviderInterface;

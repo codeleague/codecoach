@@ -6,8 +6,8 @@ export default (file: string): string => {
   const indexOfLF = file.indexOf(NEW_LINE, 1);
   if (indexOfLF === -1) {
     if (file.indexOf(LF) !== -1) return LF;
-    return '\n';
+    return NEW_LINE;
   }
   if (file[indexOfLF - 1] === LF) return CRLF;
-  return '\n';
+  return NEW_LINE;
 };

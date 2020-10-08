@@ -1,38 +1,62 @@
-import { resolve, relative } from 'path';
+import { relative, resolve } from 'path';
 import slash from 'slash';
 import LogSeverity from './@enums/log.severity.enum';
-import LogType from './@types/log.type';
+import { Parser } from './@interfaces/parser.interface';
+import { LogType } from './@types/log.type';
+import lineBreakUtil from './utils/lineBreak.util';
 
-export type CSharpParserType = LogType;
+export class CSharpParser implements Parser {
+  private logs: LogType[] = [];
 
-export default (log: string): CSharpParserType => {
-  const structureMatch = log.match(
-    />([^\s()]+)(?:\((\d+),(\d+)\))?\s*:\s*(\w+)\s*(\w+)\s*:\s*([^\[]+)(?:\[(.+)])?$/,
-  );
-  if (!structureMatch) throw new Error(`CSharpParser Error: ${log}`);
-  const [, src, lineN, offset, severity, code, content, _projectSrc] = structureMatch;
-  const projectSrc = slash(_projectSrc);
+  // todo: customizable line splitter ?
 
-  let relativeSrc: string;
-  const line = Number(lineN) || undefined;
-  const lineOffset = Number(offset) || undefined;
-
-  if (line && lineOffset) {
-    const fileRelativeSrcMatch = src.match(/^.+[\\/]tmp[\\/]repo[\\/](.+)$/);
-    if (!fileRelativeSrcMatch) throw new Error(`CSharpParser Error: ${line}`);
-    const [, _relativeSrc] = fileRelativeSrcMatch;
-    relativeSrc = slash(_relativeSrc);
-  } else {
-    const project_root = resolve(projectSrc, '../');
-    relativeSrc = relative(project_root, projectSrc);
+  getLogs(): LogType[] {
+    return this.logs;
   }
 
-  return {
-    log,
-    line,
-    lineOffset,
-    msg: `${code.trim()}: ${content.trim()}`,
-    source: relativeSrc,
-    severity: severity as LogSeverity,
-  };
-};
+  withContent(content: string): Parser {
+    const lineSplitter = lineBreakUtil(content);
+
+    const logs = content
+      .split(lineSplitter)
+      .map((line) => line.trim())
+      .filter((line) => line !== '' && line !== lineSplitter)
+      .map(CSharpParser.toLog)
+      .filter((log) => log);
+
+    this.logs.push(...logs);
+    return this;
+  }
+
+  private static toLog(log: string): LogType {
+    const structureMatch = log.match(
+      />([^\s()]+)(?:\((\d+),(\d+)\))?\s*:\s*(\w+)\s*(\w+)\s*:\s*([^\[]+)(?:\[(.+)])?$/,
+    );
+    if (!structureMatch) throw new Error(`CSharpParser Error: ${log}`);
+    const [, src, lineN, offset, severity, code, content, _projectSrc] = structureMatch;
+    const projectSrc = slash(_projectSrc);
+
+    let relativeSrc: string;
+    const line = Number(lineN) || undefined;
+    const lineOffset = Number(offset) || undefined;
+
+    if (line && lineOffset) {
+      const fileRelativeSrcMatch = src.match(/^.+[\\/]tmp[\\/]repo[\\/](.+)$/);
+      if (!fileRelativeSrcMatch) throw new Error(`CSharpParser Error: ${line}`);
+      const [, _relativeSrc] = fileRelativeSrcMatch;
+      relativeSrc = slash(_relativeSrc);
+    } else {
+      const project_root = resolve(projectSrc, '../');
+      relativeSrc = relative(project_root, projectSrc);
+    }
+
+    return {
+      log,
+      line,
+      lineOffset,
+      msg: `${code.trim()}: ${content.trim()}`,
+      source: relativeSrc,
+      severity: severity as LogSeverity,
+    };
+  }
+}
