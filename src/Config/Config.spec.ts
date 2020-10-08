@@ -14,8 +14,6 @@ const invalidEnv = {
   PROVIDER_PR_NUMBER: '9',
   AGENT_PATH: 'dotnet',
   AGENT_PROJECT_TARGET: 'tmp/repo/sample/csharp/broken.csproj',
-  AGENT_REBUILD: 'true',
-  AGENT_VERBOSITY: '',
 };
 
 const validEnv = {
@@ -29,8 +27,6 @@ const validEnv = {
   PROVIDER_PR_NUMBER: '9',
   AGENT_PATH: 'dotnet',
   AGENT_PROJECT_TARGET: 'tmp/repo/sample/csharp/broken.csproj',
-  AGENT_REBUILD: 'true',
-  AGENT_VERBOSITY: 'q',
   AGENT_BUILD_BYPASS: 'true',
 };
 
@@ -45,7 +41,7 @@ describe('Config', () => {
     });
 
     it('should ignore specified keys', () => {
-      const IGNORE_KEY: envEnum[] = [envEnum.PROVIDER_TOKEN, envEnum.AGENT_VERBOSITY];
+      const IGNORE_KEY: envEnum[] = [envEnum.PROVIDER_TOKEN];
       expect(validateConfig(invalidEnv, IGNORE_KEY)).toBeTruthy();
     });
   });
@@ -66,12 +62,6 @@ describe('Config', () => {
     it('should parse valid configs correctly', () => {
       const agentConfig = buildAgentConfig(validEnv);
       expect(agentConfig.buildBypass).toBeTruthy();
-      expect(agentConfig.settings.rebuild).toBeTruthy();
-    });
-
-    it('should parse invalid configs', () => {
-      const agentConfig = buildAgentConfig(invalidEnv);
-      expect(agentConfig.settings.verbosity).toBe('');
     });
   });
 

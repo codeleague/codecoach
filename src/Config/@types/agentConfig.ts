@@ -1,8 +1,6 @@
-import { AgentSettings } from '../../Agent/@types/agentSettings';
-
 export type AgentConfig = {
   execPath: string;
-  settings: AgentSettings;
+  target?: string;
   buildBypass?: boolean;
   debug?: boolean;
 };

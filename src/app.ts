@@ -1,6 +1,6 @@
 import { join } from 'path';
 import { URL } from 'url';
-import { Agent } from './Agent/Agent';
+import { CSharpAgent } from './Agent/CSharpAgent';
 import { ROOT_DIR } from './app.constants';
 import Config from './Config/Config';
 import { File } from './File';
@@ -56,7 +56,7 @@ async function parseBuildData(): Promise<LogType[]> {
 }
 
 async function build(): Promise<void> {
-  const agent = new Agent(Config.agent);
-  await agent.runTask();
+  const agent = new CSharpAgent(Config.agent);
+  await agent.buildAndGetLogFiles();
   console.log('Agent finish');
 }
