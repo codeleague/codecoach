@@ -7,4 +7,5 @@ export type LogType = {
   source: string;
   line?: number;
   lineOffset?: number;
+  valid: boolean;
 };

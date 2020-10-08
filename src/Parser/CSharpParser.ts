@@ -32,7 +32,8 @@ export class CSharpParser implements Parser {
     const structureMatch = log.match(
       />([^\s()]+)(?:\((\d+),(\d+)\))?\s*:\s*(\w+)\s*(\w+)\s*:\s*([^\[]+)(?:\[(.+)])?$/,
     );
-    if (!structureMatch) throw new Error(`CSharpParser Error: ${log}`);
+    if (!structureMatch)
+      throw new Error(`CSharpParser Error: not match structure match ${log}`);
     const [, src, lineN, offset, severity, code, content, _projectSrc] = structureMatch;
     const projectSrc = slash(_projectSrc);
 
@@ -42,7 +43,19 @@ export class CSharpParser implements Parser {
 
     if (line && lineOffset) {
       const fileRelativeSrcMatch = src.match(/^.+[\\/]tmp[\\/]repo[\\/](.+)$/);
-      if (!fileRelativeSrcMatch) throw new Error(`CSharpParser Error: ${line}`);
+      if (!fileRelativeSrcMatch) {
+        // HOTFIX ignore this log with valid:false
+        console.warn(`CSharpParser Error: not match fileRelativeSrcMatch ${log}`);
+        return {
+          log,
+          line,
+          lineOffset,
+          msg: `${code.trim()}: ${content.trim()}`,
+          source: '',
+          severity: severity as LogSeverity,
+          valid: false,
+        };
+      }
       const [, _relativeSrc] = fileRelativeSrcMatch;
       relativeSrc = slash(_relativeSrc);
     } else {
@@ -57,6 +70,7 @@ export class CSharpParser implements Parser {
       msg: `${code.trim()}: ${content.trim()}`,
       source: relativeSrc,
       severity: severity as LogSeverity,
+      valid: true,
     };
   }
 }

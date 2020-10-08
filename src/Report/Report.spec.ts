@@ -13,6 +13,7 @@ describe('Report test', () => {
       lineOffset: 8,
       source: 'Broken.cs',
       severity: 'warning' as LogSeverity,
+      valid: true,
     },
     {
       log:
@@ -23,6 +24,7 @@ describe('Report test', () => {
       lineOffset: 8,
       source: 'Broken.cs',
       severity: 'error' as LogSeverity,
+      valid: true,
     },
   ];
 
