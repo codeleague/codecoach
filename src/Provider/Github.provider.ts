@@ -11,7 +11,8 @@ import { IssuesType } from '../Report/@types/issues.type';
 import ReportType from '../Report/@types/report.type';
 import GithubProviderInterface from './@interfaces/github.provider.interface';
 import { GITHUB_PROVIDER_MAX_REVIEWS_PER_PAGE } from './constants/github.provider.constant';
-import { MessageUtil } from './utils/message.util';
+import CommitStatusState from './@enums/CommitStatusState';
+import { MessageUtil } from './utils/message.util'
 
 export class GithubProvider implements GithubProviderInterface {
   adapter: Octokit;
@@ -215,6 +216,37 @@ ${infoOverview}
     };
   }
 
+  private async getLatestCommitsSHA(): Promise<string> {
+    const { owner, repo, prId } = this.config;
+    const response = await this.adapter.pulls.listCommits({
+      owner,
+      repo,
+      pull_number: prId,
+    });
+    return response.data[response.data.length - 1].sha;
+  }
+
+  private async createCommitStatus(commitState: CommitStatusState) {
+    const { owner, repo } = this.config;
+    const sha = await this.getLatestCommitsSHA();
+    try {
+      return this.adapter.repos.createCommitStatus({
+        owner,
+        repo,
+        sha,
+        state: commitState,
+        context: 'CodeCoach',
+      });
+    } catch (err) {
+      if (err.name === 'HttpError') {
+        throw Error(
+          'NotFound: Could be repository does not exist or token does not have permission to repository',
+        );
+      }
+      throw Error(err);
+    }
+  }
+
   async report({
     overviewMsg,
     error: errors,
@@ -261,6 +293,12 @@ ${infoOverview}
           touchedIssuesBySeverity.info.n,
         ),
       });
+
+      await this.createCommitStatus(
+        touchedIssuesBySeverity.error
+          ? CommitStatusState.failure
+          : CommitStatusState.success,
+      );
     } catch (err) {
       throw Error(err);
     }
