@@ -23,6 +23,6 @@ jobs:
           key: yarn-${{ hashFiles('yarn.lock') }}
           restore-keys: yarn-
       - run: yarn
-      - run: yarn lint
+      - run: yarn lint-ci
       - run: yarn test --ci
       - run: yarn build
