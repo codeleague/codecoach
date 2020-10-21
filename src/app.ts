@@ -50,7 +50,7 @@ class App {
 
   private async parseBuildData(files: string[]): Promise<LogType[]> {
     const parserTasks = files.map(async (file) => {
-      const content = await File.readFileHelper(resolve(file));
+      const content = await File.readFileHelper(file);
       this.parser.withContent(content);
     });
 
@@ -60,10 +60,7 @@ class App {
   }
 
   private static async writeLogToFile(logs: LogType[]): Promise<void> {
-    await File.writeFileHelper(
-      join(ROOT_DIR, Config.app.logFilePath),
-      JSON.stringify(logs, null, 2),
-    );
+    await File.writeFileHelper(Config.app.logFilePath, JSON.stringify(logs, null, 2));
   }
 }
 
