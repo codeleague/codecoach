@@ -9,10 +9,10 @@ import LogSeverity from '../Parser/@enums/log.severity.enum';
 import IssueType from '../Report/@types/Issue.type';
 import { IssuesType } from '../Report/@types/issues.type';
 import ReportType from '../Report/@types/report.type';
+import CommitStatusState from './@enums/CommitStatusState';
 import GithubProviderInterface from './@interfaces/github.provider.interface';
 import { GITHUB_PROVIDER_MAX_REVIEWS_PER_PAGE } from './constants/github.provider.constant';
-import CommitStatusState from './@enums/CommitStatusState';
-import { MessageUtil } from './utils/message.util'
+import { MessageUtil } from './utils/message.util';
 
 export class GithubProvider implements GithubProviderInterface {
   adapter: Octokit;
@@ -293,12 +293,11 @@ ${infoOverview}
           touchedIssuesBySeverity.info.n,
         ),
       });
-
-      await this.createCommitStatus(
-        touchedIssuesBySeverity.error
-          ? CommitStatusState.failure
-          : CommitStatusState.success,
-      );
+      const commitState =
+        touchedIssuesBySeverity.error.n == 0
+          ? CommitStatusState.success
+          : CommitStatusState.failure;
+      await this.createCommitStatus(commitState);
     } catch (err) {
       throw Error(err);
     }
