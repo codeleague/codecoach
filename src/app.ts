@@ -1,62 +1,73 @@
-import { join } from 'path';
-import { URL } from 'url';
-import { Agent } from './Agent/Agent';
-import { ROOT_DIR } from './app.constants';
-import Config from './Config/Config';
+import { join, resolve } from 'path';
+
+import { Agent, CSharpAgent } from './Agent';
+import { Config, ProjectType } from './Config';
 import { File } from './File';
-import { CSharpParser, LogType } from './Parser';
-import GitConfigType from './Provider/@types/git.config.type';
-import { Git } from './Provider/Git/Git';
-import { GithubProvider } from './Provider/Github.provider';
+import { CSharpParser, LogType, Parser } from './Parser';
+import { Git, GitConfigType, GithubProvider } from './Provider';
 import { Report } from './Report/Report';
 
-(async () => {
-  try {
-    if (!Config.provider.gitCloneBypass) await gitClone();
-    if (!Config.agent.buildBypass) await build();
+import { ROOT_DIR } from './app.constants';
 
-    const logs = await parseBuildData();
-    const reportData = Report.parse(logs);
+class App {
+  private readonly parser: Parser;
+  private readonly agent: Agent;
+  private readonly provider = new GithubProvider(Config.provider);
 
-    const provider = new GithubProvider(Config.provider);
-    await provider.report(reportData);
+  constructor() {
+    [this.parser, this.agent] = App.setProjectType(Config.app.projectType);
+  }
+
+  async start(): Promise<void> {
+    if (!Config.provider.gitCloneBypass) await App.cloneRepo();
+
+    const logFiles = Config.app.buildLogFiles ?? (await this.agent.buildAndGetLogFiles());
+
+    const logs = await this.parseBuildData(logFiles);
+    const report = Report.parse(logs);
+
+    await this.provider.report(report);
+    await App.writeLogToFile(logs);
+  }
+
+  private static async cloneRepo(): Promise<void> {
+    const config: GitConfigType = {
+      src: Config.provider.repoUrl,
+      prId: Config.provider.prId,
+      dest: ROOT_DIR,
+    };
+
+    const git = new Git(config);
+    await git.clone();
+  }
+
+  private static setProjectType(type: ProjectType): [Parser, Agent] {
+    switch (type) {
+      case ProjectType.csharp:
+        return [new CSharpParser(), new CSharpAgent(Config.agent)];
+    }
+  }
+
+  private async parseBuildData(files: string[]): Promise<LogType[]> {
+    const parserTasks = files.map(async (file) => {
+      const content = await File.readFileHelper(resolve(file));
+      this.parser.withContent(content);
+    });
+
+    await Promise.all(parserTasks);
+
+    return this.parser.getLogs();
+  }
+
+  private static async writeLogToFile(logs: LogType[]): Promise<void> {
     await File.writeFileHelper(
       join(ROOT_DIR, Config.app.logFilePath),
       JSON.stringify(logs, null, 2),
     );
-
-    console.log('write file dotnetbuild log complete');
-  } catch (err) {
-    console.error(err);
-    process.exit(1);
   }
-})();
-
-async function gitClone(): Promise<void> {
-  const config: GitConfigType = {
-    src: new URL(
-      join(Config.provider.owner, Config.provider.repo),
-      Config.provider.repoUrl,
-    ).toString(),
-    prId: Config.provider.prId,
-    dest: ROOT_DIR,
-  };
-
-  const git = new Git(config);
-  await git.clone();
 }
 
-async function parseBuildData(): Promise<LogType[]> {
-  console.log('parsing');
-
-  const warnFileLog = await File.readFileHelper(join(ROOT_DIR, Config.app.warnFilePath));
-  const errFileLog = await File.readFileHelper(join(ROOT_DIR, Config.app.errFilePath));
-
-  return new CSharpParser().withContent(warnFileLog).withContent(errFileLog).getLogs();
-}
-
-async function build(): Promise<void> {
-  const agent = new Agent(Config.agent);
-  await agent.runTask();
-  console.log('Agent finish');
-}
+new App().start().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

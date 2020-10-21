@@ -11,7 +11,7 @@
     "format": "prettier --write src/**/*.{js,ts}",
     "test": "jest",
     "build": "tsc --project tsconfig.build.json",
-    "dev": "nodemon --inspect=5858 --config ./nodemon.json"
+    "dev": "nodemon --inspect=5858 --config ./nodemon.json -- --url=https://github.agodadev.io/agoda-front-end/Agoda.Gateway.git --token=2e5fd1320b3befcb2a6d988399504dc4ed2797b1 --pr=2746 --type=dotnet --content=dotnetbuild.wrn --content=dotnetbuild.err --noClone"
   },
   "devDependencies": {
     "@octokit/types": "^5.4.1",
@@ -35,8 +35,9 @@
   "dependencies": {
     "@octokit/core": "^3.1.2",
     "@octokit/rest": "^18.0.4",
+    "dotenv": "^8.2.0",
     "rimraf": "^3.0.2",
     "slash": "^3.0.0",
-    "dotenv": "^8.2.0"
+    "yargs": "^16.0.3"
   }
 }

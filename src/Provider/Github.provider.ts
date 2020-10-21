@@ -4,6 +4,8 @@ import {
   PullsGetResponseData,
   PullsListReviewCommentsResponseData,
 } from '@octokit/types';
+import { URL } from 'url';
+import { GITHUB_COM_API } from '../app.constants';
 import { ProviderConfig } from '../Config/@types';
 import LogSeverity from '../Parser/@enums/log.severity.enum';
 import IssueType from '../Report/@types/Issue.type';
@@ -15,18 +17,34 @@ import { GITHUB_PROVIDER_MAX_REVIEWS_PER_PAGE } from './constants/github.provide
 import { MessageUtil } from './utils/message.util';
 
 export class GithubProvider implements GithubProviderInterface {
+  owner: string;
+  repo: string;
   adapter: Octokit;
   config: ProviderConfig;
 
   constructor(config: ProviderConfig) {
     this.config = config;
 
+    const repoUrl = new URL(config.repoUrl);
+    this.setRepoParam(repoUrl);
     this.adapter = new Octokit({
       auth: config.token,
       userAgent: config.userAgent,
       timeZone: config.timeZone,
-      baseUrl: config.baseUrl,
+      baseUrl: GithubProvider.getGitHubBase(repoUrl),
     });
+  }
+
+  private static getGitHubBase(repo: URL): string {
+    return repo.hostname === 'github.com'
+      ? GITHUB_COM_API
+      : new URL('api/v3', repo.origin).toString();
+  }
+
+  private setRepoParam(repoUrl: URL): void {
+    const [, owner, repo] = repoUrl.pathname.replace(/\.git/gi, '').split('/');
+    this.owner = owner;
+    this.repo = repo;
   }
 
   async listAllPageComments(
@@ -72,7 +90,8 @@ export class GithubProvider implements GithubProviderInterface {
   }
 
   async listAllReviewComments(): Promise<PullsListReviewCommentsResponseData> {
-    const { owner, repo, prId } = this.config;
+    const { prId } = this.config;
+    const { owner, repo } = this;
     const response = await this.adapter.pulls.listReviewComments({
       owner,
       repo,
@@ -114,7 +133,9 @@ export class GithubProvider implements GithubProviderInterface {
   }
 
   async listTouchedFiles(): Promise<string[]> {
-    const { owner, repo, prId } = this.config;
+    const { prId } = this.config;
+    const { owner, repo } = this;
+
     const { data: touchedFiles } = await this.adapter.pulls.listFiles({
       owner,
       repo,
@@ -138,7 +159,8 @@ export class GithubProvider implements GithubProviderInterface {
     severity: LogSeverity,
     commit_id: string,
   ): Promise<void> {
-    const { owner, repo, prId } = this.config;
+    const { owner, repo } = this;
+    const { prId } = this.config;
     try {
       await Promise.all(
         data.issues.map(async (issue: IssueType) => {
@@ -217,7 +239,8 @@ ${infoOverview}
   }
 
   private async getLatestCommitsSHA(): Promise<string> {
-    const { owner, repo, prId } = this.config;
+    const { prId } = this.config;
+    const { owner, repo } = this;
     const response = await this.adapter.pulls.listCommits({
       owner,
       repo,
@@ -227,7 +250,7 @@ ${infoOverview}
   }
 
   private async createCommitStatus(commitState: CommitStatusState) {
-    const { owner, repo } = this.config;
+    const { owner, repo } = this;
     const sha = await this.getLatestCommitsSHA();
     try {
       return this.adapter.repos.createCommitStatus({
@@ -254,7 +277,9 @@ ${infoOverview}
     info: infos,
   }: ReportType): Promise<void> {
     try {
-      const { owner, repo, prId } = this.config;
+      const { prId } = this.config;
+      const { owner, repo } = this;
+
       await this.updateComment(owner, repo, prId);
       const {
         data: pullRequestDetail,

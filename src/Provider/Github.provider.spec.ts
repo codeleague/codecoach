@@ -3,37 +3,17 @@ import nock from 'nock';
 import { IssuesType } from '../Report/@types/issues.type';
 import { GithubProvider } from './Github.provider';
 import LogSeverity from '../Parser/@enums/log.severity.enum';
-import ReportType from '../Report/@types/report.type';
 import { ProviderConfig } from '../Config/@types';
 
 const BASE_URL = 'https://api.github.com';
 
 const CONFIG_PROVIDER: ProviderConfig = {
-  owner: 'codeleague',
-  repo: 'codecoach',
+  repoUrl: 'https://github.com/codeleague/codecoach.git',
   token: ' ',
   prId: 9,
-  baseUrl: '',
-  repoUrl: '',
   userAgent: '',
   timeZone: '',
   gitCloneBypass: false,
-};
-
-const MOCK_REPORT: ReportType = {
-  overviewMsg: '',
-  error: {
-    n: 0,
-    issues: [],
-  },
-  warning: {
-    n: 0,
-    issues: [],
-  },
-  info: {
-    n: 0,
-    issues: [],
-  },
 };
 
 describe('GitHub Provider', () => {

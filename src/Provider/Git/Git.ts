@@ -2,9 +2,9 @@ import { exec } from 'child_process';
 import { resolve } from 'path';
 import rimraf from 'rimraf';
 import { promisify } from 'util';
+import { GitConfigType } from '..';
 import { REPO_DIR } from '../../app.constants';
 import GitInterface, { CommandSequence } from '../@interfaces/git.interface';
-import GitConfigType from '../@types/git.config.type';
 import { GIT_CHECKOUT, GIT_CLONE, GIT_EXEC, GIT_FETCH } from '../constants/git.constant';
 
 const rimrafAsync = promisify(rimraf);

@@ -1,8 +1,8 @@
 import { existsSync } from 'fs';
 import { mkdir, writeFile } from 'fs/promises';
 import { resolve } from 'path';
+import { GitConfigType } from '..';
 import { REPO_DIR } from '../../app.constants';
-import GitConfigType from '../@types/git.config.type';
 import { Git } from './Git';
 
 describe('Git tests', () => {

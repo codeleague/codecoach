@@ -1,5 +1,7 @@
+import { ProjectType } from '../@enums';
+
 export type AppConfig = {
-  warnFilePath: string;
-  errFilePath: string;
   logFilePath: string;
+  projectType: ProjectType;
+  buildLogFiles?: string[];
 };
