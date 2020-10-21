@@ -12,8 +12,5 @@ describe('Message util tests', () => {
     expect(MessageUtil.createMessageWithEmoji(msg, LogSeverity.warning)).toBe(
       `:warning: ${msg}`,
     );
-    expect(MessageUtil.createMessageWithEmoji(msg, LogSeverity.info)).toBe(
-      `:information_source: ${msg}`,
-    );
   });
 });

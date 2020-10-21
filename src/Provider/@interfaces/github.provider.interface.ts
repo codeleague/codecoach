@@ -23,12 +23,7 @@ interface GithubProviderInterface extends ProviderInterface<Octokit> {
     severity: LogSeverity,
     commit_id: string,
   ): Promise<void>;
-  report({
-    overviewMsg,
-    error: errors,
-    warning: warnings,
-    info: infos,
-  }: ReportType): Promise<void>;
+  report({ overviewMsg, error: errors, warning: warnings }: ReportType): Promise<void>;
 }
 
 export default GithubProviderInterface;

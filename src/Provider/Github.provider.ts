@@ -197,11 +197,7 @@ export class GithubProvider implements GithubProviderInterface {
     }
   }
 
-  private generateOverviewMessage(
-    nOfErrors: number,
-    nOfWarnings: number,
-    nOfInfos: number,
-  ): string {
+  private generateOverviewMessage(nOfErrors: number, nOfWarnings: number): string {
     const errorOverview = MessageUtil.createMessageWithEmoji(
       `${nOfErrors} error(s)`,
       LogSeverity.error,
@@ -210,14 +206,9 @@ export class GithubProvider implements GithubProviderInterface {
       `${nOfWarnings} warning(s)`,
       LogSeverity.warning,
     );
-    const infoOverview = MessageUtil.createMessageWithEmoji(
-      `${nOfInfos} info(s)`,
-      LogSeverity.info,
-    );
-    return `CodeCoach reports ${nOfErrors + nOfWarnings + nOfInfos} issue(s)
+    return `CodeCoach reports ${nOfErrors + nOfWarnings} issue(s)
 ${errorOverview}
 ${warningOverview}
-${infoOverview}
     `;
   }
 
@@ -225,16 +216,13 @@ ${infoOverview}
     touchedFiles: string[],
     error: IssuesType,
     warning: IssuesType,
-    info: IssuesType,
   ): {
     [LogSeverity.error]: IssuesType;
     [LogSeverity.warning]: IssuesType;
-    [LogSeverity.info]: IssuesType;
   } {
     return {
       [LogSeverity.error]: this.filterIssuesByTouchedFiles(error, touchedFiles),
       [LogSeverity.warning]: this.filterIssuesByTouchedFiles(warning, touchedFiles),
-      [LogSeverity.info]: this.filterIssuesByTouchedFiles(info, touchedFiles),
     };
   }
 
@@ -274,7 +262,6 @@ ${infoOverview}
     overviewMsg,
     error: errors,
     warning: warnings,
-    info: infos,
   }: ReportType): Promise<void> {
     try {
       const { prId } = this.config;
@@ -293,33 +280,35 @@ ${infoOverview}
         await this.listTouchedFiles(),
         errors,
         warnings,
-        infos,
       );
+      if (
+        touchedIssuesBySeverity.error.n !== 0 ||
+        touchedIssuesBySeverity.warning.n !== 0
+      ) {
+        const severities = [LogSeverity.error, LogSeverity.warning];
 
-      const severities = [LogSeverity.error, LogSeverity.warning, LogSeverity.info];
-
-      for (const severity of severities) {
-        if (severity !== LogSeverity.unknown) {
-          await this.createCommentForEachFile(
-            touchedIssuesBySeverity[severity],
-            severity,
-            pullRequestDetail.head.sha,
-          );
+        for (const severity of severities) {
+          if (severity !== LogSeverity.unknown) {
+            await this.createCommentForEachFile(
+              touchedIssuesBySeverity[severity],
+              severity,
+              pullRequestDetail.head.sha,
+            );
+          }
         }
-      }
 
-      await this.adapter.issues.createComment({
-        owner,
-        repo,
-        issue_number: prId,
-        body: this.generateOverviewMessage(
-          touchedIssuesBySeverity.error.n,
-          touchedIssuesBySeverity.warning.n,
-          touchedIssuesBySeverity.info.n,
-        ),
-      });
+        await this.adapter.issues.createComment({
+          owner,
+          repo,
+          issue_number: prId,
+          body: this.generateOverviewMessage(
+            touchedIssuesBySeverity.error.n,
+            touchedIssuesBySeverity.warning.n,
+          ),
+        });
+      }
       const commitState =
-        touchedIssuesBySeverity.error.n == 0
+        touchedIssuesBySeverity.error.n === 0
           ? CommitStatusState.success
           : CommitStatusState.failure;
       await this.createCommitStatus(commitState);

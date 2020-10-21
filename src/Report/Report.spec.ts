@@ -32,6 +32,5 @@ describe('Report test', () => {
     const report = Report.parse(mockLogs);
     expect(report.warning.n).toBe(1);
     expect(report.error.n).toBe(1);
-    expect(report.info.n).toBe(0);
   });
 });

@@ -165,15 +165,12 @@ describe('GitHub Provider', () => {
         },
       ],
     };
-    const mockInfoIssues: IssuesType = { n: 0, issues: [] };
     const touchedIssuesBySeverityMap = githubProvider.getTouchedIssuesBySeverityMap(
       mockTouchedFiles,
       mockErrorIssues,
       mockWarningIssues,
-      mockInfoIssues,
     );
     expect(touchedIssuesBySeverityMap.error.n).toBe(1);
     expect(touchedIssuesBySeverityMap.warning.n).toBe(0);
-    expect(touchedIssuesBySeverityMap.info.n).toBe(0);
   });
 });

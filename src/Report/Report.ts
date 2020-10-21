@@ -32,16 +32,10 @@ export class Report {
       issues: errorLogs,
     };
 
-    const infoLogs: IssueType[] = this.selectLogType(logs, LogSeverity.info);
-    const info: IssuesType = {
-      n: infoLogs.length,
-      issues: infoLogs,
-    };
     return {
       overviewMsg: '',
       warning,
       error,
-      info,
     };
   }
 }
