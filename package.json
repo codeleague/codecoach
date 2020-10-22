@@ -1,5 +1,5 @@
 {
-  "name": "codecoach",
+  "name": "@codeleague/codecoach",
   "version": "0.0.1",
   "main": "src/app.ts",
   "repository": "git@github.com:codeleague/codecoach.git",
@@ -11,7 +11,20 @@
     "format": "prettier --write src/**/*.{js,ts}",
     "test": "jest",
     "build": "tsc --project tsconfig.build.json",
+    "prepare": "yarn build",
     "dev": "nodemon --inspect=5858 --config ./nodemon.json -- --url=https://github.agodadev.io/agoda-front-end/Agoda.Gateway.git --pr=2746 --token=2e5fd1320b3befcb2a6d988399504dc4ed2797b1 --type=csharp --buildLogFile=./tmp/dotnetbuild.wrn --buildLogFile=./tmp/dotnetbuild.err --output=./tmp/dotnetbuild.json --noClone"
+  },
+  "bin": {
+    "codecoach": "dist/app.js"
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   },
   "devDependencies": {
     "@octokit/types": "^5.4.1",

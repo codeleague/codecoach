@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { Agent, CSharpAgent } from './Agent';
 import { Config, ProjectType } from './Config';
 import { File } from './File';
