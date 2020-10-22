@@ -20,6 +20,6 @@ jobs:
           key: yarn-${{ hashFiles('yarn.lock') }}
           restore-keys: yarn-
       - run: yarn
-      - run: yarn publish --new-version 1.0.$GITHUB_RUN_NUMBER
+      - run: yarn publish --new-version 1.0.$GITHUB_RUN_NUMBER --no-git-tag-version
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
