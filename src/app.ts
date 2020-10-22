@@ -1,5 +1,3 @@
-import { join, resolve } from 'path';
-
 import { Agent, CSharpAgent } from './Agent';
 import { Config, ProjectType } from './Config';
 import { File } from './File';
@@ -8,6 +6,7 @@ import { Git, GitConfigType, GithubProvider } from './Provider';
 import { Report } from './Report/Report';
 
 import { ROOT_DIR } from './app.constants';
+import ReportType from './Report/@types/report.type';
 
 class App {
   private readonly parser: Parser;
@@ -18,7 +17,7 @@ class App {
     [this.parser, this.agent] = App.setProjectType(Config.app.projectType);
   }
 
-  async start(): Promise<void> {
+  async start(): Promise<boolean> {
     if (!Config.provider.gitCloneBypass) await App.cloneRepo();
 
     const logFiles = Config.app.buildLogFiles ?? (await this.agent.buildAndGetLogFiles());
@@ -28,6 +27,12 @@ class App {
 
     await this.provider.report(report);
     await App.writeLogToFile(logs);
+
+    return App.isGreen(report);
+  }
+
+  private static isGreen(report: ReportType): boolean {
+    return report.error.n === 0;
   }
 
   private static async cloneRepo(): Promise<void> {
@@ -64,7 +69,10 @@ class App {
   }
 }
 
-new App().start().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+new App()
+  .start()
+  .then((green) => process.exit(green ? 0 : 1))
+  .catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });

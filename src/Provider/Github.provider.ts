@@ -226,38 +226,6 @@ ${warningOverview}
     };
   }
 
-  private async getLatestCommitsSHA(): Promise<string> {
-    const { prId } = this.config;
-    const { owner, repo } = this;
-    const response = await this.adapter.pulls.listCommits({
-      owner,
-      repo,
-      pull_number: prId,
-    });
-    return response.data[response.data.length - 1].sha;
-  }
-
-  private async createCommitStatus(commitState: CommitStatusState) {
-    const { owner, repo } = this;
-    const sha = await this.getLatestCommitsSHA();
-    try {
-      return this.adapter.repos.createCommitStatus({
-        owner,
-        repo,
-        sha,
-        state: commitState,
-        context: 'CodeCoach',
-      });
-    } catch (err) {
-      if (err.name === 'HttpError') {
-        throw Error(
-          'NotFound: Could be repository does not exist or token does not have permission to repository',
-        );
-      }
-      throw Error(err);
-    }
-  }
-
   async report({
     overviewMsg,
     error: errors,
@@ -307,11 +275,6 @@ ${warningOverview}
           ),
         });
       }
-      const commitState =
-        touchedIssuesBySeverity.error.n === 0
-          ? CommitStatusState.success
-          : CommitStatusState.failure;
-      await this.createCommitStatus(commitState);
     } catch (err) {
       throw Error(err);
     }
