@@ -19,10 +19,11 @@ export class GitHub implements VCS {
       try {
         const reviews = filteredLogs.map(this.toCreateReviewComment(latestCommitSha));
         await Promise.all(reviews);
-
-        const nOfErrors = logs.filter((log) => log.severity === LogSeverity.error).length;
-        const nOfWarnings = logs.filter((log) => log.severity === LogSeverity.warning)
+        const nOfErrors = filteredLogs.filter((log) => log.severity === LogSeverity.error)
           .length;
+        const nOfWarnings = filteredLogs.filter(
+          (log) => log.severity === LogSeverity.warning,
+        ).length;
 
         const comment = GitHub.generateOverviewMessage(nOfErrors, nOfWarnings);
         await this.prService.createComment(comment);
