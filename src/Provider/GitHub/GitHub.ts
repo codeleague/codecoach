@@ -44,13 +44,21 @@ ${MessageUtil.createMessageWithEmoji(`${nOfErrors} error(s)`, LogSeverity.error)
 ${MessageUtil.createMessageWithEmoji(`${nOfWarnings} warning(s)`, LogSeverity.warning)}`;
   }
 
-  private toCreateReviewComment = (commitSha: string) => (log: LogType): Promise<void> =>
-    this.prService.createReviewComment(
-      commitSha,
-      MessageUtil.createMessageWithEmoji(log.msg, log.severity),
-      log.source,
-      log.line,
-    );
+  private toCreateReviewComment = (commitSha: string) => async (
+    log: LogType,
+  ): Promise<void> => {
+    try {
+      //todo: handle comment on restrict zone in github
+      await this.prService.createReviewComment(
+        commitSha,
+        MessageUtil.createMessageWithEmoji(log.msg, log.severity),
+        log.source,
+        log.line,
+      );
+    } catch (e) {
+      console.warn('GitHub: Cannot createReviewComment for ', e);
+    }
+  };
 
   private async removeExistingComments(): Promise<void> {
     const [userId, comments, reviews] = await Promise.all([
