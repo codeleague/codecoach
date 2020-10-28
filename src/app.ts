@@ -4,19 +4,23 @@ import { Agent, CSharpAgent } from './Agent';
 import { Config, ProjectType } from './Config';
 import { File } from './File';
 import { CSharpParser, LogType, Parser } from './Parser';
-import { Git, GitConfigType, GithubProvider } from './Provider';
-import { Report } from './Report/Report';
+import { Git, GitConfigType, GitHub, GitHubPRService, VCS } from './Provider';
 
 import { ROOT_DIR } from './app.constants';
-import ReportType from './Report/@types/report.type';
 
 class App {
   private readonly parser: Parser;
   private readonly agent: Agent;
-  private readonly provider = new GithubProvider(Config.provider);
+  private readonly vcs: VCS;
 
   constructor() {
     [this.parser, this.agent] = App.setProjectType(Config.app.projectType);
+    const githubPRService = new GitHubPRService(
+      Config.provider.token,
+      Config.provider.repoUrl,
+      Config.provider.prId,
+    );
+    this.vcs = new GitHub(githubPRService);
   }
 
   async start(): Promise<boolean> {
@@ -25,16 +29,11 @@ class App {
     const logFiles = Config.app.buildLogFiles ?? (await this.agent.buildAndGetLogFiles());
 
     const logs = await this.parseBuildData(logFiles);
-    const report = Report.parse(logs);
 
-    await this.provider.report(report);
+    const isOk = await this.vcs.report(logs);
     await App.writeLogToFile(logs);
 
-    return App.isGreen(report);
-  }
-
-  private static isGreen(report: ReportType): boolean {
-    return report.error.n === 0;
+    return isOk;
   }
 
   private static async cloneRepo(): Promise<void> {
@@ -73,7 +72,7 @@ class App {
 
 new App()
   .start()
-  .then((green) => process.exit(green ? 0 : 1))
+  .then((ok) => process.exit(ok ? 0 : 1))
   .catch((err) => {
     console.error(err);
     process.exit(1);

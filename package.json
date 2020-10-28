@@ -6,9 +6,9 @@
   "author": "codeleague <virtualjoel@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "lint": "eslint src/**/*.{js,ts} --quiet --fix",
-    "lint-ci": "eslint src/**/*.{js,ts}",
-    "format": "prettier --write src/**/*.{js,ts}",
+    "lint": "eslint 'src/**/*.{js,ts}' --quiet --fix",
+    "lint-ci": "eslint 'src/**/*.{js,ts}'",
+    "format": "prettier --write 'src/**/*.{js,ts}'",
     "test": "jest",
     "build": "tsc --project tsconfig.build.json",
     "prepare": "yarn build",

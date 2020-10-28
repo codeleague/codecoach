@@ -1,4 +1,4 @@
-import LogSeverity from './@enums/log.severity.enum';
+import { LogSeverity } from './@enums/log.severity.enum';
 import { LogType } from './@types/log.type';
 import { CSharpParser } from './CSharpParser';
 

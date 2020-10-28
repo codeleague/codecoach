@@ -1,4 +1,4 @@
-import LogSeverity from '../@enums/log.severity.enum';
+import { LogSeverity } from '..';
 
 export type LogType = {
   log: string;

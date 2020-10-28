@@ -1,6 +1,6 @@
 import { relative, resolve } from 'path';
 import slash from 'slash';
-import LogSeverity from './@enums/log.severity.enum';
+import { LogSeverity } from './@enums/log.severity.enum';
 import { Parser } from './@interfaces/parser.interface';
 import { LogType } from './@types/log.type';
 import lineBreakUtil from './utils/lineBreak.util';

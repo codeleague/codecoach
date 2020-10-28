@@ -1,4 +1,4 @@
-import LogSeverity from '../../Parser/@enums/log.severity.enum';
+import { LogSeverity } from '../../Parser';
 import { MessageUtil } from './message.util';
 
 describe('Message util tests', () => {
