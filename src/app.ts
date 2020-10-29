@@ -7,6 +7,8 @@ import { CSharpParser, LogType, Parser } from './Parser';
 import { Git, GitConfigType, GitHub, GitHubPRService, VCS } from './Provider';
 
 import { ROOT_DIR } from './app.constants';
+import { TSLintParser } from './Parser/TSLintParser';
+import { TSAgent } from './Agent/TSAgent';
 
 class App {
   private readonly parser: Parser;
@@ -25,11 +27,8 @@ class App {
 
   async start(): Promise<boolean> {
     if (!Config.provider.gitCloneBypass) await App.cloneRepo();
-
     const logFiles = Config.app.buildLogFiles ?? (await this.agent.buildAndGetLogFiles());
-
     const logs = await this.parseBuildData(logFiles);
-
     const isOk = await this.vcs.report(logs);
     await App.writeLogToFile(logs);
 
@@ -51,6 +50,8 @@ class App {
     switch (type) {
       case ProjectType.csharp:
         return [new CSharpParser(), new CSharpAgent(Config.agent)];
+      case ProjectType.tslint:
+        return [new TSLintParser(), new TSAgent(Config.agent)];
     }
   }
 
