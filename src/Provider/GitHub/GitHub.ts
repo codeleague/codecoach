@@ -8,34 +8,44 @@ export class GitHub implements VCS {
   constructor(private readonly prService: IGitHubPRService) {}
 
   async report(logs: LogType[]): Promise<boolean> {
-    await this.removeExistingComments();
-    const latestCommitSha = await this.prService.getLatestCommitSha();
-    const touchedFiles = await this.prService.files();
-    const filteredLogs = logs
-      .filter(onlyIn(touchedFiles))
-      .filter(onlySeverity(LogSeverity.error, LogSeverity.warning));
+    try {
+      await this.removeExistingComments();
+      const latestCommitSha = await this.prService.getLatestCommitSha();
+      const touchedFiles = await this.prService.files();
+      const filteredLogs = logs
+        .filter(onlyIn(touchedFiles))
+        .filter(onlySeverity(LogSeverity.error, LogSeverity.warning));
 
-    if (filteredLogs.length > 0) {
-      try {
-        const reviews = filteredLogs.map(this.toCreateReviewComment(latestCommitSha));
+      if (filteredLogs.length > 0) {
+        const reviews = filteredLogs
+          .map((log) => {
+            try {
+              return this.toCreateReviewComment(latestCommitSha)(log);
+            } catch (err) {
+              console.trace(err);
+              return null;
+            }
+          })
+          .filter((el) => el);
         await Promise.all(reviews);
+
         const nOfErrors = filteredLogs.filter((log) => log.severity === LogSeverity.error)
           .length;
         const nOfWarnings = filteredLogs.filter(
           (log) => log.severity === LogSeverity.warning,
         ).length;
-
         const comment = GitHub.generateOverviewMessage(nOfErrors, nOfWarnings);
+
         await this.prService.createComment(comment);
 
         return nOfErrors === 0;
-      } catch (e) {
-        console.trace(e);
-        throw Error(e);
       }
-    }
 
-    return true;
+      return true;
+    } catch (err) {
+      console.trace(err);
+      throw new Error('Github report error' + err);
+    }
   }
 
   private static generateOverviewMessage(nOfErrors: number, nOfWarnings: number): string {
@@ -47,17 +57,13 @@ ${MessageUtil.createMessageWithEmoji(`${nOfWarnings} warning(s)`, LogSeverity.wa
   private toCreateReviewComment = (commitSha: string) => async (
     log: LogType,
   ): Promise<void> => {
-    try {
-      //todo: handle comment on restrict zone in github
-      await this.prService.createReviewComment(
-        commitSha,
-        MessageUtil.createMessageWithEmoji(log.msg, log.severity),
-        log.source,
-        log.line,
-      );
-    } catch (e) {
-      console.warn('GitHub: Cannot createReviewComment for ', e);
-    }
+    //todo: handle comment on restrict zone in github
+    return this.prService.createReviewComment(
+      commitSha,
+      MessageUtil.createMessageWithEmoji(log.msg, log.severity),
+      log.source,
+      log.line,
+    );
   };
 
   private async removeExistingComments(): Promise<void> {
