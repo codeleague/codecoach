@@ -1,23 +1,32 @@
 import { promises } from 'fs';
 import { resolve } from 'path';
+import { Log } from './Logger';
 
 const { readFile, writeFile } = promises;
 
 export abstract class File {
   static async readFileHelper(path: string): Promise<string> {
     try {
-      const data = await readFile(resolve(path));
+      const fullPath = resolve(path);
+      Log.debug(`Reading from ${fullPath}`);
+
+      const data = await readFile(fullPath);
       return data.toString();
     } catch (err) {
-      throw new Error(`Read file error:${err}`);
+      Log.error('Read file error');
+      throw err;
     }
   }
 
   static async writeFileHelper(path: string, data: string): Promise<void> {
     try {
-      await writeFile(resolve(path), data);
+      const fullPath = resolve(path);
+      Log.debug(`Writing to ${fullPath}`);
+
+      await writeFile(fullPath, data);
     } catch (err) {
-      throw new Error(`Write file error:${err}`);
+      Log.error('Write file error');
+      throw err;
     }
   }
 }

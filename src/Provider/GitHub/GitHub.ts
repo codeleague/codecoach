@@ -1,4 +1,5 @@
 import { VCS } from '..';
+import { Log } from '../../Logger';
 import { LogSeverity, LogType } from '../../Parser';
 import { onlyIn, onlySeverity } from '../utils/filter.util';
 import { MessageUtil } from '../utils/message.util';
@@ -17,17 +18,22 @@ export class GitHub implements VCS {
         .filter(onlyIn(touchedFiles))
         .filter(onlySeverity(LogSeverity.error, LogSeverity.warning));
 
+      Log.debug(`Commit SHA ${commitId}`);
+      Log.debug('Touched files', touchedFiles);
+      Log.debug('Filtered log', filteredLogs);
+
       const reviews = filteredLogs
         .map((log) => {
           try {
             return this.toCreateReviewComment(commitId)(log);
           } catch (err) {
-            console.trace(err);
+            Log.warning('Create review failed', err);
             return null;
           }
         })
         .filter((el) => el);
       await Promise.all(reviews);
+      Log.info(`Create ${reviews.length} review comments completed`);
 
       const nOfErrors = filteredLogs.filter(onlySeverity(LogSeverity.error)).length;
       const nOfWarnings = filteredLogs.filter(onlySeverity(LogSeverity.warning)).length;
@@ -35,14 +41,16 @@ export class GitHub implements VCS {
       if (filteredLogs.length > 0) {
         const comment = MessageUtil.generateOverviewMessage(nOfErrors, nOfWarnings);
         await this.prService.createComment(comment);
+        Log.info('Create summary comment completed');
       }
 
       const commitStatus = nOfErrors ? CommitStatus.failure : CommitStatus.success;
       const description = MessageUtil.generateCommitDescription(nOfErrors);
       await this.prService.createCommitStatus(commitId, commitStatus, description);
+      Log.info('Report commit status completed');
     } catch (err) {
-      console.trace(err);
-      throw new Error('Github report error' + err);
+      Log.error('Github report failed');
+      throw err;
     }
   }
 
@@ -64,6 +72,7 @@ export class GitHub implements VCS {
       this.prService.listAllComments(),
       this.prService.listAllReviewComments(),
     ]);
+    Log.debug('Get existing CodeCoach comments completed');
 
     const deleteComments = comments
       .filter((comment) => comment.user.id === userId)
@@ -74,5 +83,6 @@ export class GitHub implements VCS {
       .map((review) => this.prService.deleteReviewComment(review.id));
 
     await Promise.all([...deleteComments, ...deleteReviews]);
+    Log.debug('Delete CodeCoach comments completed');
   }
 }

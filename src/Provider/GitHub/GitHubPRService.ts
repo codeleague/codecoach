@@ -7,6 +7,7 @@ import { URL } from 'url';
 
 import { GITHUB_COM_API } from '../../app.constants';
 import { TIME_ZONE, USER_AGENT } from '../../Config/constants/defaults';
+import { Log } from '../../Logger';
 import { GITHUB_PROVIDER_MAX_REVIEWS_PER_PAGE } from '../constants/github.provider.constant';
 import { CommitStatus } from './CommitStatus';
 import { IGitHubPRService } from './IGitHubPRService';
@@ -60,8 +61,7 @@ export class GitHubPRService implements IGitHubPRService {
     const getLastPageNumberRegex = /.*page=(\d+)>; rel="last"/;
     const extract = headers.link.match(getLastPageNumberRegex);
     if (!extract) {
-      console.warn();
-      throw new Error(`Github.provider Error: ${headers.link}`);
+      throw new Error(`List comments failed: ${headers.link}`);
     }
     const [, lastPageNumber] = extract;
 
@@ -152,11 +152,11 @@ export class GitHubPRService implements IGitHubPRService {
       });
     } catch (err) {
       if (err.name === 'HttpError') {
-        throw Error(
+        Log.error(
           'NotFound: Could be repository does not exist or token does not have permission to repository',
         );
       }
-      throw Error(err);
+      throw err;
     }
   }
 

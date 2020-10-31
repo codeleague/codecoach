@@ -2,6 +2,7 @@
 
 import { Config, ProjectType } from './Config';
 import { File } from './File';
+import { Log } from './Logger';
 import { CSharpParser, LogType, Parser, TSLintParser } from './Parser';
 import { GitHub, GitHubPRService, VCS } from './Provider';
 
@@ -10,7 +11,7 @@ class App {
   private readonly vcs: VCS;
 
   constructor() {
-    [this.parser] = App.setProjectType(Config.app.projectType);
+    this.parser = App.setProjectType(Config.app.projectType);
     const githubPRService = new GitHubPRService(
       Config.provider.token,
       Config.provider.repoUrl,
@@ -21,16 +22,21 @@ class App {
 
   async start(): Promise<void> {
     const logs = await this.parseBuildData(Config.app.buildLogFiles);
+    Log.info('Build data parsing completed');
+
     await this.vcs.report(logs);
+    Log.info('Report to VCS completed');
+
     await App.writeLogToFile(logs);
+    Log.info('Write output completed');
   }
 
-  private static setProjectType(type: ProjectType): [Parser] {
+  private static setProjectType(type: ProjectType): Parser {
     switch (type) {
       case ProjectType.csharp:
-        return [new CSharpParser(Config.app.cwd)];
+        return new CSharpParser(Config.app.cwd);
       case ProjectType.tslint:
-        return [new TSLintParser(Config.app.cwd)];
+        return new TSLintParser(Config.app.cwd);
     }
   }
 
@@ -51,6 +57,6 @@ class App {
 }
 
 new App().start().catch((err) => {
-  console.error(err);
+  Log.error(err);
   process.exit(1);
 });

@@ -1,5 +1,6 @@
 import { relative, resolve } from 'path';
 import slash from 'slash';
+import { Log } from '../Logger/Logger';
 
 import { getRelativePath } from '../Provider/utils/path.util';
 import { LogSeverity } from './@enums/log.severity.enum';
@@ -26,8 +27,11 @@ export class CSharpParser extends Parser {
     const structureMatch = log.match(
       />([^\s()]+)(?:\((\d+),(\d+)\))?\s*:\s*(\w+)\s*(\w+)\s*:\s*([^\[]+)(?:\[(.+)])?$/,
     );
-    if (!structureMatch)
-      throw new Error(`CSharpParser Error: not match structure match ${log}`);
+    if (!structureMatch) {
+      const message = "CSharpParser Error: log structure doesn't match";
+      Log.error(message, { log });
+      throw new Error(message);
+    }
     const [, src, lineN, offset, severity, code, content, _projectSrc] = structureMatch;
     const projectSrc = slash(_projectSrc);
 
@@ -39,7 +43,7 @@ export class CSharpParser extends Parser {
       const _relativeSrc = getRelativePath(this.cwd, src);
       if (!_relativeSrc) {
         // HOTFIX ignore this log with valid:false
-        console.warn(`CSharpParser Error: not match fileRelativeSrcMatch ${log}`);
+        Log.warn(`CSharpParser Error: source path is not a relative of root`, { src });
         return {
           log,
           line,

@@ -1,3 +1,4 @@
+import { Log } from '../Logger/Logger';
 import { getRelativePath } from '../Provider/utils/path.util';
 import { LogSeverity } from './@enums/log.severity.enum';
 import { Parser } from './@interfaces/parser.interface';
@@ -28,7 +29,7 @@ export class TSLintParser extends Parser {
 
       return this;
     } catch (err) {
-      console.warn('TSLint Parser: parse with content via JSON error', content);
+      Log.warn('TSLint Parser: parse with content via JSON error', content);
       throw err;
     }
   }
