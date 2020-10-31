@@ -3,6 +3,9 @@ import { LogType } from './@types/log.type';
 import { CSharpParser } from './CSharpParser';
 
 describe('CSharpParser tests', () => {
+  const cwdWin = 'C:\\source\\codeleague\\codecoach\\tmp\\repo';
+  const cwdUnix = '/opt/buildagent/work/8e09d9d554a92a80/tmp/repo';
+
   const contentWithLineOffset =
     '1:7>C:\\source\\codeleague\\codecoach\\tmp\\repo\\Broken.cs(6,8): warning AG0030: Prevent use of dynamic [C:\\source\\codeleague\\codecoach\\tmp\\repo\\Broken.csproj]';
 
@@ -15,7 +18,7 @@ describe('CSharpParser tests', () => {
     9:8>/usr/share/dotnet/sdk/3.1.402/Microsoft.Common.CurrentVersion.targets(2084,5): warning MSB3277: Found conflicts between different versions of "Microsoft.Extensions.Configuration.Json" that could not be resolved.  These reference conflicts are listed in the build log when log verbosity is set to detailed. [/opt/buildagent/work/8e09d9d554a92a80/tmp/repo/Tests/Agoda.Gateway.External.Tests/Agoda.Gateway.External.Tests.csproj]`;
 
   it('Should parse correctly when (line, offset) is provided', () => {
-    const result = new CSharpParser().withContent(contentWithLineOffset).getLogs();
+    const result = new CSharpParser(cwdWin).withContent(contentWithLineOffset).getLogs();
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
       source: `Broken.cs`,
@@ -29,7 +32,7 @@ describe('CSharpParser tests', () => {
   });
 
   it('Should parse correctly when (line, offset) is not provided', () => {
-    const result = new CSharpParser().withContent(contentNoLineOffset).getLogs();
+    const result = new CSharpParser(cwdWin).withContent(contentNoLineOffset).getLogs();
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
       source: `Broken.csproj`,
@@ -43,7 +46,7 @@ describe('CSharpParser tests', () => {
   });
 
   it('Should be able to call `withContent` multiple times and add all content together', () => {
-    const result = new CSharpParser()
+    const result = new CSharpParser(cwdWin)
       .withContent(contentWithLineOffset)
       .withContent(contentNoLineOffset)
       .getLogs();
@@ -52,19 +55,19 @@ describe('CSharpParser tests', () => {
   });
 
   it('Should parse with valid/invalid correctly', () => {
-    const result = new CSharpParser().withContent(contentWithNotValid).getLogs();
-    const valid = result.filter((el) => el.valid === true);
-    const invalid = result.filter((el) => el.valid === false);
+    const result = new CSharpParser(cwdUnix).withContent(contentWithNotValid).getLogs();
+    const valid = result.filter((el) => el.valid);
+    const invalid = result.filter((el) => !el.valid);
     expect(valid).toHaveLength(2);
     expect(invalid).toHaveLength(1);
   });
 
   it('Should do nothing if put empty string', () => {
-    const result = new CSharpParser().withContent('').getLogs();
+    const result = new CSharpParser(cwdWin).withContent('').getLogs();
     expect(result).toHaveLength(0);
   });
 
   it('Should throw error if the line not match the rule', () => {
-    expect(() => new CSharpParser().withContent(':')).toThrowError();
+    expect(() => new CSharpParser(cwdWin).withContent(':')).toThrowError();
   });
 });

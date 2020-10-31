@@ -1,57 +1,49 @@
-import { LogSeverity, LogType } from '../../Parser';
 import { VCS } from '..';
-import { IGitHubPRService } from './IGitHubPRService';
+import { LogSeverity, LogType } from '../../Parser';
 import { onlyIn, onlySeverity } from '../utils/filter.util';
 import { MessageUtil } from '../utils/message.util';
+import { CommitStatus } from './CommitStatus';
+import { IGitHubPRService } from './IGitHubPRService';
 
 export class GitHub implements VCS {
   constructor(private readonly prService: IGitHubPRService) {}
 
-  async report(logs: LogType[]): Promise<boolean> {
+  async report(logs: LogType[]): Promise<void> {
     try {
       await this.removeExistingComments();
-      const latestCommitSha = await this.prService.getLatestCommitSha();
+      const commitId = await this.prService.getLatestCommitSha();
       const touchedFiles = await this.prService.files();
       const filteredLogs = logs
         .filter(onlyIn(touchedFiles))
         .filter(onlySeverity(LogSeverity.error, LogSeverity.warning));
 
+      const reviews = filteredLogs
+        .map((log) => {
+          try {
+            return this.toCreateReviewComment(commitId)(log);
+          } catch (err) {
+            console.trace(err);
+            return null;
+          }
+        })
+        .filter((el) => el);
+      await Promise.all(reviews);
+
+      const nOfErrors = filteredLogs.filter(onlySeverity(LogSeverity.error)).length;
+      const nOfWarnings = filteredLogs.filter(onlySeverity(LogSeverity.warning)).length;
+
       if (filteredLogs.length > 0) {
-        const reviews = filteredLogs
-          .map((log) => {
-            try {
-              return this.toCreateReviewComment(latestCommitSha)(log);
-            } catch (err) {
-              console.trace(err);
-              return null;
-            }
-          })
-          .filter((el) => el);
-        await Promise.all(reviews);
-
-        const nOfErrors = filteredLogs.filter((log) => log.severity === LogSeverity.error)
-          .length;
-        const nOfWarnings = filteredLogs.filter(
-          (log) => log.severity === LogSeverity.warning,
-        ).length;
-        const comment = GitHub.generateOverviewMessage(nOfErrors, nOfWarnings);
-
+        const comment = MessageUtil.generateOverviewMessage(nOfErrors, nOfWarnings);
         await this.prService.createComment(comment);
-
-        return nOfErrors === 0;
       }
 
-      return true;
+      const commitStatus = nOfErrors ? CommitStatus.failure : CommitStatus.success;
+      const description = MessageUtil.generateCommitDescription(nOfErrors);
+      await this.prService.createCommitStatus(commitId, commitStatus, description);
     } catch (err) {
       console.trace(err);
       throw new Error('Github report error' + err);
     }
-  }
-
-  private static generateOverviewMessage(nOfErrors: number, nOfWarnings: number): string {
-    return `CodeCoach reports ${nOfErrors + nOfWarnings} issue(s)
-${MessageUtil.createMessageWithEmoji(`${nOfErrors} error(s)`, LogSeverity.error)}
-${MessageUtil.createMessageWithEmoji(`${nOfWarnings} warning(s)`, LogSeverity.warning)}`;
   }
 
   private toCreateReviewComment = (commitSha: string) => async (

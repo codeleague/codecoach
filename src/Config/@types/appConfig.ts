@@ -4,4 +4,5 @@ export type AppConfig = {
   logFilePath: string;
   projectType: ProjectType;
   buildLogFiles: string[];
+  cwd: string;
 };

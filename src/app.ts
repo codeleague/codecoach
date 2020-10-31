@@ -2,7 +2,7 @@
 
 import { Config, ProjectType } from './Config';
 import { File } from './File';
-import { CSharpParser, TSLintParser, LogType, Parser } from './Parser';
+import { CSharpParser, LogType, Parser, TSLintParser } from './Parser';
 import { GitHub, GitHubPRService, VCS } from './Provider';
 
 class App {
@@ -19,20 +19,18 @@ class App {
     this.vcs = new GitHub(githubPRService);
   }
 
-  async start(): Promise<boolean> {
+  async start(): Promise<void> {
     const logs = await this.parseBuildData(Config.app.buildLogFiles);
-    const isOk = await this.vcs.report(logs);
+    await this.vcs.report(logs);
     await App.writeLogToFile(logs);
-
-    return isOk;
   }
 
   private static setProjectType(type: ProjectType): [Parser] {
     switch (type) {
       case ProjectType.csharp:
-        return [new CSharpParser()];
+        return [new CSharpParser(Config.app.cwd)];
       case ProjectType.tslint:
-        return [new TSLintParser()];
+        return [new TSLintParser(Config.app.cwd)];
     }
   }
 
@@ -52,10 +50,7 @@ class App {
   }
 }
 
-new App()
-  .start()
-  .then((ok) => process.exit(ok ? 0 : 1))
-  .catch((err) => {
-    console.error(err);
-    process.exit(1);
-  });
+new App().start().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

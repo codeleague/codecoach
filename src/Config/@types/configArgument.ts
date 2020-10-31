@@ -7,4 +7,5 @@ export type ConfigArgument = {
   buildLogFile: string[];
   output: string;
   token: string;
+  cwd: string;
 };

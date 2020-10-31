@@ -40,6 +40,11 @@ const args = yargs
     type: 'string',
     demandOption: true,
   })
+  .option('cwd', {
+    describe: 'Set working directory. Will use current context cwd if not set.',
+    type: 'string',
+    default: process.cwd(),
+  })
   .help()
   .parse(process.argv.slice(1)) as ConfigArgument;
 

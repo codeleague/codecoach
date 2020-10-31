@@ -1,19 +1,13 @@
 import { relative, resolve } from 'path';
 import slash from 'slash';
+
+import { getRelativePath } from '../Provider/utils/path.util';
 import { LogSeverity } from './@enums/log.severity.enum';
 import { Parser } from './@interfaces/parser.interface';
 import { LogType } from './@types/log.type';
 import lineBreakUtil from './utils/lineBreak.util';
 
-export class CSharpParser implements Parser {
-  private logs: LogType[] = [];
-
-  // todo: customizable line splitter ?
-
-  getLogs(): LogType[] {
-    return this.logs;
-  }
-
+export class CSharpParser extends Parser {
   withContent(content: string): Parser {
     const lineSplitter = lineBreakUtil(content);
 
@@ -21,14 +15,14 @@ export class CSharpParser implements Parser {
       .split(lineSplitter)
       .map((line) => line.trim())
       .filter((line) => line !== '' && line !== lineSplitter)
-      .map(CSharpParser.toLog)
+      .map((log) => this.toLog(log))
       .filter((log) => log);
 
     this.logs.push(...logs);
     return this;
   }
 
-  private static toLog(log: string): LogType {
+  private toLog(log: string): LogType {
     const structureMatch = log.match(
       />([^\s()]+)(?:\((\d+),(\d+)\))?\s*:\s*(\w+)\s*(\w+)\s*:\s*([^\[]+)(?:\[(.+)])?$/,
     );
@@ -42,8 +36,8 @@ export class CSharpParser implements Parser {
     const lineOffset = Number(offset) || undefined;
 
     if (line && lineOffset) {
-      const fileRelativeSrcMatch = src.match(/^.+[\\/]tmp[\\/]repo[\\/](.+)$/);
-      if (!fileRelativeSrcMatch) {
+      const _relativeSrc = getRelativePath(this.cwd, src);
+      if (!_relativeSrc) {
         // HOTFIX ignore this log with valid:false
         console.warn(`CSharpParser Error: not match fileRelativeSrcMatch ${log}`);
         return {
@@ -56,8 +50,7 @@ export class CSharpParser implements Parser {
           valid: false,
         };
       }
-      const [, _relativeSrc] = fileRelativeSrcMatch;
-      relativeSrc = slash(_relativeSrc);
+      relativeSrc = _relativeSrc;
     } else {
       const project_root = resolve(projectSrc, '../');
       relativeSrc = relative(project_root, projectSrc);

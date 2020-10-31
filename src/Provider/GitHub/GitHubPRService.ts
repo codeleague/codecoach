@@ -8,6 +8,7 @@ import { URL } from 'url';
 import { GITHUB_COM_API } from '../../app.constants';
 import { TIME_ZONE, USER_AGENT } from '../../Config/constants/defaults';
 import { GITHUB_PROVIDER_MAX_REVIEWS_PER_PAGE } from '../constants/github.provider.constant';
+import { CommitStatus } from './CommitStatus';
 import { IGitHubPRService } from './IGitHubPRService';
 
 type PrRequestBase = {
@@ -134,6 +135,29 @@ export class GitHubPRService implements IGitHubPRService {
     });
 
     return data.head.sha;
+  }
+
+  async createCommitStatus(
+    sha: string,
+    state: CommitStatus,
+    description?: string,
+  ): Promise<void> {
+    try {
+      await this.adapter.repos.createCommitStatus({
+        ...this.requestBase,
+        sha,
+        state,
+        description,
+        context: 'CodeCoach',
+      });
+    } catch (err) {
+      if (err.name === 'HttpError') {
+        throw Error(
+          'NotFound: Could be repository does not exist or token does not have permission to repository',
+        );
+      }
+      throw Error(err);
+    }
   }
 
   async files(): Promise<string[]> {

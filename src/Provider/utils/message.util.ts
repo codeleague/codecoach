@@ -16,4 +16,16 @@ export class MessageUtil {
     }
     return `${emoji} ${msg}`;
   }
+
+  static generateOverviewMessage(nOfErrors: number, nOfWarnings: number): string {
+    return `CodeCoach reports ${nOfErrors + nOfWarnings} issue(s)
+${MessageUtil.createMessageWithEmoji(`${nOfErrors} error(s)`, LogSeverity.error)}
+${MessageUtil.createMessageWithEmoji(`${nOfWarnings} warning(s)`, LogSeverity.warning)}`;
+  }
+
+  static generateCommitDescription(nOfErrors: number): string {
+    return nOfErrors
+      ? `CodeCoach report ${nOfErrors} errors`
+      : 'CodeCoach report no issue';
+  }
 }

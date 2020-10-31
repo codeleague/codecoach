@@ -1,4 +1,4 @@
-import slash from 'slash';
+import { getRelativePath } from '../Provider/utils/path.util';
 import { LogSeverity } from './@enums/log.severity.enum';
 import { Parser } from './@interfaces/parser.interface';
 import { LogType } from './@types/log.type';
@@ -17,18 +17,12 @@ type TslintLog = {
   ruleSeverity: string;
   startPosition: TslintLogPosition;
 };
-export class TSLintParser implements Parser {
-  private logs: LogType[] = [];
-
-  getLogs(): LogType[] {
-    return this.logs;
-  }
-
+export class TSLintParser extends Parser {
   withContent(content: string): Parser {
     try {
       if (content) {
         const logsJson = JSON.parse(content) as TslintLog[];
-        const logs = logsJson.map((el) => TSLintParser.toLog(el));
+        const logs = logsJson.map((el) => this.toLog(el));
         this.logs.push(...logs);
       }
 
@@ -39,7 +33,7 @@ export class TSLintParser implements Parser {
     }
   }
 
-  private static toLog(log: TslintLog): LogType {
+  private toLog(log: TslintLog): LogType {
     const parsed: LogType = {
       log: JSON.stringify(log),
       line: log.startPosition.line + 1,
@@ -51,11 +45,9 @@ export class TSLintParser implements Parser {
       valid: true,
     };
 
-    const fileSrc = slash(log.name);
-    const match = fileSrc.match(/(?:\/tmp\/repo\/)(.*)/);
+    const source = getRelativePath(this.cwd, log.name);
+    if (!source) return { ...parsed, valid: false };
 
-    if (!match) return { ...parsed, valid: false };
-    const [, source] = match;
     return { ...parsed, source };
   }
 }

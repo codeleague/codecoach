@@ -2,6 +2,7 @@ import {
   IssuesListCommentsResponseData,
   PullsListReviewCommentsResponseData,
 } from '@octokit/types';
+import { CommitStatus } from './CommitStatus';
 
 export interface IGitHubPRService {
   listAllReviewComments(): Promise<PullsListReviewCommentsResponseData>;
@@ -17,5 +18,10 @@ export interface IGitHubPRService {
   ): Promise<void>;
   getCurrentUserId(): Promise<number>;
   getLatestCommitSha(): Promise<string>;
+  createCommitStatus(
+    commitId: string,
+    state: CommitStatus,
+    description?: string,
+  ): Promise<void>;
   files(): Promise<string[]>;
 }

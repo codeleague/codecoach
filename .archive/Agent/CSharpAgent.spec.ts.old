@@ -2,7 +2,6 @@ import { resolve } from 'path';
 import { ChildProcess, spawn as baseSpawn } from 'child_process';
 import { mocked } from 'ts-jest/utils';
 
-import { REPO_DIR, ROOT_DIR } from '../app.constants';
 import { AgentConfig } from '../Config/@types';
 import { CSharpAgent, ErrorFile, WarningFile } from './CSharpAgent';
 
@@ -11,9 +10,11 @@ jest.mock('child_process');
 const spawn = mocked(baseSpawn, true);
 
 describe('CSharpAgent', () => {
+  const cwd = './tmp';
   const agentLoader: AgentConfig = {
     execPath: 'test',
     target: 'test.sln',
+    cwd,
   };
 
   it('should create child process with arguments and return log files', async () => {
@@ -32,9 +33,9 @@ describe('CSharpAgent', () => {
 
     const files = await agent.buildAndGetLogFiles();
 
-    const expectedWarningFile = resolve(ROOT_DIR, WarningFile);
-    const expectedErrorFile = resolve(ROOT_DIR, ErrorFile);
-    const expectedSolutionFile = resolve(ROOT_DIR, REPO_DIR, agentLoader.target!);
+    const expectedWarningFile = resolve(cwd, WarningFile);
+    const expectedErrorFile = resolve(cwd, ErrorFile);
+    const expectedSolutionFile = resolve(cwd, agentLoader.target!);
     const expectedArgs = [
       'build',
       '--nologo',

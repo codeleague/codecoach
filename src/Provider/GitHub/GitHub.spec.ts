@@ -2,7 +2,8 @@ import {
   IssuesListCommentsResponseData,
   PullsListReviewCommentsResponseData,
 } from '@octokit/types';
-import { LogSeverity, LogType } from '../../Parser';
+import { LogSeverity } from '../../Parser';
+import { CommitStatus } from './CommitStatus';
 import { GitHub } from './GitHub';
 import { IGitHubPRService } from './IGitHubPRService';
 
@@ -11,8 +12,6 @@ const mockedReviewId = 324145;
 const mockedUserId = 1234;
 const mockedSha = '123456';
 const mockTouchedFiles = 'file1.cs';
-const mockTouchedLine1 = 88;
-const mockTouchedLine2 = 99;
 
 const mockedReviews = [
   { id: mockedReviewId, user: { id: mockedUserId } },
@@ -22,102 +21,134 @@ const mockedComments = [
   { id: mockedCommentId, user: { id: mockedUserId } },
 ] as IssuesListCommentsResponseData;
 
-const prServiceMock: IGitHubPRService = {
-  listAllReviewComments: jest.fn(() => Promise.resolve(mockedReviews)),
-  listAllComments: jest.fn(() => Promise.resolve(mockedComments)),
-  deleteComment: jest.fn(() => Promise.resolve()),
-  createComment: jest.fn(() => Promise.resolve()),
-  deleteReviewComment: jest.fn(() => Promise.resolve()),
-  createReviewComment: jest.fn(() => Promise.resolve()),
-  getCurrentUserId: jest.fn(() => Promise.resolve(mockedUserId)),
-  getLatestCommitSha: jest.fn(() => Promise.resolve(mockedSha)),
-  files: jest.fn(() => Promise.resolve([mockTouchedFiles])),
+class PrServiceMock implements IGitHubPRService {
+  listAllReviewComments = jest.fn(() => Promise.resolve(mockedReviews));
+  listAllComments = jest.fn(() => Promise.resolve(mockedComments));
+  deleteComment = jest.fn(() => Promise.resolve());
+  createComment = jest.fn(() => Promise.resolve());
+  deleteReviewComment = jest.fn(() => Promise.resolve());
+  createReviewComment = jest.fn(() => Promise.resolve());
+  getCurrentUserId = jest.fn(() => Promise.resolve(mockedUserId));
+  getLatestCommitSha = jest.fn(() => Promise.resolve(mockedSha));
+  createCommitStatus = jest.fn(() => Promise.resolve());
+  files = jest.fn(() => Promise.resolve([mockTouchedFiles]));
+}
+
+const touchFileError = {
+  log: '',
+  msg: 'msg1',
+  severity: LogSeverity.error,
+  source: mockTouchedFiles,
+  line: 11,
+  lineOffset: 22,
+  valid: true,
+};
+const touchFileWarning = {
+  log: '',
+  msg: 'msg3',
+  severity: LogSeverity.warning,
+  source: mockTouchedFiles,
+  line: 33,
+  lineOffset: 44,
+  valid: true,
+};
+const untouchedError = {
+  log: '',
+  msg: 'msg2',
+  severity: LogSeverity.error,
+  source: 'otherfile.cs',
+  line: 55,
+  lineOffset: 66,
+  valid: true,
+};
+const untouchedWarning = {
+  log: '',
+  msg: 'msg4',
+  severity: LogSeverity.warning,
+  source: 'otherfile.cs',
+  line: 77,
+  lineOffset: 88,
+  valid: true,
 };
 
-const mockedLogs: LogType[] = [
-  {
-    log: '',
-    msg: 'msg1',
-    severity: LogSeverity.error,
-    source: mockTouchedFiles,
-    line: mockTouchedLine1,
-    lineOffset: 99,
-    valid: true,
-  },
-  {
-    log: '',
-    msg: 'msg2',
-    severity: LogSeverity.error,
-    source: 'otherfile.cs',
-    line: 2,
-    lineOffset: 3,
-    valid: true,
-  },
-  {
-    log: '',
-    msg: 'msg3',
-    severity: LogSeverity.warning,
-    source: mockTouchedFiles,
-    line: mockTouchedLine2,
-    lineOffset: 5,
-    valid: true,
-  },
-  {
-    log: '',
-    msg: 'msg4',
-    severity: LogSeverity.warning,
-    source: 'otherfile.cs',
-    line: 6,
-    lineOffset: 7,
-    valid: true,
-  },
-];
-
 describe('VCS: GitHub', () => {
-  it('report should remove old comments and reviews and post new ones', async () => {
-    const github = new GitHub(prServiceMock);
+  it('should remove old comments and reviews and post new ones', async () => {
+    const service = new PrServiceMock();
+    const github = new GitHub(service);
 
-    const ok = await github.report(mockedLogs);
+    await github.report([
+      touchFileError,
+      touchFileWarning,
+      untouchedError,
+      untouchedWarning,
+    ]);
 
-    expect(prServiceMock.getCurrentUserId).toHaveBeenCalledTimes(1);
-    expect(prServiceMock.listAllComments).toHaveBeenCalledTimes(1);
-    expect(prServiceMock.listAllReviewComments).toHaveBeenCalledTimes(1);
+    expect(service.getCurrentUserId).toHaveBeenCalledTimes(1);
+    expect(service.listAllComments).toHaveBeenCalledTimes(1);
+    expect(service.listAllReviewComments).toHaveBeenCalledTimes(1);
 
-    expect(prServiceMock.deleteComment).toHaveBeenCalledTimes(1);
-    expect(prServiceMock.deleteComment).toHaveBeenCalledWith(mockedCommentId);
+    expect(service.deleteComment).toHaveBeenCalledTimes(1);
+    expect(service.deleteComment).toHaveBeenCalledWith(mockedCommentId);
 
-    expect(prServiceMock.deleteReviewComment).toHaveBeenCalledTimes(1);
-    expect(prServiceMock.deleteReviewComment).toHaveBeenCalledWith(mockedReviewId);
+    expect(service.deleteReviewComment).toHaveBeenCalledTimes(1);
+    expect(service.deleteReviewComment).toHaveBeenCalledWith(mockedReviewId);
 
-    expect(prServiceMock.getLatestCommitSha).toHaveBeenCalledTimes(1);
-    expect(prServiceMock.files).toHaveBeenCalledTimes(1);
+    expect(service.getLatestCommitSha).toHaveBeenCalledTimes(1);
+    expect(service.files).toHaveBeenCalledTimes(1);
 
-    expect(prServiceMock.createReviewComment).toHaveBeenNthCalledWith(
+    expect(service.createReviewComment).toHaveBeenNthCalledWith(
       1,
       mockedSha,
       expect.any(String),
-      mockTouchedFiles,
-      mockTouchedLine1,
+      touchFileError.source,
+      touchFileError.line,
     );
-    expect(prServiceMock.createReviewComment).toHaveBeenNthCalledWith(
+    expect(service.createReviewComment).toHaveBeenNthCalledWith(
       2,
       mockedSha,
       expect.any(String),
-      mockTouchedFiles,
-      99,
+      touchFileWarning.source,
+      touchFileWarning.line,
     );
-    expect(prServiceMock.createComment).toHaveBeenCalledTimes(1);
-    expect(prServiceMock.createComment).toHaveBeenCalledWith(expect.any(String));
 
-    expect(ok).toBeFalsy();
+    expect(service.createCommitStatus).toHaveBeenCalledTimes(1);
+    expect(service.createCommitStatus).toHaveBeenCalledWith(
+      mockedSha,
+      CommitStatus.failure,
+      expect.any(String),
+    );
+
+    expect(service.createComment).toHaveBeenCalledTimes(1);
+    expect(service.createComment).toHaveBeenCalledWith(expect.any(String));
   });
 
-  it('should report truthy status if no error occur', async () => {
-    const github = new GitHub(prServiceMock);
-    const warnLog = mockedLogs[2];
+  it('should set commit status as success when no error', async () => {
+    const service = new PrServiceMock();
+    const github = new GitHub(service);
+    await github.report([touchFileWarning]);
 
-    const ok = await github.report([warnLog]);
+    expect(service.createReviewComment).toHaveBeenCalledTimes(1);
+    expect(service.createComment).toHaveBeenCalledTimes(1);
+    expect(service.createCommitStatus).toHaveBeenCalledTimes(1);
+    expect(service.createCommitStatus).toHaveBeenCalledWith(
+      mockedSha,
+      CommitStatus.success,
+      expect.any(String),
+    );
+  });
 
-    expect(ok).toBeTruthy();
+  it('should not create review or comment when no related issues provided', async () => {
+    const service = new PrServiceMock();
+    const github = new GitHub(service);
+    await github.report([untouchedWarning, untouchedError]);
+
+    expect(service.createReviewComment).toHaveBeenCalledTimes(0);
+    expect(service.createComment).toHaveBeenCalledTimes(0);
+    expect(service.createCommitStatus).toHaveBeenCalledTimes(1);
+    expect(service.createCommitStatus).toHaveBeenCalledWith(
+      mockedSha,
+      CommitStatus.success,
+      expect.any(String),
+    );
   });
 });

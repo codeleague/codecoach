@@ -10,7 +10,7 @@ import { GIT_CHECKOUT, GIT_CLONE, GIT_EXEC, GIT_FETCH } from './git.constant';
 const rimrafAsync = promisify(rimraf);
 
 const PULLS = (n: number) => `pull/${n}/head`;
-
+// todo: use cwd somehow ?
 export class Git implements GitInterface {
   commands: CommandSequence;
   rootPath: string;

@@ -15,5 +15,6 @@ export const buildAppConfig = (arg: ConfigArgument): AppConfig => {
     logFilePath: arg.output,
     projectType: arg.type as ProjectType,
     buildLogFiles: arg.buildLogFile,
+    cwd: arg.cwd,
   };
 };

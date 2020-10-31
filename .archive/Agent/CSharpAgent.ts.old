@@ -1,7 +1,6 @@
 import { spawn } from 'child_process';
 import { resolve } from 'path';
 
-import { REPO_DIR, ROOT_DIR } from '../app.constants';
 import { AgentConfig } from '../Config/@types';
 import { Agent } from './@interfaces/agent.interface';
 
@@ -12,15 +11,18 @@ export class CSharpAgent implements Agent {
   private readonly execPath: string;
   private readonly target?: string;
   private readonly debug: boolean;
-
-  private static warningOutFile = resolve(ROOT_DIR, WarningFile);
-  private static errorOutFile = resolve(ROOT_DIR, ErrorFile);
+  private readonly cwd: string;
+  private readonly warningOutFile: string;
+  private readonly errorOutFile: string;
 
   constructor(loader: AgentConfig) {
-    const { execPath, debug, target } = loader;
+    const { execPath, debug, target, cwd } = loader;
     this.execPath = execPath;
     this.target = target;
     this.debug = debug ?? false;
+    this.cwd = cwd;
+    this.errorOutFile = resolve(cwd, ErrorFile);
+    this.warningOutFile = resolve(cwd, WarningFile);
   }
 
   private getBuildArgs(): string[] {
@@ -30,11 +32,11 @@ export class CSharpAgent implements Agent {
       '-p:ActiveRulesets="Coding Standards"',
       '-p:GenerateFullPaths=true',
       '--no-incremental',
-      `-flp1:logfile=${CSharpAgent.warningOutFile};warningsonly;`,
-      `-flp2:logfile=${CSharpAgent.errorOutFile};errorsonly;`,
+      `-flp1:logfile=${this.warningOutFile};warningsonly;`,
+      `-flp2:logfile=${this.errorOutFile};errorsonly;`,
     ];
 
-    if (this.target) args.push(resolve(ROOT_DIR, REPO_DIR, this.target));
+    if (this.target) args.push(resolve(this.cwd, this.target));
 
     return args;
   }
@@ -58,6 +60,6 @@ export class CSharpAgent implements Agent {
       }
     });
 
-    return [CSharpAgent.warningOutFile, CSharpAgent.errorOutFile];
+    return [this.warningOutFile, this.errorOutFile];
   }
 }
