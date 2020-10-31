@@ -4,5 +4,4 @@ export type ProviderConfig = {
   prId: number;
   userAgent: string;
   timeZone: string;
-  gitCloneBypass: boolean;
 };

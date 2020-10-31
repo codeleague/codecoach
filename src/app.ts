@@ -1,22 +1,16 @@
 #!/usr/bin/env node
 
-import { Agent, CSharpAgent } from './Agent';
 import { Config, ProjectType } from './Config';
 import { File } from './File';
-import { CSharpParser, LogType, Parser } from './Parser';
-import { Git, GitConfigType, GitHub, GitHubPRService, VCS } from './Provider';
-
-import { ROOT_DIR } from './app.constants';
-import { TSLintParser } from './Parser/TSLintParser';
-import { TSAgent } from './Agent/TSAgent';
+import { CSharpParser, TSLintParser, LogType, Parser } from './Parser';
+import { GitHub, GitHubPRService, VCS } from './Provider';
 
 class App {
   private readonly parser: Parser;
-  private readonly agent: Agent;
   private readonly vcs: VCS;
 
   constructor() {
-    [this.parser, this.agent] = App.setProjectType(Config.app.projectType);
+    [this.parser] = App.setProjectType(Config.app.projectType);
     const githubPRService = new GitHubPRService(
       Config.provider.token,
       Config.provider.repoUrl,
@@ -26,32 +20,19 @@ class App {
   }
 
   async start(): Promise<boolean> {
-    if (!Config.provider.gitCloneBypass) await App.cloneRepo();
-    const logFiles = Config.app.buildLogFiles ?? (await this.agent.buildAndGetLogFiles());
-    const logs = await this.parseBuildData(logFiles);
+    const logs = await this.parseBuildData(Config.app.buildLogFiles);
     const isOk = await this.vcs.report(logs);
     await App.writeLogToFile(logs);
 
     return isOk;
   }
 
-  private static async cloneRepo(): Promise<void> {
-    const config: GitConfigType = {
-      src: Config.provider.repoUrl,
-      prId: Config.provider.prId,
-      dest: ROOT_DIR,
-    };
-
-    const git = new Git(config);
-    await git.clone();
-  }
-
-  private static setProjectType(type: ProjectType): [Parser, Agent] {
+  private static setProjectType(type: ProjectType): [Parser] {
     switch (type) {
       case ProjectType.csharp:
-        return [new CSharpParser(), new CSharpAgent(Config.agent)];
+        return [new CSharpParser()];
       case ProjectType.tslint:
-        return [new TSLintParser(), new TSAgent(Config.agent)];
+        return [new TSLintParser()];
     }
   }
 

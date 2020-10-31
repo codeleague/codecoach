@@ -1,15 +1,9 @@
-import dotenv from 'dotenv';
 import yargs from 'yargs';
 
 import { ConfigArgument, ConfigObject } from './@types';
 import { ProjectType } from './@enums';
 
-import {
-  buildAgentConfig,
-  buildAppConfig,
-  buildProviderConfig,
-  validateEnvConfig,
-} from './configBuilder';
+import { buildAppConfig, buildProviderConfig } from './configBuilder';
 import { DEFAULT_OUTPUT_FILE } from './constants/defaults';
 
 const args = yargs
@@ -34,16 +28,12 @@ const args = yargs
     type: 'array',
     string: true,
     number: false,
+    demandOption: true,
   })
   .option('output', {
     describe: 'Output parsed log file',
     type: 'string',
     default: DEFAULT_OUTPUT_FILE,
-  })
-  .option('noClone', {
-    describe: 'Bypass internal source pulling',
-    type: 'boolean',
-    default: false,
   })
   .option('token', {
     describe: 'GitHub token',
@@ -53,14 +43,7 @@ const args = yargs
   .help()
   .parse(process.argv.slice(1)) as ConfigArgument;
 
-dotenv.config();
-
-if (!validateEnvConfig(process.env)) {
-  throw new Error('.env file is not valid');
-}
-
 export const Config: ConfigObject = Object.freeze({
-  agent: buildAgentConfig(process.env),
   app: buildAppConfig(args),
   provider: buildProviderConfig(args),
 });

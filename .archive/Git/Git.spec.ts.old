@@ -1,14 +1,14 @@
 import { existsSync } from 'fs';
 import { mkdir, writeFile } from 'fs/promises';
 import { resolve } from 'path';
-import { GitConfigType } from '..';
-import { REPO_DIR } from '../../app.constants';
+import { REPO_DIR } from '../../src/app.constants';
 import { Git } from './Git';
+import { GitConfigType } from './git.config.type.ts.old';
 
 describe('Git tests', () => {
   const cloneDest = './testdir';
   const config: GitConfigType = {
-    src: 'https://github.com/yee2542/git-101',
+    src: 'https://github.com/owner/repo',
     dest: cloneDest,
     prId: 5,
   };
@@ -28,7 +28,7 @@ describe('Git tests', () => {
     const checkoutCwd = git.commands[2].cwd;
 
     expect(cloneCommand).toBe(
-      'git clone https://github.com/yee2542/git-101' + ' ' + cloneTargetPath,
+      'git clone https://github.com/owner/repo' + ' ' + cloneTargetPath,
     );
     expect(cloneCwd).toBe(ROOT_PATH);
 
@@ -45,10 +45,5 @@ describe('Git tests', () => {
     await git.clearRepo();
     const repoExist = existsSync(PROJECT_PATH);
     expect(repoExist).toBe(false);
-  });
-
-  it('The git constant should define correctly', () => {
-    // todo: srsly ?
-    expect(REPO_DIR).toBe('./repo');
   });
 });

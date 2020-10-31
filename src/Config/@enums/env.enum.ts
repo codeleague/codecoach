@@ -1,6 +1,0 @@
-export enum envEnum {
-  PROVIDER = 'PROVIDER',
-
-  AGENT_PATH = 'AGENT_PATH',
-  AGENT_PROJECT_TARGET = 'AGENT_PROJECT_TARGET',
-}
