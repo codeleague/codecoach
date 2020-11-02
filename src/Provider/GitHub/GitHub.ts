@@ -22,16 +22,9 @@ export class GitHub implements VCS {
       Log.debug('Touched files', touchedFiles);
       Log.debug('Filtered log', filteredLogs);
 
-      const reviews = filteredLogs
-        .map((log) => {
-          try {
-            return this.toCreateReviewComment(commitId)(log);
-          } catch (err) {
-            Log.warning('Create review failed', err);
-            return null;
-          }
-        })
-        .filter((el) => el);
+      const reviews = filteredLogs.map((log) =>
+        this.toCreateReviewComment(commitId, log),
+      );
       await Promise.all(reviews);
       Log.info(`Create ${reviews.length} review comments completed`);
 
@@ -49,21 +42,26 @@ export class GitHub implements VCS {
       await this.prService.createCommitStatus(commitId, commitStatus, description);
       Log.info('Report commit status completed');
     } catch (err) {
-      Log.error('Github report failed');
+      Log.error('GitHub report failed', err);
       throw err;
     }
   }
 
-  private toCreateReviewComment = (commitSha: string) => async (
+  private toCreateReviewComment = async (
+    commitSha: string,
     log: LogType,
   ): Promise<void> => {
-    //todo: handle comment on restrict zone in github
-    return this.prService.createReviewComment(
-      commitSha,
-      MessageUtil.createMessageWithEmoji(log.msg, log.severity),
-      log.source,
-      log.line,
-    );
+    try {
+      return await this.prService.createReviewComment(
+        commitSha,
+        MessageUtil.createMessageWithEmoji(log.msg, log.severity),
+        log.source,
+        log.line,
+      );
+    } catch (e) {
+      // todo: this is workaround; handle comment on restrict zone in github
+      Log.warning('GitHub create review failed', log);
+    }
   };
 
   private async removeExistingComments(): Promise<void> {
