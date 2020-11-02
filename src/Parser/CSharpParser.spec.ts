@@ -3,19 +3,19 @@ import { LogType } from './@types/log.type';
 import { CSharpParser } from './CSharpParser';
 
 describe('CSharpParser tests', () => {
-  const cwdWin = 'C:\\source\\codeleague\\codecoach\\tmp\\repo';
-  const cwdUnix = '/opt/buildagent/work/8e09d9d554a92a80/tmp/repo';
+  const cwdWin = 'C:\\source';
+  const cwdUnix = '/dir';
 
   const contentWithLineOffset =
-    '1:7>C:\\source\\codeleague\\codecoach\\tmp\\repo\\Broken.cs(6,8): warning AG0030: Prevent use of dynamic [C:\\source\\codeleague\\codecoach\\tmp\\repo\\Broken.csproj]';
+    '1:7>C:\\source\\Broken.cs(6,8): warning AG0030: Prevent use of dynamic [C:\\source\\Broken.csproj]';
 
   const contentNoLineOffset =
-    "1:7>CSC : error CS5001: Program does not contain a static 'Main' method suitable for an entry point [C:\\source\\codeleague\\codecoach\\tmp\\repo\\Broken.csproj]";
+    "1:7>CSC : error CS5001: Program does not contain a static 'Main' method suitable for an entry point [C:\\source\\Broken.csproj]";
 
   const contentWithNotValid = `
-  3:9>/opt/buildagent/work/8e09d9d554a92a80/tmp/repo/Tests/Agoda.Gateway.Core.Tests/Mocks/SearchResultMockBuilder.cs(17,43): warning CS0649: Field 'SearchResultMockBuilder._urgencyScore' is never assigned to, and will always have its default value null [/opt/buildagent/work/8e09d9d554a92a80/tmp/repo/Tests/Agoda.Gateway.Core.Tests/Agoda.Gateway.Core.Tests.csproj]
-  17:6>/opt/buildagent/work/8e09d9d554a92a80/tmp/repo/Tests/PCI/Agoda.Gateway.Pci.External.Tests/BookingApi/Mappers/Request/CreateBookingRequestMapperTests.cs(226,17): warning CS0219: The variable 'langId' is assigned but its value is never used [/opt/buildagent/work/8e09d9d554a92a80/tmp/repo/Tests/PCI/Agoda.Gateway.Pci.External.Tests/Agoda.Gateway.Pci.External.Tests.csproj]
-    9:8>/usr/share/dotnet/sdk/3.1.402/Microsoft.Common.CurrentVersion.targets(2084,5): warning MSB3277: Found conflicts between different versions of "Microsoft.Extensions.Configuration.Json" that could not be resolved.  These reference conflicts are listed in the build log when log verbosity is set to detailed. [/opt/buildagent/work/8e09d9d554a92a80/tmp/repo/Tests/Agoda.Gateway.External.Tests/Agoda.Gateway.External.Tests.csproj]`;
+  3:9>/dir/Tests/File.cs(17,43): warning CS0649: Field 'SearchResultMockBuilder._urgencyScore' is never assigned to, and will always have its default value null [/dir/Tests/project.csproj]
+  17:6>/dir/Tests/File2.cs(226,17): warning CS0219: The variable 'langId' is assigned but its value is never used [/dir/Tests/project.csproj]
+    9:8>/usr/share/dotnet/sdk/3.1.402/Microsoft.Common.CurrentVersion.targets(2084,5): warning MSB3277: Found conflicts between different versions of "Microsoft.Extensions.Configuration.Json" that could not be resolved.  These reference conflicts are listed in the build log when log verbosity is set to detailed. [/dir/Tests/project.csproj]`;
 
   it('Should parse correctly when (line, offset) is provided', () => {
     const result = new CSharpParser(cwdWin).withContent(contentWithLineOffset).getLogs();

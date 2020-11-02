@@ -2,13 +2,12 @@ import { LogSeverity } from './@enums/log.severity.enum';
 import { TSLintParser } from './TSLintParser';
 
 describe('TSLintParser tests', () => {
-  const cwd = 'C:/Users/kthuswongsa/Documents/agoda-com-spa-mobile/tmp/repo';
+  const cwd = 'C:/repo';
   const mockedContent = [
     {
       endPosition: { character: 5, line: 55, position: 3915 },
       failure: "Identifier 'a' is never reassigned; use 'const' instead of 'let'.",
-      name:
-        'C:/Users/kthuswongsa/Documents/agoda-com-spa-mobile/tmp/repo/Agoda.Mobile.Client/src/app/mobile/component/Layout/Layout.tsx',
+      name: 'C:/repo/src/app/mobile/component/Layout/Layout.tsx',
       ruleName: 'prefer-const',
       ruleSeverity: 'ERROR',
       startPosition: { character: 4, line: 55, position: 3914 },
@@ -29,7 +28,7 @@ describe('TSLintParser tests', () => {
     const result = new TSLintParser(cwd).withContent(mockedContentString).getLogs();
     expect(result).toHaveLength(2);
     expect(result[0]).toEqual({
-      source: `Agoda.Mobile.Client/src/app/mobile/component/Layout/Layout.tsx`,
+      source: `src/app/mobile/component/Layout/Layout.tsx`,
       severity: LogSeverity.error,
       line: 56,
       lineOffset: 4,

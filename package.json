@@ -11,8 +11,8 @@
     "format": "prettier --write 'src/**/*.{js,ts}'",
     "test": "jest",
     "build": "tsc --project tsconfig.build.json",
-    "dev:csharp": "nodemon --inspect=5858 --config ./nodemon.json -- --url=https://github.agodadev.io/agoda-front-end/Agoda.Gateway.git --pr=2746 --token=2e5fd1320b3befcb2a6d988399504dc4ed2797b1 --type=csharp --buildLogFile=./tmp/dotnetbuild.wrn --buildLogFile=./tmp/dotnetbuild.err --output=./tmp/dotnetbuild.json",
-    "dev:tslint": "nodemon --inspect=5858 --config ./nodemon.json -- --url=https://github.agodadev.io/agoda-front-end/agoda-com-spa-mobile.git --pr=4664 --token=2e5fd1320b3befcb2a6d988399504dc4ed2797b1 --type=tslint --buildLogFile=./sample/ts/tslint-output.json --output=./tmp/tsbuild.json",
+    "dev:csharp": "nodemon --inspect=5858 --config ./nodemon.json -- --url=https://github.com/codeleague/codecoach.git --token=placeyourtokenhere --pr=15 --type=csharp --buildLogFile=./sample/csharp/build.content --output=./tmp/dotnetbuild.json",
+    "dev:tslint": "nodemon --inspect=5858 --config ./nodemon.json -- --url=https://github.com/codeleague/codecoach.git --token=placeyourtokenhere --pr=15 --type=tslint --buildLogFile=./sample/tslint/tslint-output.json --output=./tmp/tsbuild.json",
     "prepublishOnly": "yarn build"
   },
   "bin": {

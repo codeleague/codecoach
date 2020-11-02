@@ -2,7 +2,7 @@
   {
     "endPosition": { "character": 5, "line": 55, "position": 3915 },
     "failure": "Identifier 'a' is never reassigned; use 'const' instead of 'let'.",
-    "name": "C:/Users/kthuswongsa/Documents/agoda-com-spa-mobile/tmp/repo/Agoda.Mobile.Client/src/app/mobile/component/Layout/Layout.tsx",
+    "name": "C:/Users/a/repo/src/app/mobile/component/Layout/Layout.tsx",
     "ruleName": "prefer-const",
     "ruleSeverity": "ERROR",
     "startPosition": { "character": 4, "line": 55, "position": 3914 }
@@ -10,7 +10,7 @@
   {
     "endPosition": { "character": 5, "line": 57, "position": 3925 },
     "failure": "Identifier 'b' is never reassigned; use 'const' instead of 'let'.",
-    "name": "C:/Users/kthuswongsa/Documents/agoda-com-spa-mobile/tmp/repo/Agoda.Mobile.Client/src/app/mobile/component/Layout/Layout.tsx",
+    "name": "C:/Users/a/repo/src/app/mobile/component/Layout/Layout.tsx",
     "ruleName": "prefer-const",
     "ruleSeverity": "ERROR",
     "startPosition": { "character": 4, "line": 57, "position": 3924 }
@@ -19,7 +19,7 @@
     "endPosition": { "character": 13, "line": 60, "position": 3945 },
     "failure": "Missing semicolon",
     "fix": { "innerStart": 3945, "innerLength": 0, "innerText": ";" },
-    "name": "C:/Users/kthuswongsa/Documents/agoda-com-spa-mobile/tmp/repo/Agoda.Mobile.Client/src/app/mobile/component/Layout/Layout.tsx",
+    "name": "C:/Users/a/repo/src/app/mobile/component/Layout/Layout.tsx",
     "ruleName": "semicolon",
     "ruleSeverity": "ERROR",
     "startPosition": { "character": 13, "line": 60, "position": 3945 }

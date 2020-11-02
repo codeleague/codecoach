@@ -33,11 +33,12 @@ Options:
   --version       Show version number                                  [boolean]
   --url           GitHub repo url (https or ssh)             [string] [required]
   --pr            PR number                                  [number] [required]
-  --type          Project type                    [required] [choices: "csharp"]
+  --type          Project type          [required] [choices: "csharp", "tslint"]
   --buildLogFile  Build log content files (repeatable); If this option is set,
-                  build agent will be skipped                            [array]
+                  build agent will be skipped                 [array] [required]
   --output        Output parsed log file        [string] [default: "build.json"]
-  --noClone       Bypass internal source pulling      [boolean] [default: false]
   --token         GitHub token                               [string] [required]
+  --cwd           Set working directory. Will use current context cwd if not
+                  set.                                                  [string]
   --help          Show help                                            [boolean]
 ```
