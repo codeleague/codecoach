@@ -60,7 +60,7 @@ export class GitHub implements VCS {
       );
     } catch (e) {
       // todo: this is workaround; handle comment on restrict zone in github
-      Log.warning('GitHub create review failed', log);
+      Log.warn('GitHub create review failed', log);
     }
   };
 
