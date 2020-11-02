@@ -151,4 +151,13 @@ describe('VCS: GitHub', () => {
       expect.any(String),
     );
   });
+
+  it('should not throw when create review failed (REMOVE THIS TEST WHEN WORKAROUND IS REMOVED)', async () => {
+    const service = new PrServiceMock();
+    service.createReviewComment = jest.fn(() => Promise.reject());
+
+    const github = new GitHub(service);
+
+    await expect(github.report([touchFileWarning])).resolves.not.toThrow();
+  });
 });
