@@ -14,24 +14,29 @@ export class GitHub implements VCS {
       await this.removeExistingComments();
       const commitId = await this.prService.getLatestCommitSha();
       const touchedFiles = await this.prService.files();
-      const filteredLogs = logs
+      const touchedFileLog = logs
         .filter(onlyIn(touchedFiles))
         .filter(onlySeverity(LogSeverity.error, LogSeverity.warning));
 
       Log.debug(`Commit SHA ${commitId}`);
       Log.debug('Touched files', touchedFiles);
-      Log.debug('Filtered log', filteredLogs);
+      Log.debug('Touched file log', touchedFileLog);
 
-      const reviews = filteredLogs.map((log) =>
-        this.toCreateReviewComment(commitId, log),
+      const reviewResults = await Promise.all(
+        touchedFileLog.map((log) => this.toCreateReviewComment(commitId, log)),
       );
-      await Promise.all(reviews);
-      Log.info(`Create ${reviews.length} review comments completed`);
+      const reviewedLogs = reviewResults.filter((log) => log);
 
-      const nOfErrors = filteredLogs.filter(onlySeverity(LogSeverity.error)).length;
-      const nOfWarnings = filteredLogs.filter(onlySeverity(LogSeverity.warning)).length;
+      Log.info(
+        `Create ${reviewedLogs.length} review comments. (with ${
+          reviewResults.length - reviewedLogs.length
+        } failed)`,
+      );
 
-      if (filteredLogs.length > 0) {
+      const nOfErrors = reviewedLogs.filter(onlySeverity(LogSeverity.error)).length;
+      const nOfWarnings = reviewedLogs.filter(onlySeverity(LogSeverity.warning)).length;
+
+      if (reviewedLogs.length > 0) {
         const comment = MessageUtil.generateOverviewMessage(nOfErrors, nOfWarnings);
         await this.prService.createComment(comment);
         Log.info('Create summary comment completed');
@@ -50,17 +55,19 @@ export class GitHub implements VCS {
   private toCreateReviewComment = async (
     commitSha: string,
     log: LogType,
-  ): Promise<void> => {
+  ): Promise<LogType | null> => {
     try {
-      return await this.prService.createReviewComment(
+      await this.prService.createReviewComment(
         commitSha,
         MessageUtil.createMessageWithEmoji(log.msg, log.severity),
         log.source,
         log.line,
       );
+      return log;
     } catch (e) {
       // todo: this is workaround; handle comment on restrict zone in github
-      Log.warn('GitHub create review failed', log);
+      Log.warn('GitHub create review failed', e, log);
+      return null;
     }
   };
 
