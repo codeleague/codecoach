@@ -1,6 +1,11 @@
 # CodeCoach
 Automatic code report tool.
 
+### The Problem Statement
+At Agoda there are hundreds of active contributors a week, which resulted in wheter code getting GOOD fast or getting BAD fast.
+
+CodeCoach automate code review routine and aim to provide utility to gamify code clean up in team.  
+
 ### Prerequisite
 Node v12.0.0 or later
 
@@ -24,7 +29,7 @@ $ yarn global add @codeleague/codecoach
 ### Usage
 Just use command `codecoach`
 ```shell script
-$ codecoach <options>
+$ CodeCoach <options>
 ```
 
 All available options
