@@ -14,6 +14,8 @@ export class GitHub implements VCS {
       await this.removeExistingComments();
       const commitId = await this.prService.getLatestCommitSha();
       const touchedFiles = await this.prService.files();
+      const noFileLogs = logs.filter((l) => !l.valid);
+
       const touchedFileLog = logs
         .filter(onlyIn(touchedFiles))
         .filter(onlySeverity(LogSeverity.error, LogSeverity.warning));
@@ -22,6 +24,17 @@ export class GitHub implements VCS {
       Log.debug('Touched files', touchedFiles);
       Log.debug('Touched file log', touchedFileLog);
 
+      if (noFileLogs.length > 0) {
+        try {
+          const message = `<details><summary><span style="color:blue">Other issues ...</span></summary> ${noFileLogs
+            .map((l) => l.msg)
+            .join('\n\n')} </details>`;
+          await this.prService.createComment(message);
+        } catch (e) {
+          console.trace(e);
+          throw Error(e);
+        }
+      }
       const reviewResults = await Promise.all(
         touchedFileLog.map((log) => this.toCreateReviewComment(commitId, log)),
       );
@@ -32,7 +45,6 @@ export class GitHub implements VCS {
           reviewResults.length - reviewedLogs.length
         } failed)`,
       );
-
       const nOfErrors = reviewedLogs.filter(onlySeverity(LogSeverity.error)).length;
       const nOfWarnings = reviewedLogs.filter(onlySeverity(LogSeverity.warning)).length;
 
