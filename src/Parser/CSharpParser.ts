@@ -1,11 +1,11 @@
 import { relative, resolve } from 'path';
 import slash from 'slash';
-import { Log } from '../Logger/Logger';
 
+import { Log } from '../Logger';
 import { getRelativePath } from '../Provider/utils/path.util';
 import { LogSeverity } from './@enums/log.severity.enum';
 import { Parser } from './@interfaces/parser.interface';
-import { LogType } from './@types/log.type';
+import { LogType } from './@types';
 import lineBreakUtil from './utils/lineBreak.util';
 
 export class CSharpParser extends Parser {

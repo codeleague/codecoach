@@ -45,6 +45,11 @@ const args = yargs
     type: 'string',
     default: process.cwd(),
   })
+  .check((options) => {
+    if (!options.pr || Array.isArray(options.pr))
+      throw '--pr config should be a single number';
+    else return true;
+  })
   .help()
   .parse(process.argv.slice(1)) as ConfigArgument;
 

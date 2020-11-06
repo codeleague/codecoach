@@ -1,28 +1,14 @@
-import { Log } from '../Logger/Logger';
+import { Log } from '../Logger';
 import { getRelativePath } from '../Provider/utils/path.util';
 import { LogSeverity } from './@enums/log.severity.enum';
 import { Parser } from './@interfaces/parser.interface';
-import { LogType } from './@types/log.type';
+import { LogType, TSLintLog } from './@types';
 
-type TslintLogPosition = {
-  character: number;
-  line: number;
-  position: number;
-};
-
-type TslintLog = {
-  endPosition: TslintLogPosition;
-  failure: string;
-  name: string;
-  ruleName: string;
-  ruleSeverity: string;
-  startPosition: TslintLogPosition;
-};
 export class TSLintParser extends Parser {
   withContent(content: string): Parser {
     try {
       if (content) {
-        const logsJson = JSON.parse(content) as TslintLog[];
+        const logsJson = JSON.parse(content) as TSLintLog[];
         const logs = logsJson.map((el) => this.toLog(el));
         this.logs.push(...logs);
       }
@@ -34,7 +20,7 @@ export class TSLintParser extends Parser {
     }
   }
 
-  private toLog(log: TslintLog): LogType {
+  private toLog(log: TSLintLog): LogType {
     const parsed: LogType = {
       log: JSON.stringify(log),
       line: log.startPosition.line + 1,

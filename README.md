@@ -33,7 +33,7 @@ Options:
   --version       Show version number                                  [boolean]
   --url           GitHub repo url (https or ssh)             [string] [required]
   --pr            PR number                                  [number] [required]
-  --type          Project type          [required] [choices: "csharp", "tslint"]
+  --type          Project type[required] [choices: "csharp", "tslint", "eslint"]
   --buildLogFile  Build log content files (repeatable); If this option is set,
                   build agent will be skipped                 [array] [required]
   --output        Output parsed log file        [string] [default: "build.json"]

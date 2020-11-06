@@ -3,7 +3,7 @@
 import { Config, ProjectType } from './Config';
 import { File } from './File';
 import { Log } from './Logger';
-import { CSharpParser, LogType, Parser, TSLintParser } from './Parser';
+import { CSharpParser, ESLintParser, LogType, Parser, TSLintParser } from './Parser';
 import { GitHub, GitHubPRService, VCS } from './Provider';
 
 class App {
@@ -37,6 +37,8 @@ class App {
         return new CSharpParser(Config.app.cwd);
       case ProjectType.tslint:
         return new TSLintParser(Config.app.cwd);
+      case ProjectType.eslint:
+        return new ESLintParser(Config.app.cwd);
     }
   }
 
