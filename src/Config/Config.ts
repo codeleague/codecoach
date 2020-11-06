@@ -45,6 +45,10 @@ const args = yargs
     type: 'string',
     default: process.cwd(),
   })
+  .check((options) => {
+    if (!options.pr) throw 'SHIT!';
+    else return true;
+  })
   .help()
   .parse(process.argv.slice(1)) as ConfigArgument;
 
