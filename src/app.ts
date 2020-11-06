@@ -5,6 +5,7 @@ import { File } from './File';
 import { Log } from './Logger';
 import { CSharpParser, LogType, Parser, TSLintParser } from './Parser';
 import { GitHub, GitHubPRService, VCS } from './Provider';
+import { ESLintParser } from './Parser/ESLintParser';
 
 class App {
   private readonly parser: Parser;
@@ -37,6 +38,8 @@ class App {
         return new CSharpParser(Config.app.cwd);
       case ProjectType.tslint:
         return new TSLintParser(Config.app.cwd);
+      case ProjectType.eslint:
+        return new ESLintParser(Config.app.cwd);
     }
   }
 
