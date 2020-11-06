@@ -3,9 +3,8 @@
 import { Config, ProjectType } from './Config';
 import { File } from './File';
 import { Log } from './Logger';
-import { CSharpParser, LogType, Parser, TSLintParser } from './Parser';
+import { CSharpParser, ESLintParser, LogType, Parser, TSLintParser } from './Parser';
 import { GitHub, GitHubPRService, VCS } from './Provider';
-import { ESLintParser } from './Parser/ESLintParser';
 
 class App {
   private readonly parser: Parser;
