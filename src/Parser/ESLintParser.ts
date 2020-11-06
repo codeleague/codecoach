@@ -32,11 +32,13 @@ export class ESLintParser extends Parser {
       if (content) {
         const logs = JSON.parse(content) as ESLintLog[];
         logs.forEach((log) => {
-          const source = getRelativePath(this.cwd, log.filePath);
+          if (log.messages.length > 0) {
+            const source = getRelativePath(this.cwd, log.filePath);
 
-          log.messages.forEach((msg) => {
-            this.logs.push(ESLintParser.toLog(msg, source));
-          });
+            log.messages.forEach((msg) => {
+              this.logs.push(ESLintParser.toLog(msg, source));
+            });
+          }
         });
       }
 
