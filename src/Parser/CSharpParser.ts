@@ -1,6 +1,6 @@
 import { relative, resolve } from 'path';
 import slash from 'slash';
-import { Log } from '../Logger/Logger';
+import { Log } from '../Logger';
 
 import { getRelativePath } from '../Provider/utils/path.util';
 import { LogSeverity } from './@enums/log.severity.enum';
