@@ -1,30 +1,8 @@
-import { Parser } from './@interfaces/parser.interface';
 import { Log } from '../Logger';
-import { LogType } from './@types/log.type';
-import { LogSeverity } from './@enums/log.severity.enum';
 import { getRelativePath } from '../Provider/utils/path.util';
-
-type ESLintIssue = {
-  ruleId: string | null;
-  fatal: boolean;
-  severity: number;
-  message: string;
-  line: number;
-  column: number;
-  nodeType: string;
-  messageId: 'string';
-  endLine: number;
-  endColumn: number;
-};
-type ESLintLog = {
-  filePath: string;
-  messages: ESLintIssue[];
-  errorCount: number;
-  warningCount: number;
-  fixableErrorCount: number;
-  fixableWarningCount: number;
-  source: string;
-};
+import { LogSeverity } from './@enums/log.severity.enum';
+import { Parser } from './@interfaces/parser.interface';
+import { ESLintIssue, ESLintLog, LogType } from './@types';
 
 export class ESLintParser extends Parser {
   withContent(content: string): Parser {

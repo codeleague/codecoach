@@ -2,8 +2,7 @@ import { Log } from '../Logger';
 import { getRelativePath } from '../Provider/utils/path.util';
 import { LogSeverity } from './@enums/log.severity.enum';
 import { Parser } from './@interfaces/parser.interface';
-import { LogType } from './@types/log.type';
-import { TSLintLog } from './@types/TSLintLog';
+import { LogType, TSLintLog } from './@types';
 
 export class TSLintParser extends Parser {
   withContent(content: string): Parser {
