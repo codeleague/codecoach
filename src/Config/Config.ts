@@ -46,7 +46,8 @@ const args = yargs
     default: process.cwd(),
   })
   .check((options) => {
-    if (!options.pr) throw 'SHIT!';
+    if (!options.pr || Array.isArray(options.pr))
+      throw '--pr config should be a single number';
     else return true;
   })
   .help()
