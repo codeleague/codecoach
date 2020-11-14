@@ -31,8 +31,7 @@ export class GitHub implements VCS {
             .join('\n\n')} </details>`;
           await this.prService.createComment(message);
         } catch (e) {
-          console.trace(e);
-          throw Error(e);
+          Log.error('Create other issues comment failed', e);
         }
       }
       const reviewResults = await Promise.all(

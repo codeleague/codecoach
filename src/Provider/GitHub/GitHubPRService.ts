@@ -2,13 +2,14 @@ import { Octokit } from '@octokit/rest';
 import {
   IssuesListCommentsResponseData,
   PullsListReviewCommentsResponseData,
+  ResponseHeaders,
 } from '@octokit/types';
 import { URL } from 'url';
 
 import { GITHUB_COM_API } from '../../app.constants';
 import { TIME_ZONE, USER_AGENT } from '../../Config/constants/defaults';
 import { Log } from '../../Logger';
-import { GITHUB_PROVIDER_MAX_REVIEWS_PER_PAGE } from '../constants/github.provider.constant';
+import { API_PAGE_SIZE_LIMIT } from '../constants/github.provider.constant';
 import { CommitStatus } from './CommitStatus';
 import { IGitHubPRService } from './IGitHubPRService';
 
@@ -35,53 +36,47 @@ export class GitHubPRService implements IGitHubPRService {
   }
 
   async listAllReviewComments(): Promise<PullsListReviewCommentsResponseData> {
-    const response = await this.adapter.pulls.listReviewComments({
-      ...this.requestBase,
-      pull_number: this.pr,
-      per_page: GITHUB_PROVIDER_MAX_REVIEWS_PER_PAGE,
-    });
-    return response.data;
-  }
+    const reviews: PullsListReviewCommentsResponseData = [];
+    let page = 0;
+    let hasNext = true;
 
-  private static getApiBase(repo: URL): string {
-    return repo.hostname === 'github.com'
-      ? GITHUB_COM_API
-      : new URL('api/v3', repo.origin).toString();
+    while (hasNext) {
+      const { headers, data } = await this.adapter.pulls.listReviewComments({
+        ...this.requestBase,
+        pull_number: this.pr,
+        per_page: API_PAGE_SIZE_LIMIT,
+        page: ++page,
+      });
+
+      reviews.push(...data);
+      hasNext = GitHubPRService.hasNext(headers);
+    }
+
+    Log.debug(`Loaded ${page} pages of reviews`);
+
+    return reviews;
   }
 
   async listAllComments(): Promise<IssuesListCommentsResponseData> {
-    const { headers, data: firstPageComments } = await this.adapter.issues.listComments({
-      ...this.requestBase,
-      issue_number: this.pr,
-      per_page: GITHUB_PROVIDER_MAX_REVIEWS_PER_PAGE,
-    });
-    if (!headers.link) {
-      return firstPageComments;
-    }
-    const getLastPageNumberRegex = /.*page=(\d+)>; rel="last"/;
-    const extract = headers.link.match(getLastPageNumberRegex);
-    if (!extract) {
-      throw new Error(`List comments failed: ${headers.link}`);
-    }
-    const [, lastPageNumber] = extract;
+    const comments: IssuesListCommentsResponseData = [];
+    let page = 0;
+    let hasNext = true;
 
-    const FIRST_PAGE_OFFSET = 1;
-    const QUERY_PAGE_OFFSET = 2;
-    const listCommentHelper = Array(Number(lastPageNumber) - FIRST_PAGE_OFFSET)
-      .fill(undefined)
-      .map((_, i) => {
-        const pageIndex = i + QUERY_PAGE_OFFSET;
-        return this.adapter.issues.listComments({
-          ...this.requestBase,
-          issue_number: this.pr,
-          per_page: GITHUB_PROVIDER_MAX_REVIEWS_PER_PAGE,
-          page: pageIndex,
-        });
+    while (hasNext) {
+      const { headers, data } = await this.adapter.issues.listComments({
+        ...this.requestBase,
+        issue_number: this.pr,
+        per_page: API_PAGE_SIZE_LIMIT,
+        page: ++page,
       });
-    const listCommentQuery = (await Promise.all(listCommentHelper)).flatMap(
-      (el) => el.data,
-    );
-    return [...firstPageComments, ...listCommentQuery];
+
+      comments.push(...data);
+      hasNext = GitHubPRService.hasNext(headers);
+    }
+
+    Log.debug(`Loaded ${page} pages of comments`);
+
+    return comments;
   }
 
   async deleteComment(comment_id: number): Promise<void> {
@@ -161,11 +156,40 @@ export class GitHubPRService implements IGitHubPRService {
   }
 
   async files(): Promise<string[]> {
-    const { data: files } = await this.adapter.pulls.listFiles({
-      ...this.requestBase,
-      pull_number: this.pr,
-    });
+    const files: string[] = [];
+    let page = 0;
+    let hasNext = true;
 
-    return files.map((file) => file.filename);
+    while (hasNext) {
+      const { headers, data } = await this.adapter.pulls.listFiles({
+        ...this.requestBase,
+        pull_number: this.pr,
+        per_page: API_PAGE_SIZE_LIMIT,
+        page: ++page,
+      });
+
+      files.push(...data.map((d) => d.filename));
+      hasNext = GitHubPRService.hasNext(headers);
+    }
+
+    Log.debug(`Loaded ${page} pages of PR file list`);
+
+    return files;
+  }
+
+  private static hasNext(headers: ResponseHeaders): boolean {
+    const { link } = headers;
+    return (
+      link
+        ?.split(', ')
+        .map((l) => l.match(/rel="(.+)"/)?.[1])
+        .some((rel) => rel === 'next') ?? false
+    );
+  }
+
+  private static getApiBase(repo: URL): string {
+    return repo.hostname === 'github.com'
+      ? GITHUB_COM_API
+      : new URL('api/v3', repo.origin).toString();
   }
 }
