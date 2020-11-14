@@ -1,1 +1,1 @@
-export const GITHUB_PROVIDER_MAX_REVIEWS_PER_PAGE = 100;
+export const API_PAGE_SIZE_LIMIT = 100;
