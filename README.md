@@ -29,7 +29,7 @@ $ yarn global add @codeleague/codecoach
 ### Usage
 Just use command `codecoach`
 ```shell script
-$ CodeCoach <options>
+$ codecoach <options>
 ```
 
 All available options
