@@ -33,11 +33,24 @@ export class CSharpParser extends Parser {
       throw new Error(message);
     }
     const [, src, lineN, offset, severity, code, content, _projectSrc] = structureMatch;
-    const projectSrc = slash(_projectSrc);
 
     let relativeSrc: string;
     const line = Number(lineN) || undefined;
     const lineOffset = Number(offset) || undefined;
+
+    if (!_projectSrc) {
+      return {
+        log,
+        line,
+        lineOffset,
+        msg: `${code.trim()}: ${content.trim()}`,
+        source: '',
+        severity: severity as LogSeverity,
+        valid: false,
+      };
+    }
+
+    const projectSrc = slash(_projectSrc);
 
     if (line && lineOffset) {
       const _relativeSrc = getRelativePath(this.cwd, src);
