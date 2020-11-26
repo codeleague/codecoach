@@ -1,5 +1,5 @@
 import { LogSeverity } from './@enums/log.severity.enum';
-import { LogType } from './@types/log.type';
+import { LogType } from './@types';
 import { CSharpParser } from './CSharpParser';
 
 describe('CSharpParser tests', () => {
@@ -16,6 +16,9 @@ describe('CSharpParser tests', () => {
   3:9>/dir/Tests/File.cs(17,43): warning CS0649: Field 'SearchResultMockBuilder._urgencyScore' is never assigned to, and will always have its default value null [/dir/Tests/project.csproj]
   17:6>/dir/Tests/File2.cs(226,17): warning CS0219: The variable 'langId' is assigned but its value is never used [/dir/Tests/project.csproj]
     9:8>/usr/share/dotnet/sdk/3.1.402/Microsoft.Common.CurrentVersion.targets(2084,5): warning MSB3277: Found conflicts between different versions of "Microsoft.Extensions.Configuration.Json" that could not be resolved.  These reference conflicts are listed in the build log when log verbosity is set to detailed. [/dir/Tests/project.csproj]`;
+
+  const contentWithNoPathAtTheEnd =
+    '13:11>/dir/File.csproj : warning NU1701: This package may not be fully compatible with your project.';
 
   it('Should parse correctly when (line, offset) is provided', () => {
     const result = new CSharpParser(cwdWin).withContent(contentWithLineOffset).getLogs();
@@ -69,5 +72,11 @@ describe('CSharpParser tests', () => {
 
   it('Should throw error if the line not match the rule', () => {
     expect(() => new CSharpParser(cwdWin).withContent(':')).toThrowError();
+  });
+
+  it('should be able to handle log with no csproj file at the end', () => {
+    expect(() =>
+      new CSharpParser(cwdUnix).withContent(contentWithNoPathAtTheEnd),
+    ).not.toThrowError();
   });
 });
