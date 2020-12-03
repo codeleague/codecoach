@@ -41,7 +41,7 @@ export class MSBuildParser extends Parser {
 
     const line = Number(_line) || undefined;
     const lineOffset = Number(_lineOffset) || undefined;
-    const fileFullPath = slash(join(_csprojFullPath, '..', _filepath));
+    const fileFullPath = slash(join(slash(_csprojFullPath), '..', slash(_filepath)));
     const fileRelativePath = getRelativePath(this.cwd, fileFullPath);
 
     return {
