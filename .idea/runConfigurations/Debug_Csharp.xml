@@ -1,7 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Debug:Csharp" type="CompoundRunConfigurationType">
-    <toRun name="Dev:Csharp" type="js.build_tools.npm" />
-    <toRun name="Debugger" type="ChromiumRemoteDebugType" />
-    <method v="2" />
-  </configuration>
-</component>
