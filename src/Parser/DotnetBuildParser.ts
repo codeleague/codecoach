@@ -6,16 +6,11 @@ import { getRelativePath } from '../Provider/utils/path.util';
 import { LogSeverity } from './@enums/log.severity.enum';
 import { Parser } from './@interfaces/parser.interface';
 import { LogType } from './@types';
-import lineBreakUtil from './utils/lineBreak.util';
+import { splitByLine } from './utils/lineBreak.util';
 
 export class DotnetBuildParser extends Parser {
   withContent(content: string): Parser {
-    const lineSplitter = lineBreakUtil(content);
-
-    const logs = content
-      .split(lineSplitter)
-      .map((line) => line.trim())
-      .filter((line) => line !== '' && line !== lineSplitter)
+    const logs = splitByLine(content)
       .map((log) => this.toLog(log))
       .filter((log) => log);
 
