@@ -67,7 +67,11 @@ class App {
   }
 }
 
-new App().start().catch((err) => {
-  Log.error(err);
+new App().start().catch((error) => {
+  if (error instanceof Error) {
+    const { stack, message } = error;
+    Log.error('Unexpected error', { stack, message });
+  }
+  Log.error('Unexpected error', { error });
   process.exit(1);
 });
