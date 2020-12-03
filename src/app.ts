@@ -39,6 +39,7 @@ class App {
   }
 
   private static setProjectType(type: ProjectType): Parser {
+    Log.debug(`Project type: ${type}, cwd: ${Config.app.cwd}`);
     switch (type) {
       case ProjectType.dotnetbuild:
         return new DotnetBuildParser(Config.app.cwd);
