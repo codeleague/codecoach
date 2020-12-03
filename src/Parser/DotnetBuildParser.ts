@@ -8,7 +8,7 @@ import { Parser } from './@interfaces/parser.interface';
 import { LogType } from './@types';
 import lineBreakUtil from './utils/lineBreak.util';
 
-export class CSharpParser extends Parser {
+export class DotnetBuildParser extends Parser {
   withContent(content: string): Parser {
     const lineSplitter = lineBreakUtil(content);
 
@@ -28,7 +28,7 @@ export class CSharpParser extends Parser {
       />([^\s()]+)(?:\((\d+),(\d+)\))?\s*:\s*(\w+)\s*(\w+)\s*:\s*([^\[]+)(?:\[(.+)])?$/,
     );
     if (!structureMatch) {
-      const message = "CSharpParser Error: log structure doesn't match";
+      const message = "DotnetBuildParser Error: log structure doesn't match";
       Log.error(message, { log });
       throw new Error(message);
     }
@@ -56,7 +56,9 @@ export class CSharpParser extends Parser {
       const _relativeSrc = getRelativePath(this.cwd, src);
       if (!_relativeSrc) {
         // HOTFIX ignore this log with valid:false
-        Log.warn(`CSharpParser Error: source path is not a relative of root`, { src });
+        Log.warn(`DotnetBuildParser Error: source path is not a relative of root`, {
+          src,
+        });
         return {
           log,
           line,

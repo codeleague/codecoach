@@ -1,4 +1,4 @@
-export { CSharpParser } from './CSharpParser';
+export { DotnetBuildParser } from './DotnetBuildParser';
 export { TSLintParser } from './TSLintParser';
 export { ESLintParser } from './ESLintParser';
 export { Parser } from './@interfaces/parser.interface';

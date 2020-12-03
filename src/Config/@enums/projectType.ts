@@ -1,5 +1,5 @@
 export enum ProjectType {
-  csharp = 'csharp',
+  dotnetbuild = 'dotnetbuild',
   tslint = 'tslint',
   eslint = 'eslint',
 }
