@@ -41,7 +41,7 @@ export class GitHub implements VCS {
       const otherIssues = GitHub.createOtherIssue(invalidLogs);
 
       await this.prService.createComment(
-        overview + otherIssues ? `\n${otherIssues}` : '',
+        overview + (otherIssues ? `\n${otherIssues}` : ''),
       );
       Log.info('Create summary comment completed');
 
