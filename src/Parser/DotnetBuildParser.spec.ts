@@ -1,8 +1,8 @@
 import { LogSeverity } from './@enums/log.severity.enum';
 import { LogType } from './@types';
-import { CSharpParser } from './CSharpParser';
+import { DotnetBuildParser } from './DotnetBuildParser';
 
-describe('CSharpParser tests', () => {
+describe('DotnetBuildParser tests', () => {
   const cwdWin = 'C:\\source';
   const cwdUnix = '/dir';
 
@@ -21,7 +21,9 @@ describe('CSharpParser tests', () => {
     '13:11>/dir/File.csproj : warning NU1701: This package may not be fully compatible with your project.';
 
   it('Should parse correctly when (line, offset) is provided', () => {
-    const result = new CSharpParser(cwdWin).withContent(contentWithLineOffset).getLogs();
+    const result = new DotnetBuildParser(cwdWin)
+      .withContent(contentWithLineOffset)
+      .getLogs();
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
       source: `Broken.cs`,
@@ -35,7 +37,9 @@ describe('CSharpParser tests', () => {
   });
 
   it('Should parse correctly when (line, offset) is not provided', () => {
-    const result = new CSharpParser(cwdWin).withContent(contentNoLineOffset).getLogs();
+    const result = new DotnetBuildParser(cwdWin)
+      .withContent(contentNoLineOffset)
+      .getLogs();
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
       source: `Broken.csproj`,
@@ -49,7 +53,7 @@ describe('CSharpParser tests', () => {
   });
 
   it('Should be able to call `withContent` multiple times and add all content together', () => {
-    const result = new CSharpParser(cwdWin)
+    const result = new DotnetBuildParser(cwdWin)
       .withContent(contentWithLineOffset)
       .withContent(contentNoLineOffset)
       .getLogs();
@@ -58,7 +62,9 @@ describe('CSharpParser tests', () => {
   });
 
   it('Should parse with valid/invalid correctly', () => {
-    const result = new CSharpParser(cwdUnix).withContent(contentWithNotValid).getLogs();
+    const result = new DotnetBuildParser(cwdUnix)
+      .withContent(contentWithNotValid)
+      .getLogs();
     const valid = result.filter((el) => el.valid);
     const invalid = result.filter((el) => !el.valid);
     expect(valid).toHaveLength(2);
@@ -66,17 +72,17 @@ describe('CSharpParser tests', () => {
   });
 
   it('Should do nothing if put empty string', () => {
-    const result = new CSharpParser(cwdWin).withContent('').getLogs();
+    const result = new DotnetBuildParser(cwdWin).withContent('').getLogs();
     expect(result).toHaveLength(0);
   });
 
   it('Should throw error if the line not match the rule', () => {
-    expect(() => new CSharpParser(cwdWin).withContent(':')).toThrowError();
+    expect(() => new DotnetBuildParser(cwdWin).withContent(':')).toThrowError();
   });
 
   it('should be able to handle log with no csproj file at the end', () => {
     expect(() =>
-      new CSharpParser(cwdUnix).withContent(contentWithNoPathAtTheEnd),
+      new DotnetBuildParser(cwdUnix).withContent(contentWithNoPathAtTheEnd),
     ).not.toThrowError();
   });
 });

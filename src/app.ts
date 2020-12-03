@@ -3,7 +3,14 @@
 import { Config, ProjectType } from './Config';
 import { File } from './File';
 import { Log } from './Logger';
-import { CSharpParser, ESLintParser, LogType, Parser, TSLintParser } from './Parser';
+import {
+  DotnetBuildParser,
+  ESLintParser,
+  LogType,
+  MSBuildParser,
+  Parser,
+  TSLintParser,
+} from './Parser';
 import { GitHub, GitHubPRService, VCS } from './Provider';
 
 class App {
@@ -33,8 +40,10 @@ class App {
 
   private static setProjectType(type: ProjectType): Parser {
     switch (type) {
-      case ProjectType.csharp:
-        return new CSharpParser(Config.app.cwd);
+      case ProjectType.dotnetbuild:
+        return new DotnetBuildParser(Config.app.cwd);
+      case ProjectType.msbuild:
+        return new MSBuildParser(Config.app.cwd);
       case ProjectType.tslint:
         return new TSLintParser(Config.app.cwd);
       case ProjectType.eslint:
