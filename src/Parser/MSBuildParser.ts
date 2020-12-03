@@ -1,4 +1,4 @@
-import { resolve } from 'path';
+import { join } from 'path';
 import slash from 'slash';
 
 import { Log } from '../Logger';
@@ -41,7 +41,7 @@ export class MSBuildParser extends Parser {
 
     const line = Number(_line) || undefined;
     const lineOffset = Number(_lineOffset) || undefined;
-    const fileFullPath = slash(resolve(_csprojFullPath, '..', _filepath));
+    const fileFullPath = slash(join(_csprojFullPath, '..', _filepath));
     const fileRelativePath = getRelativePath(this.cwd, fileFullPath);
 
     return {
