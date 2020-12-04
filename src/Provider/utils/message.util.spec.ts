@@ -17,7 +17,9 @@ describe('createMessageWithEmoji', () => {
 
 describe('generateCommitDescription', () => {
   it('should return no issue when provided 0 error', () => {
-    expect(MessageUtil.generateCommitDescription(0)).toBe('CodeCoach report no issue');
+    expect(MessageUtil.generateCommitDescription(0)).toBe(
+      'CodeCoach report no critical issue, good job!',
+    );
   });
 
   it('should notate error count if error > 0', () => {
