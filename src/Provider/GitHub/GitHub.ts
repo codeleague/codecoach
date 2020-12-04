@@ -37,13 +37,15 @@ export class GitHub implements VCS {
       const nOfErrors = reviewedLogs.filter(onlySeverity(LogSeverity.error)).length;
       const nOfWarnings = reviewedLogs.filter(onlySeverity(LogSeverity.warning)).length;
 
-      const overview = MessageUtil.generateOverviewMessage(nOfErrors, nOfWarnings);
-      const otherIssues = GitHub.createOtherIssue(invalidLogs);
+      if (nOfWarnings + nOfErrors > 0 || invalidLogs.length > 0) {
+        const overview = MessageUtil.generateOverviewMessage(nOfErrors, nOfWarnings);
+        const otherIssues = GitHub.createOtherIssue(invalidLogs);
 
-      await this.prService.createComment(
-        overview + (otherIssues ? `\n${otherIssues}` : ''),
-      );
-      Log.info('Create summary comment completed');
+        await this.prService.createComment(
+          overview + (otherIssues ? `\n${otherIssues}` : ''),
+        );
+        Log.info('Create summary comment completed');
+      }
 
       const commitStatus = nOfErrors ? CommitStatus.failure : CommitStatus.success;
       const description = MessageUtil.generateCommitDescription(nOfErrors);
