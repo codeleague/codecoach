@@ -137,21 +137,6 @@ describe('VCS: GitHub', () => {
     );
   });
 
-  it('should not create review or comment when no related issues provided', async () => {
-    const service = new PrServiceMock();
-    const github = new GitHub(service);
-    await github.report([untouchedWarning, untouchedError]);
-
-    expect(service.createReviewComment).toHaveBeenCalledTimes(0);
-    expect(service.createComment).toHaveBeenCalledTimes(0);
-    expect(service.createCommitStatus).toHaveBeenCalledTimes(1);
-    expect(service.createCommitStatus).toHaveBeenCalledWith(
-      mockedSha,
-      CommitStatus.success,
-      expect.any(String),
-    );
-  });
-
   it('should not throw when create review failed (REMOVE THIS TEST WHEN WORKAROUND IS REMOVED)', async () => {
     const service = new PrServiceMock();
     service.createReviewComment = jest.fn(() => Promise.reject());

@@ -3,7 +3,14 @@
 import { Config, ProjectType } from './Config';
 import { File } from './File';
 import { Log } from './Logger';
-import { CSharpParser, ESLintParser, LogType, Parser, TSLintParser } from './Parser';
+import {
+  DotnetBuildParser,
+  ESLintParser,
+  LogType,
+  MSBuildParser,
+  Parser,
+  TSLintParser,
+} from './Parser';
 import { GitHub, GitHubPRService, VCS } from './Provider';
 
 class App {
@@ -32,9 +39,12 @@ class App {
   }
 
   private static setProjectType(type: ProjectType): Parser {
+    Log.debug(`Project type: ${type}, cwd: ${Config.app.cwd}`);
     switch (type) {
-      case ProjectType.csharp:
-        return new CSharpParser(Config.app.cwd);
+      case ProjectType.dotnetbuild:
+        return new DotnetBuildParser(Config.app.cwd);
+      case ProjectType.msbuild:
+        return new MSBuildParser(Config.app.cwd);
       case ProjectType.tslint:
         return new TSLintParser(Config.app.cwd);
       case ProjectType.eslint:
@@ -58,7 +68,11 @@ class App {
   }
 }
 
-new App().start().catch((err) => {
-  Log.error(err);
+new App().start().catch((error) => {
+  if (error instanceof Error) {
+    const { stack, message } = error;
+    Log.error('Unexpected error', { stack, message });
+  }
+  Log.error('Unexpected error', { error });
   process.exit(1);
 });

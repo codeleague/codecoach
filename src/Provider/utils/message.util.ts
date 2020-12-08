@@ -18,14 +18,32 @@ export class MessageUtil {
   }
 
   static generateOverviewMessage(nOfErrors: number, nOfWarnings: number): string {
-    return `CodeCoach reports ${nOfErrors + nOfWarnings} issue(s)
-${MessageUtil.createMessageWithEmoji(`${nOfErrors} error(s)`, LogSeverity.error)}
-${MessageUtil.createMessageWithEmoji(`${nOfWarnings} warning(s)`, LogSeverity.warning)}`;
+    if (nOfErrors + nOfWarnings === 0) {
+      return 'CodeCoach reports no issue, good job';
+    }
+    const issueCountMsg = this.pluralize('issue', nOfErrors + nOfWarnings);
+    const errorMsg = MessageUtil.createMessageWithEmoji(
+      MessageUtil.pluralize('error', nOfErrors),
+      LogSeverity.error,
+    );
+    const warningMsg = MessageUtil.createMessageWithEmoji(
+      MessageUtil.pluralize('warning', nOfWarnings),
+      LogSeverity.warning,
+    );
+
+    return `## CodeCoach reports ${issueCountMsg}
+${errorMsg}
+${warningMsg}`;
+  }
+
+  private static pluralize(word: string, n: number): string {
+    const fill = word.split('').shift() === 's' ? 'es' : 's';
+    return n + ' ' + (n > 1 ? `${word}${fill}` : word);
   }
 
   static generateCommitDescription(nOfErrors: number): string {
     return nOfErrors
       ? `CodeCoach report ${nOfErrors} errors`
-      : 'CodeCoach report no issue';
+      : 'CodeCoach report no critical issue, good job!';
   }
 }

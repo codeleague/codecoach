@@ -14,7 +14,7 @@ export class GitHub implements VCS {
       await this.removeExistingComments();
       const commitId = await this.prService.getLatestCommitSha();
       const touchedFiles = await this.prService.files();
-      const noFileLogs = logs.filter((l) => !l.valid);
+      const invalidLogs = logs.filter((l) => !l.valid);
 
       const touchedFileLog = logs
         .filter(onlyIn(touchedFiles))
@@ -24,16 +24,6 @@ export class GitHub implements VCS {
       Log.debug('Touched files', touchedFiles);
       Log.debug('Touched file log', touchedFileLog);
 
-      if (noFileLogs.length > 0) {
-        try {
-          const message = `<details><summary><span style="color:blue">Other issues ...</span></summary> ${noFileLogs
-            .map((l) => l.msg)
-            .join('\n\n')} </details>`;
-          await this.prService.createComment(message);
-        } catch (e) {
-          Log.error('Create other issues comment failed', e);
-        }
-      }
       const reviewResults = await Promise.all(
         touchedFileLog.map((log) => this.toCreateReviewComment(commitId, log)),
       );
@@ -47,9 +37,13 @@ export class GitHub implements VCS {
       const nOfErrors = reviewedLogs.filter(onlySeverity(LogSeverity.error)).length;
       const nOfWarnings = reviewedLogs.filter(onlySeverity(LogSeverity.warning)).length;
 
-      if (reviewedLogs.length > 0) {
-        const comment = MessageUtil.generateOverviewMessage(nOfErrors, nOfWarnings);
-        await this.prService.createComment(comment);
+      if (nOfWarnings + nOfErrors > 0 || invalidLogs.length > 0) {
+        const overview = MessageUtil.generateOverviewMessage(nOfErrors, nOfWarnings);
+        const otherIssues = GitHub.createOtherIssue(invalidLogs);
+
+        await this.prService.createComment(
+          overview + (otherIssues ? `\n${otherIssues}` : ''),
+        );
         Log.info('Create summary comment completed');
       }
 
@@ -61,6 +55,14 @@ export class GitHub implements VCS {
       Log.error('GitHub report failed', err);
       throw err;
     }
+  }
+
+  private static createOtherIssue(logs: LogType[]): string | null {
+    return logs.length > 0
+      ? `<details><summary><span style="color:blue">Other issues not related to your code</span></summary> ${logs
+          .map((l) => `${l.source} ${l.msg}`)
+          .join('\n\n')} </details>`
+      : null;
   }
 
   private toCreateReviewComment = async (

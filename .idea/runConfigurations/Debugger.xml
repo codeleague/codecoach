@@ -1,6 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Debugger" type="ChromiumRemoteDebugType" factoryName="Chromium Remote" port="5858" isV8Legacy="true" restartOnDisconnect="true">
-    <option name="v8Legacy" value="true" />
+  <configuration default="false" name="Debugger" type="ChromiumRemoteDebugType" factoryName="Chromium Remote" port="5858" restartOnDisconnect="true">
     <method v="2" />
   </configuration>
 </component>
