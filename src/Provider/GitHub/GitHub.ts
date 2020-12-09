@@ -58,11 +58,16 @@ export class GitHub implements VCS {
   }
 
   private static createOtherIssue(logs: LogType[]): string | null {
-    return logs.length > 0
-      ? `<details><summary><span style="color:blue">Other issues not related to your code</span></summary> ${logs
-          .map((l) => `${l.source} ${l.msg}`)
-          .join('\n\n')} </details>`
-      : null;
+    if (logs.length === 0) return null;
+
+    const issuesTableContent = logs.map((l) => `| ${l.source} | ${l.msg} |`).join('\n');
+
+    return `<details>
+<summary><span>By the way, there are other issues those might not related to your code</span></summary>
+| source | message |
+|-|-|
+${issuesTableContent}
+</details>`;
   }
 
   private toCreateReviewComment = async (
@@ -93,11 +98,11 @@ export class GitHub implements VCS {
     Log.debug('Get existing CodeCoach comments completed');
 
     const deleteComments = comments
-      .filter((comment) => comment.user.id === userId)
+      .filter((comment) => comment.user?.id === userId)
       .map((comment) => this.prService.deleteComment(comment.id));
 
     const deleteReviews = reviews
-      .filter((review) => review.user.id === userId)
+      .filter((review) => review.user?.id === userId)
       .map((review) => this.prService.deleteReviewComment(review.id));
 
     await Promise.all([...deleteComments, ...deleteReviews]);

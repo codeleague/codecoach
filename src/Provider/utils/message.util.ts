@@ -19,7 +19,7 @@ export class MessageUtil {
 
   static generateOverviewMessage(nOfErrors: number, nOfWarnings: number): string {
     if (nOfErrors + nOfWarnings === 0) {
-      return 'CodeCoach reports no issue, good job';
+      return '## CodeCoach reports no issue, good job';
     }
     const issueCountMsg = this.pluralize('issue', nOfErrors + nOfWarnings);
     const errorMsg = MessageUtil.createMessageWithEmoji(
