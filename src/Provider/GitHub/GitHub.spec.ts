@@ -1,11 +1,11 @@
-import {
-  IssuesListCommentsResponseData,
-  PullsListReviewCommentsResponseData,
-} from '@octokit/types';
 import { LogSeverity } from '../../Parser';
 import { CommitStatus } from './CommitStatus';
 import { GitHub } from './GitHub';
 import { IGitHubPRService } from './IGitHubPRService';
+import {
+  IssuesListCommentsResponseData,
+  PullsListReviewCommentsResponseData,
+} from './OctokitTypeMap';
 
 const mockedCommentId = 45346;
 const mockedReviewId = 324145;
@@ -22,16 +22,16 @@ const mockedComments = [
 ] as IssuesListCommentsResponseData;
 
 class PrServiceMock implements IGitHubPRService {
-  listAllReviewComments = jest.fn(() => Promise.resolve(mockedReviews));
+  listAllReviewComments = jest.fn().mockResolvedValue(mockedReviews);
   listAllComments = jest.fn(() => Promise.resolve(mockedComments));
-  deleteComment = jest.fn(() => Promise.resolve());
-  createComment = jest.fn(() => Promise.resolve());
-  deleteReviewComment = jest.fn(() => Promise.resolve());
-  createReviewComment = jest.fn(() => Promise.resolve());
-  getCurrentUserId = jest.fn(() => Promise.resolve(mockedUserId));
-  getLatestCommitSha = jest.fn(() => Promise.resolve(mockedSha));
-  createCommitStatus = jest.fn(() => Promise.resolve());
-  files = jest.fn(() => Promise.resolve([mockTouchedFiles]));
+  deleteComment = jest.fn().mockReturnValue(Promise.resolve());
+  createComment = jest.fn().mockReturnValue(Promise.resolve());
+  deleteReviewComment = jest.fn().mockReturnValue(Promise.resolve());
+  createReviewComment = jest.fn().mockReturnValue(Promise.resolve());
+  getCurrentUserId = jest.fn().mockResolvedValue(mockedUserId);
+  getLatestCommitSha = jest.fn().mockResolvedValue(mockedSha);
+  createCommitStatus = jest.fn().mockReturnValue(Promise.resolve());
+  files = jest.fn().mockResolvedValue([mockTouchedFiles]);
 }
 
 const touchFileError = {

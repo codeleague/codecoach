@@ -1,9 +1,5 @@
 import { Octokit } from '@octokit/rest';
-import {
-  IssuesListCommentsResponseData,
-  PullsListReviewCommentsResponseData,
-  ResponseHeaders,
-} from '@octokit/types';
+import { ResponseHeaders } from '@octokit/types';
 import { URL } from 'url';
 
 import { GITHUB_COM_API } from '../../app.constants';
@@ -12,6 +8,10 @@ import { Log } from '../../Logger';
 import { API_PAGE_SIZE_LIMIT } from '../constants/github.provider.constant';
 import { CommitStatus } from './CommitStatus';
 import { IGitHubPRService } from './IGitHubPRService';
+import {
+  IssuesListCommentsResponseData,
+  PullsListReviewCommentsResponseData,
+} from './OctokitTypeMap';
 
 type PrRequestBase = {
   owner: string;

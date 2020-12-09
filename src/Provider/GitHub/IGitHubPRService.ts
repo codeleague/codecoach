@@ -1,8 +1,8 @@
+import { CommitStatus } from './CommitStatus';
 import {
   IssuesListCommentsResponseData,
   PullsListReviewCommentsResponseData,
-} from '@octokit/types';
-import { CommitStatus } from './CommitStatus';
+} from './OctokitTypeMap';
 
 export interface IGitHubPRService {
   listAllReviewComments(): Promise<PullsListReviewCommentsResponseData>;

@@ -93,11 +93,11 @@ export class GitHub implements VCS {
     Log.debug('Get existing CodeCoach comments completed');
 
     const deleteComments = comments
-      .filter((comment) => comment.user.id === userId)
+      .filter((comment) => comment.user?.id === userId)
       .map((comment) => this.prService.deleteComment(comment.id));
 
     const deleteReviews = reviews
-      .filter((review) => review.user.id === userId)
+      .filter((review) => review.user?.id === userId)
       .map((review) => this.prService.deleteReviewComment(review.id));
 
     await Promise.all([...deleteComments, ...deleteReviews]);
