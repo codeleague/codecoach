@@ -21,6 +21,6 @@ module.exports = {
         endOfLine: 'auto',
       },
     ],
-    'sonarjs/cognitive-complexity': ['error', 8],
+    'sonarjs/cognitive-complexity': ['error', 6],
   },
 };
