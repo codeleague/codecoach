@@ -62,8 +62,10 @@ export class GitHub implements VCS {
 
     const issuesTableContent = logs.map((l) => `| ${l.source} | ${l.msg} |`).join('\n');
 
+    // Blank line required after </summary> to let markdown after it display correctly
     return `<details>
 <summary><span>By the way, there are other issues those might not related to your code</span></summary>
+
 | source | message |
 |-|-|
 ${issuesTableContent}
