@@ -23,14 +23,14 @@ const mockedComments = [
 
 class PrServiceMock implements IGitHubPRService {
   listAllReviewComments = jest.fn().mockResolvedValue(mockedReviews);
-  listAllComments = jest.fn(() => Promise.resolve(mockedComments));
-  deleteComment = jest.fn().mockReturnValue(Promise.resolve());
-  createComment = jest.fn().mockReturnValue(Promise.resolve());
-  deleteReviewComment = jest.fn().mockReturnValue(Promise.resolve());
-  createReviewComment = jest.fn().mockReturnValue(Promise.resolve());
+  listAllComments = jest.fn().mockResolvedValue(mockedComments);
+  deleteComment = jest.fn().mockResolvedValue(undefined);
+  createComment = jest.fn().mockResolvedValue(undefined);
+  deleteReviewComment = jest.fn().mockResolvedValue(undefined);
+  createReviewComment = jest.fn().mockResolvedValue(undefined);
   getCurrentUserId = jest.fn().mockResolvedValue(mockedUserId);
   getLatestCommitSha = jest.fn().mockResolvedValue(mockedSha);
-  createCommitStatus = jest.fn().mockReturnValue(Promise.resolve());
+  createCommitStatus = jest.fn().mockResolvedValue(undefined);
   files = jest.fn().mockResolvedValue([mockTouchedFiles]);
 }
 
