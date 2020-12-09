@@ -1,4 +1,4 @@
-import { relative, resolve } from 'path';
+import { basename } from 'path';
 import slash from 'slash';
 
 import { Log } from '../Logger';
@@ -27,57 +27,34 @@ export class DotnetBuildParser extends Parser {
       Log.error(message, { log });
       throw new Error(message);
     }
-    const [, src, lineN, offset, severity, code, content, _projectSrc] = structureMatch;
 
-    let relativeSrc: string;
-    const line = Number(lineN) || undefined;
-    const lineOffset = Number(offset) || undefined;
+    const [
+      ,
+      src,
+      _line,
+      _lineOffset,
+      _severity,
+      errorCode,
+      content,
+      _csproj,
+    ] = structureMatch;
 
-    if (!_projectSrc) {
-      return {
-        log,
-        line,
-        lineOffset,
-        msg: `${code.trim()}: ${content.trim()}`,
-        source: '',
-        severity: severity as LogSeverity,
-        valid: false,
-      };
-    }
+    const relativeSrcPath = getRelativePath(this.cwd, src);
 
-    const projectSrc = slash(_projectSrc);
-
-    if (line && lineOffset) {
-      const _relativeSrc = getRelativePath(this.cwd, src);
-      if (!_relativeSrc) {
-        // HOTFIX ignore this log with valid:false
-        Log.warn(`DotnetBuildParser Error: source path is not a relative of root`, {
-          src,
-        });
-        return {
-          log,
-          line,
-          lineOffset,
-          msg: `${code.trim()}: ${content.trim()}`,
-          source: '',
-          severity: severity as LogSeverity,
-          valid: false,
-        };
-      }
-      relativeSrc = _relativeSrc;
-    } else {
-      const project_root = resolve(projectSrc, '../');
-      relativeSrc = relative(project_root, projectSrc);
+    if (!relativeSrcPath) {
+      Log.warn(`DotnetBuildParser Error: source path is not a relative to root`, {
+        src,
+      });
     }
 
     return {
       log,
-      line,
-      lineOffset,
-      msg: `${code.trim()}: ${content.trim()}`,
-      source: relativeSrc,
-      severity: severity as LogSeverity,
-      valid: true,
+      line: Number(_line),
+      lineOffset: Number(_lineOffset),
+      msg: `${errorCode.trim()}: ${content.trim()}`,
+      source: relativeSrcPath ?? basename(slash(_csproj)),
+      severity: _severity as LogSeverity,
+      valid: !!relativeSrcPath,
     };
   }
 }

@@ -39,15 +39,13 @@ export class MSBuildParser extends Parser {
       _csprojFullPath,
     ] = structureMatch;
 
-    const line = Number(_line) || undefined;
-    const lineOffset = Number(_lineOffset) || undefined;
     const fileFullPath = slash(join(slash(_csprojFullPath), '..', slash(_filepath)));
     const fileRelativePath = getRelativePath(this.cwd, fileFullPath);
 
     return {
       log,
-      line,
-      lineOffset,
+      line: Number(_line),
+      lineOffset: Number(_lineOffset),
       msg: `${code.trim()}: ${content.trim()}`,
       source: fileRelativePath ?? fileFullPath,
       severity: severity as LogSeverity,

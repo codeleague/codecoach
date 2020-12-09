@@ -2,11 +2,9 @@ import { LogSeverity } from './@enums/log.severity.enum';
 import { MSBuildParser } from './MSBuildParser';
 
 describe('MSBuildParser tests', () => {
-  const cwd = 'C:\\source';
-
   it('should parse log correctly', () => {
-    const log =
-      "Service\\Provider.cs(67,29): warning CS0414: The field 'Data.field' is assigned but its value is never used [C:\\source\\Project\\Project.cs]";
+    const cwd = 'C:\\source';
+    const log = `Service\\Provider.cs(67,29): warning CS0414: The field 'Data.field' is assigned but its value is never used [C:\\source\\Project\\Project.cs]`;
 
     const result = new MSBuildParser(cwd).withContent(log).getLogs();
 
