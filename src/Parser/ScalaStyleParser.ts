@@ -33,13 +33,11 @@ export class ScalaStyleParser extends Parser {
           });
         });
       }
-      // console.log(this.logs);
       return this;
     } catch (err) {
       Log.warn('ScalaStyle Parser: parse with content error', content);
       throw err;
     }
-    throw new Error();
   }
 
   private static toLog(
@@ -56,7 +54,6 @@ export class ScalaStyleParser extends Parser {
       severity: ScalaStyleParser.getSeverity(log._attributes.severity),
       valid: source !== null,
     };
-    throw new Error();
   }
 
   private static getSeverity(ScalaStyleLevel: string): LogSeverity {
@@ -70,6 +67,5 @@ export class ScalaStyleParser extends Parser {
       default:
         return LogSeverity.unknown;
     }
-    throw new Error();
   }
 }
