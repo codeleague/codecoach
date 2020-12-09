@@ -1,4 +1,4 @@
-import { relative, resolve, basename } from 'path';
+import { basename } from 'path';
 import slash from 'slash';
 
 import { Log } from '../Logger';
