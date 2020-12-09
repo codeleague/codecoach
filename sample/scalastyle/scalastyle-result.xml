@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<checkstyle version="5.0">
+ <file name="C:\\some\\where\\else">
+  <error column="4" line="53" source="some.gibberish.text.that.i.dont.wanna.keep.it" severity="error" message="Avoid mutable fields"/>
+ </file>
+ <file name="C:\\Users\\a\\scalaProjectRoot\\scalaProjectRoot\\src\\main\\scala\\code\\dir\\subdir\\code-a.scala">
+  <error severity="error" message="illegal start of definition: Token(VARID,yplTaxWithValue,1704,yplTaxWithValue)"/>
+  <error column="7" line="7" source="some.gibberish.text.that.i.dont.wanna.keep.it" severity="error" message="Number of methods in class exceeds 30"/>
+ </file>
+ <file name="C:\\Users\\a\\scalaProjectRoot\\src\\main\\scala\\code\\code-c.scala">
+  <error column="6" line="207" source="some.gibberish.text.that.i.dont.wanna.keep.it" severity="warning" message="Avoid mutable local variables"/>
+ </file>
+</checkstyle>
+	

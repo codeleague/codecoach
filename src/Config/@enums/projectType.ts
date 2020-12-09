@@ -3,4 +3,5 @@ export enum ProjectType {
   msbuild = 'msbuild',
   tslint = 'tslint',
   eslint = 'eslint',
+  scalastyle = 'scalastyle',
 }

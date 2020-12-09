@@ -5,11 +5,12 @@ import { File } from './File';
 import { Log } from './Logger';
 import {
   DotnetBuildParser,
+  MSBuildParser,
   ESLintParser,
   LogType,
-  MSBuildParser,
   Parser,
   TSLintParser,
+  ScalaStyleParser,
 } from './Parser';
 import { GitHub, GitHubPRService, VCS } from './Provider';
 
@@ -49,6 +50,8 @@ class App {
         return new TSLintParser(Config.app.cwd);
       case ProjectType.eslint:
         return new ESLintParser(Config.app.cwd);
+      case ProjectType.scalastyle:
+        return new ScalaStyleParser(Config.app.cwd);
     }
   }
 

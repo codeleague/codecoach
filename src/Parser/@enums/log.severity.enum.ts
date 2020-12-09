@@ -3,4 +3,5 @@ export enum LogSeverity {
   error = 'error',
   ignore = 'ignore',
   unknown = 'unknown',
+  info = 'info',
 }
