@@ -58,11 +58,16 @@ export class GitHub implements VCS {
   }
 
   private static createOtherIssue(logs: LogType[]): string | null {
-    return logs.length > 0
-      ? `<details><summary><span style="color:blue">Other issues not related to your code</span></summary> ${logs
-          .map((l) => `${l.source} ${l.msg}`)
-          .join('\n\n')} </details>`
-      : null;
+    if (logs.length === 0) return null;
+
+    const issuesTableContent = logs.map((l) => `| ${l.source} | ${l.msg} |`).join('\n');
+
+    return `<details>
+<summary><span>By the way, there are other issues those might not related to your code</span></summary>
+| source | message |
+|-|-|
+${issuesTableContent}
+</details>`;
   }
 
   private toCreateReviewComment = async (
