@@ -2,7 +2,7 @@
 Automatic code report tool.
 
 ### Prerequisite
-Node v12.0.0 or later
+Node v14 or later
 
 ### Installation
 CodeCoach packages are in GitHub Packages which require you to add scoped registry entry.
@@ -34,7 +34,7 @@ Options:
   --url           GitHub repo url (https or ssh)             [string] [required]
   --pr            PR number                                  [number] [required]
   --type          Project type
-              [required] [choices: "dotnetbuild", "msbuild", "tslint", "eslint"]
+[required] [choices: "dotnetbuild", "msbuild", "tslint", "eslint", "scalastyle"]
   --buildLogFile  Build log content files (repeatable); If this option is set,
                   build agent will be skipped                 [array] [required]
   --output        Output parsed log file        [string] [default: "build.json"]
