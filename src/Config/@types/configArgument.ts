@@ -1,10 +1,9 @@
-import { ProjectType } from '../@enums';
+import { BuildLogFile } from './buildLogFile';
 
 export type ConfigArgument = {
   url: string;
   pr: number;
-  type: ProjectType;
-  buildLogFile: string[];
+  buildLogFile: BuildLogFile[];
   output: string;
   token: string;
   cwd: string;
