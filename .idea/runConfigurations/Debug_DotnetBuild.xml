@@ -1,7 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Debug DotnetBuild" type="CompoundRunConfigurationType">
-    <toRun name="Debugger" type="ChromiumRemoteDebugType" />
-    <toRun name="dev:msbuild" type="js.build_tools.npm" />
-    <method v="2" />
-  </configuration>
-</component>

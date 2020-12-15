@@ -24,7 +24,7 @@ const args = yargs
   })
   .option('buildLogFile', {
     alias: 'f',
-    describe: `Build log content files formatted in '<type>:<path>' where format is one of [${Object.keys(
+    describe: `Build log content files formatted in '<type>:<path>' where type is one of [${Object.keys(
       ProjectType,
     ).join(', ')}]`,
     type: 'array',
@@ -32,7 +32,16 @@ const args = yargs
     number: false,
     demandOption: true,
   })
+  .coerce('buildLogFile', (fileOption: string[]) => {
+    return fileOption.map((opt) => {
+      const match = opt.match(buildLogFileOptionRegex);
+      if (!match) return null;
+      const [, type, path] = match;
+      return { type, path } as BuildLogFile;
+    });
+  })
   .option('output', {
+    alias: 'o',
     describe: 'Output parsed log file',
     type: 'string',
     default: DEFAULT_OUTPUT_FILE,
@@ -50,22 +59,12 @@ const args = yargs
   .check((options) => {
     if (!options.pr || Array.isArray(options.pr))
       throw '--pr config should be a single number';
-    if (
-      !options.buildLogFile ||
-      options.buildLogFile.some((file: string) => !buildLogFileOptionRegex.test(file))
-    )
-      throw '--buildLogFile, -f should have correct format';
+    if (!options.buildLogFile || options.buildLogFile.some((file) => file === null))
+      throw 'all of `--buildLogFile` options should have correct format';
     return true;
   })
-  .coerce('buildLogFile', (fileOption: string[]) => {
-    return fileOption.map((opt) => {
-      const match = opt.match(buildLogFileOptionRegex);
-      if (!match) throw 'Error parsing --buildLogFile config';
-      const [, type, path] = match;
-      return { type, path } as BuildLogFile;
-    });
-  })
   .help()
+  .wrap(120)
   .parse(process.argv.slice(1)) as ConfigArgument;
 
 export const Config: ConfigObject = Object.freeze({
