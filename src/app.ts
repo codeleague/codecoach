@@ -39,25 +39,26 @@ class App {
     Log.info('Report to VCS completed');
   }
 
-  private static getParser(type: ProjectType): Parser {
+  private static getParser(type: ProjectType, cwd: string): Parser {
     switch (type) {
       case ProjectType.dotnetbuild:
-        return new DotnetBuildParser(Config.app.cwd);
+        return new DotnetBuildParser(cwd);
       case ProjectType.msbuild:
-        return new MSBuildParser(Config.app.cwd);
+        return new MSBuildParser(cwd);
       case ProjectType.tslint:
-        return new TSLintParser(Config.app.cwd);
+        return new TSLintParser(cwd);
       case ProjectType.eslint:
-        return new ESLintParser(Config.app.cwd);
+        return new ESLintParser(cwd);
       case ProjectType.scalastyle:
-        return new ScalaStyleParser(Config.app.cwd);
+        return new ScalaStyleParser(cwd);
     }
   }
 
   private async parseBuildData(files: BuildLogFile[]): Promise<LogType[]> {
-    const logsTasks = files.map(async ({ type, path }) => {
+    const logsTasks = files.map(async ({ type, path, cwd }) => {
+      Log.debug('Parsing', { type, path, cwd });
       const content = await File.readFileHelper(path);
-      const parser = App.getParser(type);
+      const parser = App.getParser(type, cwd);
       return parser.parse(content);
     });
 

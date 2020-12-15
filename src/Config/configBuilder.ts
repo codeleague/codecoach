@@ -13,6 +13,5 @@ export const buildAppConfig = (arg: ConfigArgument): AppConfig => {
   return {
     logFilePath: arg.output,
     buildLogFiles: arg.buildLogFile,
-    cwd: arg.cwd,
   };
 };

@@ -6,10 +6,7 @@ import { ProjectType } from './@enums';
 import { buildAppConfig, buildProviderConfig } from './configBuilder';
 import { DEFAULT_OUTPUT_FILE } from './constants/defaults';
 
-const buildLogFileOptionRegex = new RegExp(
-  `^(${Object.keys(ProjectType).join('|')}):(.+)$`,
-  'i',
-);
+const projectTypes = Object.keys(ProjectType);
 
 const args = yargs
   .option('url', {
@@ -24,20 +21,21 @@ const args = yargs
   })
   .option('buildLogFile', {
     alias: 'f',
-    describe: `Build log content files formatted in '<type>:<path>' where type is one of [${Object.keys(
-      ProjectType,
-    ).join(', ')}]`,
+    describe: `Build log content files formatted in '<type>;<path>[;<cwd>]' 
+where <type> is one of [${projectTypes.join(', ')}] 
+<path> is build log file path to be processed
+and <cwd> is build root directory (optional (Will use current context as cwd)).
+`,
     type: 'array',
     string: true,
     number: false,
     demandOption: true,
   })
-  .coerce('buildLogFile', (fileOption: string[]) => {
-    return fileOption.map((opt) => {
-      const match = opt.match(buildLogFileOptionRegex);
-      if (!match) return null;
-      const [, type, path] = match;
-      return { type, path } as BuildLogFile;
+  .coerce('buildLogFile', (files: string[]) => {
+    return files.map((opt) => {
+      const [type, path, cwd] = opt.split(';');
+      if (!projectTypes.includes(type) || !path) return null;
+      return { type, path, cwd: cwd ?? process.cwd() } as BuildLogFile;
     });
   })
   .option('output', {
@@ -50,11 +48,6 @@ const args = yargs
     describe: 'GitHub token',
     type: 'string',
     demandOption: true,
-  })
-  .option('cwd', {
-    describe: 'Set working directory. Will use current context cwd if not set.',
-    type: 'string',
-    default: process.cwd(),
   })
   .check((options) => {
     if (!options.pr || Array.isArray(options.pr))
