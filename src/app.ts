@@ -30,11 +30,13 @@ class App {
     const logs = await this.parseBuildData(Config.app.buildLogFiles);
     Log.info('Build data parsing completed');
 
+    // Fire and forget, no need to await
+    App.writeLogToFile(logs)
+      .then(() => Log.info('Write output completed'))
+      .catch((error) => Log.error('Write output failed', { error }));
+
     await this.vcs.report(logs);
     Log.info('Report to VCS completed');
-
-    await App.writeLogToFile(logs);
-    Log.info('Write output completed');
   }
 
   private static getParser(type: ProjectType): Parser {
