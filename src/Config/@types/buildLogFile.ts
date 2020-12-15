@@ -1,6 +1,6 @@
 import { ProjectType } from '../@enums';
 
 export type BuildLogFile = {
-  file: string;
+  path: string;
   type: ProjectType;
 };

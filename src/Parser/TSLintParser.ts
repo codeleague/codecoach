@@ -5,15 +5,12 @@ import { Parser } from './@interfaces/parser.interface';
 import { LogType, TSLintLog } from './@types';
 
 export class TSLintParser extends Parser {
-  withContent(content: string): Parser {
+  parse(content: string): LogType[] {
     try {
-      if (content) {
-        const logsJson = JSON.parse(content) as TSLintLog[];
-        const logs = logsJson.map((el) => this.toLog(el));
-        this.logs.push(...logs);
-      }
+      if (!content) return [];
 
-      return this;
+      const logsJson = JSON.parse(content) as TSLintLog[];
+      return logsJson.map((el) => this.toLog(el));
     } catch (err) {
       Log.warn('TSLint Parser: parse with content via JSON error', content);
       throw err;

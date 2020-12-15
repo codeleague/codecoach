@@ -1,6 +1,5 @@
 import { AppConfig, ConfigArgument, ProviderConfig } from './@types';
 import { TIME_ZONE, USER_AGENT } from './constants/defaults';
-import { ProjectType } from './@enums';
 
 export const buildProviderConfig = (arg: ConfigArgument): ProviderConfig => ({
   token: arg.token,
@@ -13,7 +12,6 @@ export const buildProviderConfig = (arg: ConfigArgument): ProviderConfig => ({
 export const buildAppConfig = (arg: ConfigArgument): AppConfig => {
   return {
     logFilePath: arg.output,
-    projectType: arg.type as ProjectType,
     buildLogFiles: arg.buildLogFile,
     cwd: arg.cwd,
   };

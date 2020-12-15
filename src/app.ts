@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { Config, ProjectType } from './Config';
+import { BuildLogFile, Config, ProjectType } from './Config';
 import { File } from './File';
 import { Log } from './Logger';
 import {
@@ -15,11 +15,9 @@ import {
 import { GitHub, GitHubPRService, VCS } from './Provider';
 
 class App {
-  private readonly parser: Parser;
   private readonly vcs: VCS;
 
   constructor() {
-    this.parser = App.setProjectType(Config.app.projectType);
     const githubPRService = new GitHubPRService(
       Config.provider.token,
       Config.provider.repoUrl,
@@ -39,8 +37,7 @@ class App {
     Log.info('Write output completed');
   }
 
-  private static setProjectType(type: ProjectType): Parser {
-    Log.debug(`Project type: ${type}, cwd: ${Config.app.cwd}`);
+  private static getParser(type: ProjectType): Parser {
     switch (type) {
       case ProjectType.dotnetbuild:
         return new DotnetBuildParser(Config.app.cwd);
@@ -55,15 +52,14 @@ class App {
     }
   }
 
-  private async parseBuildData(files: string[]): Promise<LogType[]> {
-    const parserTasks = files.map(async (file) => {
-      const content = await File.readFileHelper(file);
-      this.parser.withContent(content);
+  private async parseBuildData(files: BuildLogFile[]): Promise<LogType[]> {
+    const logsTasks = files.map(async ({ type, path }) => {
+      const content = await File.readFileHelper(path);
+      const parser = App.getParser(type);
+      return parser.parse(content);
     });
 
-    await Promise.all(parserTasks);
-
-    return this.parser.getLogs();
+    return (await Promise.all(logsTasks)).flatMap((x) => x);
   }
 
   private static async writeLogToFile(logs: LogType[]): Promise<void> {

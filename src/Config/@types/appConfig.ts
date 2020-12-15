@@ -1,8 +1,7 @@
-import { ProjectType } from '../@enums';
+import { BuildLogFile } from './buildLogFile';
 
 export type AppConfig = {
   logFilePath: string;
-  projectType: ProjectType;
-  buildLogFiles: string[];
+  buildLogFiles: BuildLogFile[];
   cwd: string;
 };

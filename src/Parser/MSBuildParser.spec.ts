@@ -6,7 +6,7 @@ describe('MSBuildParser tests', () => {
     const cwd = 'C:\\source';
     const log = `Service\\Provider.cs(67,29): warning CS0414: The field 'Data.field' is assigned but its value is never used [C:\\source\\Project\\Project.cs]`;
 
-    const result = new MSBuildParser(cwd).withContent(log).getLogs();
+    const result = new MSBuildParser(cwd).parse(log);
 
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({

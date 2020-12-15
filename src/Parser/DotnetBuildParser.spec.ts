@@ -12,7 +12,7 @@ describe('DotnetBuildParser tests', () => {
   const contentWithNoPathAtTheEnd = `13:11>/dir/File.csproj : warning NU1701: This package may not be fully compatible with your project.`;
 
   it('Should parse log with source path correctly', () => {
-    const result = new DotnetBuildParser(cwdWin).withContent(logWithSource).getLogs();
+    const result = new DotnetBuildParser(cwdWin).parse(logWithSource);
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
       source: `Broken.cs`,
@@ -26,7 +26,7 @@ describe('DotnetBuildParser tests', () => {
   });
 
   it('Should parse log without source path correctly and flag as invalid and use csproj as source', () => {
-    const result = new DotnetBuildParser(cwdWin).withContent(logWithNoSource).getLogs();
+    const result = new DotnetBuildParser(cwdWin).parse(logWithNoSource);
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
       source: `Broken.csproj`,
@@ -40,9 +40,7 @@ describe('DotnetBuildParser tests', () => {
   });
 
   it('Should parse log unrelated source path correctly and flag as invalid and use csproj as source', () => {
-    const result = new DotnetBuildParser(cwdUnix)
-      .withContent(logWithUnrelatedSource)
-      .getLogs();
+    const result = new DotnetBuildParser(cwdUnix).parse(logWithUnrelatedSource);
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
       source: `project.csproj`,
@@ -55,27 +53,18 @@ describe('DotnetBuildParser tests', () => {
     } as LogType);
   });
 
-  it('Should be able to call `withContent` multiple times and add all content together', () => {
-    const result = new DotnetBuildParser(cwdWin)
-      .withContent(logWithSource)
-      .withContent(logWithNoSource)
-      .getLogs();
-
-    expect(result).toHaveLength(2);
-  });
-
   it('Should do nothing if put empty string', () => {
-    const result = new DotnetBuildParser(cwdWin).withContent('').getLogs();
+    const result = new DotnetBuildParser(cwdWin).parse('');
     expect(result).toHaveLength(0);
   });
 
   it('Should throw error if the line not match the rule', () => {
-    expect(() => new DotnetBuildParser(cwdWin).withContent(':')).toThrowError();
+    expect(() => new DotnetBuildParser(cwdWin).parse(':')).toThrowError();
   });
 
   it('should be able to handle log with no csproj file at the end', () => {
     expect(() =>
-      new DotnetBuildParser(cwdUnix).withContent(contentWithNoPathAtTheEnd),
+      new DotnetBuildParser(cwdUnix).parse(contentWithNoPathAtTheEnd),
     ).not.toThrowError();
   });
 });

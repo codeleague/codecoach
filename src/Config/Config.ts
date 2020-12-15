@@ -24,7 +24,7 @@ const args = yargs
   })
   .option('buildLogFile', {
     alias: 'f',
-    describe: `Build log content files formatted in '<format>:<filepath>' where format is one of [${Object.keys(
+    describe: `Build log content files formatted in '<type>:<path>' where format is one of [${Object.keys(
       ProjectType,
     ).join(', ')}]`,
     type: 'array',
@@ -61,8 +61,8 @@ const args = yargs
     return fileOption.map((opt) => {
       const match = opt.match(buildLogFileOptionRegex);
       if (!match) throw 'Error parsing --buildLogFile config';
-      const [, type, file] = match;
-      return { type, file } as BuildLogFile;
+      const [, type, path] = match;
+      return { type, path } as BuildLogFile;
     });
   })
   .help()

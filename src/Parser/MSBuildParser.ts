@@ -9,13 +9,10 @@ import { LogType } from './@types';
 import { splitByLine } from './utils/lineBreak.util';
 
 export class MSBuildParser extends Parser {
-  withContent(content: string): Parser {
-    const logs = splitByLine(content)
+  parse(content: string): LogType[] {
+    return splitByLine(content)
       .map((log) => this.toLog(log))
       .filter((log) => log);
-
-    this.logs.push(...logs);
-    return this;
   }
 
   private toLog(log: string): LogType {
