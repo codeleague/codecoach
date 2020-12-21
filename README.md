@@ -1,5 +1,11 @@
 # CodeCoach
-Automatic code report tool.
+Use build log to automatically review your pull requests.  
+
+#### Supported build tools & linters.
+- ESLint
+- TSLint
+- MSBuild (both `msbuild.exe` and `dotnet build` commands)
+- ScalaStyle
 
 ### Prerequisite
 Node v14 or later
@@ -42,3 +48,20 @@ Options:
       --token         GitHub token                                                                   [string] [required]
       --help          Show help                                                                                [boolean]
 ```
+
+### How to get build logs
+#### ESLint
+Use `-o <filename>` to output lint result to file and `-f json` to format logs as JSON.
+(_[ref.](https://eslint.org/docs/user-guide/command-line-interface)_)
+
+#### TSLint
+Use `-o <filename>` to output lint result to file and `-t json` or `--format json` to format logs as JSON.
+(_[ref.](https://palantir.github.io/tslint/usage/cli/)_)
+
+#### MSBuild and dotnet build
+Use `-fileLoggerParameters` or `-flp` switch with `msbuild`, `dotnet build` or `dotnet msbuild` command to send logs to file. 
+(_[ref.](https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild-command-line-reference?view=vs-2019)_)
+
+#### ScalaStyle
+Result is already written to `target/scalastyle-result.xml`
+(_[ref.](http://www.scalastyle.org/sbt.html)_)
