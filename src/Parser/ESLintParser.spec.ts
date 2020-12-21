@@ -50,7 +50,7 @@ describe('ESLintParser', () => {
   const mockedContentString = JSON.stringify(mockedContent);
 
   it('Should parse correctly', () => {
-    const result = new ESLintParser(cwd).withContent(mockedContentString).getLogs();
+    const result = new ESLintParser(cwd).parse(mockedContentString);
     expect(result).toHaveLength(2);
 
     expect(result[0]).toEqual({
@@ -74,22 +74,13 @@ describe('ESLintParser', () => {
     });
   });
 
-  it('Should be able to call `withContent` multiple times and add all content together', () => {
-    const result = new ESLintParser(cwd)
-      .withContent(mockedContentString)
-      .withContent(mockedContentString)
-      .getLogs();
-
-    expect(result).toHaveLength(4);
-  });
-
   it('Should do nothing if put empty string', () => {
-    const result = new ESLintParser(cwd).withContent('').getLogs();
+    const result = new ESLintParser(cwd).parse('');
     expect(result).toHaveLength(0);
   });
 
   it('Should parse with valid/invalid correctly', () => {
-    const result = new ESLintParser(cwd).withContent(mockedContentString).getLogs();
+    const result = new ESLintParser(cwd).parse(mockedContentString);
     const valid = result.filter((el) => el.valid);
     const invalid = result.filter((el) => !el.valid);
     expect(valid).toHaveLength(1);
@@ -97,6 +88,6 @@ describe('ESLintParser', () => {
   });
 
   it('Should throw error if the line not match the rule', () => {
-    expect(() => new ESLintParser(cwd).withContent(':')).toThrow();
+    expect(() => new ESLintParser(cwd).parse(':')).toThrow();
   });
 });

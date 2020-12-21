@@ -26,7 +26,7 @@ describe('ScalaStyleParser', () => {
   const mockedContentString = mockedContent;
 
   it('Should parse correctly', () => {
-    const result = new ScalaStyleParser(cwd).withContent(mockedContentString).getLogs();
+    const result = new ScalaStyleParser(cwd).parse(mockedContentString);
     expect(result).toHaveLength(4);
 
     expect(result[0]).toEqual({
@@ -70,22 +70,13 @@ describe('ScalaStyleParser', () => {
     });
   });
 
-  it('Should be able to call `withContent` multiple times and add all content together', () => {
-    const result = new ScalaStyleParser(cwd)
-      .withContent(mockedContentString)
-      .withContent(mockedContentString)
-      .getLogs();
-
-    expect(result).toHaveLength(8);
-  });
-
   it('Should do nothing if put empty string', () => {
-    const result = new ScalaStyleParser(cwd).withContent('').getLogs();
+    const result = new ScalaStyleParser(cwd).parse('');
     expect(result).toHaveLength(0);
   });
 
   it('Should parse with valid/invalid correctly', () => {
-    const result = new ScalaStyleParser(cwd).withContent(mockedContentString).getLogs();
+    const result = new ScalaStyleParser(cwd).parse(mockedContentString);
     const valid = result.filter((el) => el.valid);
     const invalid = result.filter((el) => !el.valid);
     expect(valid).toHaveLength(3);
@@ -93,13 +84,11 @@ describe('ScalaStyleParser', () => {
   });
 
   it('Should throw error if the line not match the rule', () => {
-    expect(() => new ScalaStyleParser(cwd).withContent(':')).toThrow();
+    expect(() => new ScalaStyleParser(cwd).parse(':')).toThrow();
   });
 
   it('Should parse content with no error correctly', () => {
-    const result = new ScalaStyleParser(cwd)
-      .withContent(mockedContentWithNoError)
-      .getLogs();
+    const result = new ScalaStyleParser(cwd).parse(mockedContentWithNoError);
     expect(result).toHaveLength(0);
   });
 });

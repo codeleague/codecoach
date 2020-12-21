@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { Config, ProjectType } from './Config';
+import { BuildLogFile, Config, ProjectType } from './Config';
 import { File } from './File';
 import { Log } from './Logger';
 import {
@@ -15,11 +15,9 @@ import {
 import { GitHub, GitHubPRService, VCS } from './Provider';
 
 class App {
-  private readonly parser: Parser;
   private readonly vcs: VCS;
 
   constructor() {
-    this.parser = App.setProjectType(Config.app.projectType);
     const githubPRService = new GitHubPRService(
       Config.provider.token,
       Config.provider.repoUrl,
@@ -32,38 +30,39 @@ class App {
     const logs = await this.parseBuildData(Config.app.buildLogFiles);
     Log.info('Build data parsing completed');
 
+    // Fire and forget, no need to await
+    App.writeLogToFile(logs)
+      .then(() => Log.info('Write output completed'))
+      .catch((error) => Log.error('Write output failed', { error }));
+
     await this.vcs.report(logs);
     Log.info('Report to VCS completed');
-
-    await App.writeLogToFile(logs);
-    Log.info('Write output completed');
   }
 
-  private static setProjectType(type: ProjectType): Parser {
-    Log.debug(`Project type: ${type}, cwd: ${Config.app.cwd}`);
+  private static getParser(type: ProjectType, cwd: string): Parser {
     switch (type) {
       case ProjectType.dotnetbuild:
-        return new DotnetBuildParser(Config.app.cwd);
+        return new DotnetBuildParser(cwd);
       case ProjectType.msbuild:
-        return new MSBuildParser(Config.app.cwd);
+        return new MSBuildParser(cwd);
       case ProjectType.tslint:
-        return new TSLintParser(Config.app.cwd);
+        return new TSLintParser(cwd);
       case ProjectType.eslint:
-        return new ESLintParser(Config.app.cwd);
+        return new ESLintParser(cwd);
       case ProjectType.scalastyle:
-        return new ScalaStyleParser(Config.app.cwd);
+        return new ScalaStyleParser(cwd);
     }
   }
 
-  private async parseBuildData(files: string[]): Promise<LogType[]> {
-    const parserTasks = files.map(async (file) => {
-      const content = await File.readFileHelper(file);
-      this.parser.withContent(content);
+  private async parseBuildData(files: BuildLogFile[]): Promise<LogType[]> {
+    const logsTasks = files.map(async ({ type, path, cwd }) => {
+      Log.debug('Parsing', { type, path, cwd });
+      const content = await File.readFileHelper(path);
+      const parser = App.getParser(type, cwd);
+      return parser.parse(content);
     });
 
-    await Promise.all(parserTasks);
-
-    return this.parser.getLogs();
+    return (await Promise.all(logsTasks)).flatMap((x) => x);
   }
 
   private static async writeLogToFile(logs: LogType[]): Promise<void> {

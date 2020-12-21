@@ -8,32 +8,32 @@ import { ScalaStyleLog } from './@types/ScalaStyleLog';
 import { ScalaStyleError } from './@types/ScalaStyleError';
 
 export class ScalaStyleParser extends Parser {
-  withContent(content: string): Parser {
+  parse(content: string): LogType[] {
     try {
-      if (content) {
-        const convertOption = {
-          compact: true,
-          nativeType: true,
-          nativeTypeAttributes: true,
-          alwaysArray: true,
-        };
-        const rawError = content
-          .split(`\n`)
-          .map((line) => line.trim())
-          .filter((line) => line.slice(0, 6) === '<error');
-        const parsedContent = xml2js(content, convertOption) as ScalaStyleLog;
+      if (!content) return [];
 
-        let rawIndex = 0;
-        parsedContent.checkstyle[0]?.file?.forEach((f) => {
+      const convertOption = {
+        compact: true,
+        nativeType: true,
+        nativeTypeAttributes: true,
+        alwaysArray: true,
+      };
+      const rawError = content
+        .split(`\n`)
+        .map((line) => line.trim())
+        .filter((line) => line.slice(0, 6) === '<error');
+      const parsedContent = xml2js(content, convertOption) as ScalaStyleLog;
+
+      let rawIndex = 0;
+      return (
+        parsedContent.checkstyle[0]?.file?.flatMap((f) => {
           const source = getRelativePath(this.cwd, f._attributes.name);
 
-          f.error.forEach((log) => {
-            this.logs.push(ScalaStyleParser.toLog(log, source, rawError[rawIndex]));
-            rawIndex += 1;
-          });
-        });
-      }
-      return this;
+          return f.error.map((log) =>
+            ScalaStyleParser.toLog(log, source, rawError[rawIndex++]),
+          );
+        }) ?? []
+      );
     } catch (err) {
       Log.warn('ScalaStyle Parser: parse with content error', content);
       throw err;

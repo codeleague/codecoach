@@ -5,22 +5,17 @@ import { Parser } from './@interfaces/parser.interface';
 import { ESLintIssue, ESLintLog, LogType } from './@types';
 
 export class ESLintParser extends Parser {
-  withContent(content: string): Parser {
+  parse(content: string): LogType[] {
     try {
-      if (content) {
-        const logs = JSON.parse(content) as ESLintLog[];
-        logs.forEach((log) => {
-          if (log.messages.length > 0) {
-            const source = getRelativePath(this.cwd, log.filePath);
+      if (!content) return [];
 
-            log.messages.forEach((msg) => {
-              this.logs.push(ESLintParser.toLog(msg, source));
-            });
-          }
+      const logs = JSON.parse(content) as ESLintLog[];
+      return logs
+        .filter((log) => log.messages.length !== 0)
+        .flatMap((log) => {
+          const source = getRelativePath(this.cwd, log.filePath);
+          return log.messages.map((msg) => ESLintParser.toLog(msg, source));
         });
-      }
-
-      return this;
     } catch (err) {
       Log.warn('ESLint Parser: parse with content via JSON error', content);
       throw err;

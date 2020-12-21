@@ -11,9 +11,7 @@
     "format": "prettier --write 'src/**/*.{js,ts}'",
     "test": "jest",
     "build": "tsc --project tsconfig.build.json",
-    "dev:dotnetbuild": "nodemon --inspect=5858 --config ./nodemon.json -- --url=https://github.com/codeleague/codecoach.git --token=placeyourtokenhere --pr=15 --type=dotnetbuild --buildLogFile=./sample/dotnetbuild/build.content --output=./tmp/dotnetbuild.json",
-    "dev:msbuild": "nodemon --inspect=5858 --config ./nodemon.json -- --url=https://github.com/codeleague/codecoach.git --token=placeyourtokenhere --pr=15 --type=msbuild --buildLogFile=./sample/msbuild/build.log --output=./tmp/dotnetbuild.json",
-    "dev:tslint": "nodemon --inspect=5858 --config ./nodemon.json -- --url=https://github.com/codeleague/codecoach.git --token=placeyourtokenhere --pr=15 --type=tslint --buildLogFile=./sample/tslint/tslint-output.json --output=./tmp/tsbuild.json",
+    "dev": "nodemon --inspect=5858 --config ./nodemon.json -- --url=https://github.com/codeleague/codecoach.git --token=placeyourtokenhere --pr=15 -f='dotnetbuild;./sample/dotnetbuild/build.content;/repo/src' -f='tslint;./sample/tslint/tslint-output.json;C:/repo/src' -o=./tmp/out.json",
     "prepublishOnly": "yarn build"
   },
   "bin": {

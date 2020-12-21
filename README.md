@@ -36,20 +36,17 @@ $ codecoach <options>
 All available options
 ```
 Options:
-  --version       Show version number                                  [boolean]
-  --url           GitHub repo url (https or ssh)             [string] [required]
-  --pr            PR number                                  [number] [required]
-  --type          Project type
-[required] [choices: "dotnetbuild", "msbuild", "tslint", "eslint", "scalastyle"]
-  --buildLogFile  Build log content files (repeatable); If this option is set,
-                  build agent will be skipped                 [array] [required]
-  --output        Output parsed log file        [string] [default: "build.json"]
-  --token         GitHub token                               [string] [required]
-  --cwd           Set working directory. Will use current context cwd if not
-                  set.
-                                                                        [string]
-  --help          Show help                                            [boolean]
-
+      --version       Show version number                                                                      [boolean]
+      --url           GitHub repo url (https or ssh)                                                 [string] [required]
+      --pr            PR number                                                                      [number] [required]
+  -f, --buildLogFile  Build log content files formatted in '<type>;<path>[;<cwd>]'
+                      where <type> is one of [dotnetbuild, msbuild, tslint, eslint, scalastyle]
+                      <path> is build log file path to be processed
+                      and <cwd> is build root directory (optional (Will use current context as cwd)).
+                                                                                                      [array] [required]
+  -o, --output        Output parsed log file                                            [string] [default: "build.json"]
+      --token         GitHub token                                                                   [string] [required]
+      --help          Show help                                                                                [boolean]
 ```
 
 ### How to get build logs

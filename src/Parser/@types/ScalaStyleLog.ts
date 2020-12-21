@@ -1,5 +1,5 @@
 import { ScalaStyleFile } from './ScalaStyleFile';
 
 export type ScalaStyleLog = {
-  checkstyle: { file: ScalaStyleFile[] }[];
+  checkstyle: { file?: ScalaStyleFile[] }[];
 };
