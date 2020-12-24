@@ -86,7 +86,7 @@ ${issuesTableContent}
       return log;
     } catch (e) {
       // todo: this is workaround; handle comment on restrict zone in github
-      const { name, status } = e;
+      const { name, status } = e ?? {};
       Log.warn('GitHub create review failed', { log, error: { name, status } });
       return null;
     }
