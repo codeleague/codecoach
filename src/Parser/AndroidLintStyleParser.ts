@@ -5,6 +5,7 @@ import { LogType } from './@types';
 import { xml2js } from 'xml-js';
 import { AndroidLintStyleIssue } from './@types/AndroidLintStyleIssue';
 import { AndroidLintStyleLog } from './@types/AndroidLintStyleLog';
+import { AndroidLintStyleLocation } from './@types/AndroidLintStyleLocation';
 
 export class AndroidLintStyleParser extends Parser {
   parse(content: string): LogType[] {
@@ -28,8 +29,8 @@ export class AndroidLintStyleParser extends Parser {
   ): LogType {
     return {
       log: issue._attributes.errorLine1.trim(),
-      line: issue.location._attributes.line,
-      lineOffset: issue.location._attributes.column,
+      line: issue.location._attributes.line ?? undefined,
+      lineOffset: issue.location._attributes.column ?? undefined,
       msg: issue._attributes.message,
       source: issue.location._attributes.file,
       severity: AndroidLintStyleParser.getSeverity(issue._attributes.severity.toLowerCase()),
