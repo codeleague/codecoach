@@ -1,4 +1,4 @@
-import {AndroidLintStyleLocation} from "./AndroidLintStyleLocation";
+import {AndroidLintStyleLocation} from './AndroidLintStyleLocation';
 
 export type AndroidLintStyleIssue = {
   _attributes: {

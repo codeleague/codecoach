@@ -15,7 +15,7 @@ export class AndroidLintStyleParser extends Parser {
       return (
           AndroidLintStyleParser.xmlToLog(content).issues[0]?.issue?.flatMap(
               (issue: AndroidLintStyleIssue) => {
-                return AndroidLintStyleParser.toLog(issue);
+                return AndroidLintStyleParser.toLog(issue, issue.location);
           }) ?? []
       );
     } catch (err) {
@@ -25,14 +25,15 @@ export class AndroidLintStyleParser extends Parser {
   }
 
   private static toLog(
-      issue: AndroidLintStyleIssue
+      issue: AndroidLintStyleIssue,
+      location: AndroidLintStyleLocation
   ): LogType {
     return {
       log: issue._attributes.errorLine1.trim(),
-      line: issue.location._attributes.line ?? undefined,
-      lineOffset: issue.location._attributes.column ?? undefined,
+      line: location._attributes.line,
+      lineOffset: location._attributes.column,
       msg: issue._attributes.message,
-      source: issue.location._attributes.file,
+      source: location._attributes.file,
       severity: AndroidLintStyleParser.getSeverity(issue._attributes.severity.toLowerCase()),
       valid: true,
     };
