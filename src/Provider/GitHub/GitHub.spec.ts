@@ -128,7 +128,7 @@ describe('VCS: GitHub', () => {
     await github.report([touchFileWarning]);
 
     expect(service.createReviewComment).toHaveBeenCalledTimes(1);
-    expect(service.createComment).toHaveBeenCalledTimes(1);
+    expect(service.createComment).toHaveBeenCalledTimes(10);
     expect(service.createCommitStatus).toHaveBeenCalledTimes(1);
     expect(service.createCommitStatus).toHaveBeenCalledWith(
       mockedSha,
