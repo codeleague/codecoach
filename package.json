@@ -47,7 +47,6 @@
   "dependencies": {
     "@octokit/core": "^3.2.4",
     "@octokit/rest": "^18.0.12",
-    "nice-try": "^2.1.0",
     "rimraf": "^3.0.2",
     "slash": "^3.0.0",
     "winston": "^3.3.3",
