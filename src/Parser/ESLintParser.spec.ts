@@ -5,7 +5,7 @@ describe('ESLintParser', () => {
   const cwd = 'C:/src/github.com/codeleague/codecoach';
   const mockedContent = [
     {
-      filePath: 'C:/some/where/else',
+      filePath: 'C:/xxxxx',
       messages: [
         {
           ruleId: null,
