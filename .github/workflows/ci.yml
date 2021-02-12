@@ -25,5 +25,8 @@ jobs:
       - name: Dependency install and integrety check
         run: yarn install --frozen-lockfile
       - run: yarn lint-ci
+        if: ${{ always() }}
       - run: yarn test --ci
+        if: ${{ always() }}
       - run: yarn build
+        if: ${{ always() }}
