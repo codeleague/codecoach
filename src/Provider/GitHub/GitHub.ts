@@ -2,7 +2,7 @@ import { VCS } from '..';
 import { Log } from '../../Logger';
 import { LogSeverity, LogType } from '../../Parser';
 import { onlyIn, onlySeverity } from '../utils/filter.util';
-import { MessageUtil} from '../utils/message.util';
+import { MessageUtil } from '../utils/message.util';
 import { CommitStatus } from './CommitStatus';
 import { IGitHubPRService } from './IGitHubPRService';
 
