@@ -22,7 +22,6 @@ export class GitHub implements VCS {
 
       Log.debug(`Commit SHA ${commitId}`);
       Log.debug('Touched files', touchedFiles);
-      Log.debug('Touched file log', touchedFileLog);
 
       const reviewResults = await Promise.all(
         touchedFileLog.map((log) => this.toCreateReviewComment(commitId, log)),
@@ -83,10 +82,12 @@ ${issuesTableContent}
         log.source,
         log.line,
       );
+      Log.debug('GitHub create review success', { log });
       return log;
     } catch (e) {
       // todo: this is workaround; handle comment on restrict zone in github
-      Log.warn('GitHub create review failed', e);
+      const { name, status } = e ?? {};
+      Log.warn('GitHub create review failed', { log, error: { name, status } });
       return null;
     }
   };
