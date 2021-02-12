@@ -8,15 +8,16 @@ module.exports = {
     ecmaVersion: 2020,
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint', 'sonarjs'],
+  plugins: ['@typescript-eslint', 'sonarjs', 'prettier'],
   extends: [
     'plugin:@typescript-eslint/recommended',
+    'prettier',
     'prettier/@typescript-eslint',
     'plugin:prettier/recommended',
   ],
   rules: {
     'prettier/prettier': [
-      'warn',
+      'error',
       {
         endOfLine: 'auto',
       },
