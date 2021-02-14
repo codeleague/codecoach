@@ -11,7 +11,7 @@ describe('AndroidLintStyleParser', () => {
   <issue id="MissingTranslation" severity="Error" message="esp is not translated in (Abkhazian)" category="Correctness:Messages" priority="8" summary="Incomplete translation" explanation="If an application has more than one locale, then all the strings declared in one language should also be translated in all other languages." errorLine1="<string name=esp>My Application</string>" errorLine2="error line two">
     <location file="/Users/a/AndroidStudioProjects/MyApplication/app/src/main/res/values/strings.xml" line="4" column="13"/>
   </issue>
-  <issue id="SetJavaScriptEnabled" severity="Warning" message="Using setJavaScriptEnabled can introduce XSS vulnerabilities into your application, review carefully" category="Security" priority="6" summary="Using setJavaScriptEnabled" explanation="Your code should not invoke setJavaScriptEnabled if you are not sure that your app really requires JavaScript support." url="https://developer.android.com/training/articles/security-tips" urls="https://developer.android.com/training/articles/security-tips" errorLine1="webView.settings.javaScriptEnabled = true" errorLine2="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+  <issue id="SetJavaScriptEnabled" severity="Warning" message="Using \`setJavaScriptEnabled\` can introduce XSS vulnerabilities into your application, review carefully" category="Security" priority="6" summary="Using setJavaScriptEnabled" explanation="Your code should not invoke setJavaScriptEnabled if you are not sure that your app really requires JavaScript support." url="https://developer.android.com/training/articles/security-tips" urls="https://developer.android.com/training/articles/security-tips" errorLine1="webView.settings.javaScriptEnabled = true" errorLine2="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
     <location file="/Users/a/AndroidStudioProjects/MyApplication/app/src/main/java/com/example/myapplication/MainActivity.kt" line="16" column="9"/>
  </issue>
 </issues>
@@ -32,7 +32,7 @@ describe('AndroidLintStyleParser', () => {
       line: 42,
       lineOffset: 5,
       msg: `A newer version of org.jetbrains.kotlin:kotlin-stdlib than 1.3.72 is available: 1.4.20`,
-      log: `implementation &quot;org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version&quot;`,
+      log: `implementation org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version`,
       valid: true,
     });
 
@@ -41,8 +41,8 @@ describe('AndroidLintStyleParser', () => {
       severity: LogSeverity.error,
       line: 4,
       lineOffset: 13,
-      msg: `&quot;esp&quot; is not translated in &quot;ab&quot; (Abkhazian)`,
-      log: `&lt;string name=&quot;esp&quot;>My Application&lt;/string>`,
+      msg: `esp is not translated in (Abkhazian)`,
+      log: `<string name=esp>My Application</string>`,
       valid: true,
     });
 

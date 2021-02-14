@@ -11,5 +11,5 @@ export type AndroidLintStyleIssue = {
     explanation: string;
     errorLine1: string;
   };
-  location: AndroidLintStyleLocation;
+  location: AndroidLintStyleLocation[];
 };

@@ -15,7 +15,7 @@ export class AndroidLintStyleParser extends Parser {
       return (
           AndroidLintStyleParser.xmlToLog(content).issues[0]?.issue?.flatMap(
               (issue: AndroidLintStyleIssue) => {
-                return AndroidLintStyleParser.toLog(issue, issue.location);
+                return AndroidLintStyleParser.toLog(issue, issue.location[0]);
           }) ?? []
       );
     } catch (err) {
