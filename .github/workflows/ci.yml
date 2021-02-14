@@ -22,7 +22,8 @@ jobs:
           path: node_modules
           key: yarn-${{ hashFiles('yarn.lock') }}
           restore-keys: yarn-
-      - run: yarn
+      - name: Dependency install and integrety check
+        run: yarn install --frozen-lockfile
       - run: yarn lint-ci
       - run: yarn test --ci
       - run: yarn build
