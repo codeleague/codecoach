@@ -65,3 +65,7 @@ Use `-fileLoggerParameters` or `-flp` switch with `msbuild`, `dotnet build` or `
 #### ScalaStyle
 Result is already written to `target/scalastyle-result.xml`
 (_[ref.](http://www.scalastyle.org/sbt.html)_)
+
+#### AndroidLint
+Use `-o <filename>` to output lint result to file
+(_[ref.](http://tools.android.com/tips/lint)_)

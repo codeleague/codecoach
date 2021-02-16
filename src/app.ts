@@ -4,6 +4,7 @@ import { BuildLogFile, Config, ProjectType } from './Config';
 import { File } from './File';
 import { Log } from './Logger';
 import {
+  AndroidLintStyleParser,
   DotnetBuildParser,
   MSBuildParser,
   ESLintParser,
@@ -51,6 +52,8 @@ class App {
         return new ESLintParser(cwd);
       case ProjectType.scalastyle:
         return new ScalaStyleParser(cwd);
+      case ProjectType.androidlint:
+        return new AndroidLintStyleParser(cwd);
     }
   }
 
