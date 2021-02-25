@@ -14,6 +14,7 @@ jobs:
     steps:
       - name: "Version $VERSION validity check"
         run: |
+          echo ${{ toJson(github) }}
           if [ $(npm info codecoach@^$VERSION | wc -c) -gt 0 ]; then
             echo "Release version must be greater than existing released versions."
             exit 1
