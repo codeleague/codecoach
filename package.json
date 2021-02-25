@@ -1,9 +1,11 @@
 {
-  "name": "@codeleague/codecoach",
-  "version": "0.0.1",
+  "name": "codecoach",
+  "version": "1.0.0",
   "main": "src/app.ts",
-  "repository": "git@github.com:codeleague/codecoach.git",
-  "author": "codeleague <virtualjoel@gmail.com>",
+  "author": "codeleague",
+  "repository": "https://github.com/codeleague/codecoach.git",
+  "bugs": "https://github.com/codeleague/codecoach/issues/new",
+  "homepage": "https://github.com/codeleague/codecoach",
   "license": "MIT",
   "scripts": {
     "lint": "eslint 'src/**/*.{js,ts}' --quiet --fix",
@@ -22,9 +24,6 @@
   ],
   "engines": {
     "node": ">=14.0.0"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
   },
   "devDependencies": {
     "@octokit/types": "^6.1.1",
