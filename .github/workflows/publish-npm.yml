@@ -12,9 +12,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: "Version $VERSION validity check"
+      - name: Version ${{ env.VERSION }} validity check
         run: |
-          if [ $(npm info codecoach@^$VERSION | wc -c) -gt 0 ]; then
+          if [ $(npm info codecoach@^${{ env.VERSION }} | wc -c) -gt 0 ]; then
             echo "Release version must be greater than existing released versions."
             exit 1
           fi
@@ -36,7 +36,7 @@ jobs:
       - name: Install dependencies
         run: yarn
 
-      - name: "Publish version $VERSION"
-        run: yarn publish --new-version $VERSION --no-git-tag-version
+      - name: Publish version ${{ env.VERSION }}
+        run: yarn publish --new-version ${{ env.VERSION }} --no-git-tag-version
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_PUB_KEY }}
