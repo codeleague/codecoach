@@ -2,23 +2,40 @@ name: Publish to npm
 
 on:
   release:
-    types: [created]
+    types: [ created ]
+
+env:
+  VERSION: github.event.release.tag_name
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Version validity check
+        run: >
+          if [ $(npm info codecoach@^16.14 | wc -c) -gt 0 ]; then
+            echo "Release version must be greater than existing released versions."
+            exit 1
+          fi
+
       - uses: actions/checkout@v2
+
       - uses: actions/setup-node@v1
         with:
           node-version: '14.x'
+          always-auth: true
+
       - name: Cache node_modules
         uses: actions/cache@v1
         with:
           path: node_modules
           key: yarn-${{ hashFiles('yarn.lock') }}
           restore-keys: yarn-
-      - run: yarn
-      - run: yarn publish --new-version 1.0.$GITHUB_RUN_NUMBER --no-git-tag-version
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Publish version $VERSION
+        run: yarn publish --new-version $VERSION --no-git-tag-version
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_PUB_KEY }}

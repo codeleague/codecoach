@@ -6,6 +6,7 @@ Use build log to automatically review your pull requests.
 - TSLint
 - MSBuild (both `msbuild.exe` and `dotnet build` commands)
 - ScalaStyle
+- AndroidLint
 
 ### Prerequisite
 Node v14 or later
@@ -13,18 +14,13 @@ Node v14 or later
 ### Installation
 CodeCoach packages are in GitHub Packages which require you to add scoped registry entry.
 
-Append this to `.npmrc` file.
-```
-@codeleague:registry=https://npm.pkg.github.com
-```
-
 Then install it globally by npm
 ```shell script
-$ npm i -g @codeleague/codecoach
+$ npm i -g codecoach
 ```
 or yarn
 ```shell script
-$ yarn global add @codeleague/codecoach
+$ yarn global add codecoach
 ```
 
 ### Usage
