@@ -4,16 +4,17 @@ on:
   release:
     types: [ created ]
 
-env:
-  VERSION: github.event.release.tag_name
-
 jobs:
   build:
+    env:
+      VERSION: ${{ github.event.release.tag_name }}
+
     runs-on: ubuntu-latest
+
     steps:
-      - name: Version validity check
-        run: >
-          if [ $(npm info codecoach@^{{ $VERSION }} | wc -c) -gt 0 ]; then
+      - name: "Version $VERSION validity check"
+        run: |
+          if [ $(npm info codecoach@^$VERSION | wc -c) -gt 0 ]; then
             echo "Release version must be greater than existing released versions."
             exit 1
           fi
@@ -35,7 +36,7 @@ jobs:
       - name: Install dependencies
         run: yarn
 
-      - name: Publish version $VERSION
+      - name: "Publish version $VERSION"
         run: yarn publish --new-version $VERSION --no-git-tag-version
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_PUB_KEY }}
