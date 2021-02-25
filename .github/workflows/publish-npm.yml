@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Version validity check
         run: >
-          if [ $(npm info codecoach@^16.14 | wc -c) -gt 0 ]; then
+          if [ $(npm info codecoach@^{{ $VERSION }} | wc -c) -gt 0 ]; then
             echo "Release version must be greater than existing released versions."
             exit 1
           fi
