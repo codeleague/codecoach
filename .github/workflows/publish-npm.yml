@@ -25,6 +25,7 @@ jobs:
         with:
           node-version: '14.x'
           always-auth: true
+          registry-url: https://registry.npmjs.org/
 
       - name: Cache node_modules
         uses: actions/cache@v1
