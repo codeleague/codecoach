@@ -1,9 +1,11 @@
 {
-  "name": "@codeleague/codecoach",
+  "name": "codecoach",
   "version": "1.0.0",
   "main": "src/app.ts",
-  "repository": "git@github.com:codeleague/codecoach.git",
   "author": "codeleague",
+  "repository": "https://github.com/codeleague/codecoach.git",
+  "bugs": "https://github.com/codeleague/codecoach/issues/new",
+  "homepage": "https://github.com/codeleague/codecoach",
   "license": "MIT",
   "scripts": {
     "lint": "eslint 'src/**/*.{js,ts}' --quiet --fix",
