@@ -122,6 +122,21 @@ describe('VCS: GitHub', () => {
     expect(service.createComment).toHaveBeenCalledWith(expect.any(String));
   });
 
+  it('should group comments in the same line of same file', async () => {
+    const service = new PrServiceMock();
+    const github = new GitHub(service);
+
+    await github.report([touchFileError, touchFileError, touchFileError, touchFileError]);
+
+    expect(service.createReviewComment).toHaveBeenCalledTimes(1);
+    expect(service.createReviewComment).toHaveBeenCalledWith(
+      mockedSha,
+      expect.any(String),
+      touchFileError.source,
+      touchFileError.line,
+    );
+  });
+
   it('should set commit status as success when no error', async () => {
     const service = new PrServiceMock();
     const github = new GitHub(service);
