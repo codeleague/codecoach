@@ -42,8 +42,8 @@ export class AndroidLintStyleParser extends Parser {
     };
   }
 
-  private static getSeverity(ScalaStyleLevel: string): LogSeverity {
-    switch (ScalaStyleLevel) {
+  private static getSeverity(levelText: string): LogSeverity {
+    switch (levelText) {
       case 'info':
         return LogSeverity.info;
       case 'warning':
