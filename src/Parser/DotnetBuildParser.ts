@@ -3,9 +3,9 @@ import slash from 'slash';
 
 import { Log } from '../Logger';
 import { getRelativePath } from '../Provider/utils/path.util';
-import { LogSeverity } from './@enums/log.severity.enum';
 import { Parser } from './@interfaces/parser.interface';
 import { LogType } from './@types';
+import { mapSeverity } from './utils/dotnetSeverityMap';
 import { splitByLine } from './utils/lineBreak.util';
 
 export class DotnetBuildParser extends Parser {
@@ -30,7 +30,7 @@ export class DotnetBuildParser extends Parser {
       src,
       _line,
       _lineOffset,
-      _severity,
+      severityText,
       errorCode,
       content,
       _csproj,
@@ -50,7 +50,7 @@ export class DotnetBuildParser extends Parser {
       lineOffset: Number(_lineOffset),
       msg: `${errorCode.trim()}: ${content.trim()}`,
       source: relativeSrcPath ?? basename(slash(_csproj)),
-      severity: _severity as LogSeverity,
+      severity: mapSeverity(severityText),
       valid: !!relativeSrcPath,
     };
   }
