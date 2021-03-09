@@ -6,13 +6,13 @@
     <a href="https://github.com/codeleague/codecoach/actions/workflows/publish-npm.yml"><img alt="Publish to npm" src="https://github.com/codeleague/codecoach/actions/workflows/publish-npm.yml/badge.svg"></a>
 </p>
 <p align="center">
+<img alt="CodeCoach logo" src="https://user-images.githubusercontent.com/5965883/110232495-8cb95700-7f50-11eb-99ee-c223786e39a9.png"/>
+</p>
+
 Lightweight code review tool. 
 Provide lint output to CodeCoach, it will automatically review pull requests.
 CodeCoach uses node.js as run time. It can be run from any command line.
 So it can be integrated with any CI with ease.
-<br/>
-<img alt="CodeCoach logo" src="https://user-images.githubusercontent.com/5965883/110232495-8cb95700-7f50-11eb-99ee-c223786e39a9.png"/>
-</p>
 
 #### Supported linters.
 - ESLint
