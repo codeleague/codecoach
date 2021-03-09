@@ -18,6 +18,16 @@ type PrRequestBase = {
   repo: string;
 };
 
+type Patch = {
+  from: number;
+  to: number;
+};
+
+type Diff = {
+  file: string;
+  patch?: Patch;
+};
+
 export class GitHubPRService implements IGitHubPRService {
   private readonly requestBase: PrRequestBase;
   private readonly adapter: Octokit;
