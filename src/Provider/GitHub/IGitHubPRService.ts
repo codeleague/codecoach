@@ -1,3 +1,4 @@
+import { Diff } from '../@types/PatchTypes';
 import { CommitStatus } from './CommitStatus';
 import {
   IssuesListCommentsResponseData,
@@ -23,5 +24,5 @@ export interface IGitHubPRService {
     state: CommitStatus,
     description?: string,
   ): Promise<void>;
-  files(): Promise<string[]>;
+  diff(): Promise<Diff[]>;
 }

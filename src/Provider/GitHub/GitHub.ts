@@ -14,15 +14,15 @@ export class GitHub implements VCS {
     try {
       await this.removeExistingComments();
       const commitId = await this.prService.getLatestCommitSha();
-      const touchedFiles = await this.prService.files();
+      const touchedDiffs = await this.prService.diff();
       const invalidLogs = logs.filter((l) => !l.valid);
 
       const touchedFileLog = logs
-        .filter(onlyIn(touchedFiles))
+        .filter(onlyIn(touchedDiffs))
         .filter(onlySeverity(LogSeverity.error, LogSeverity.warning));
 
       Log.debug(`Commit SHA ${commitId}`);
-      Log.debug('Touched files', touchedFiles);
+      Log.debug('Touched diff', touchedDiffs);
 
       const comments = this.groupComments(touchedFileLog);
 

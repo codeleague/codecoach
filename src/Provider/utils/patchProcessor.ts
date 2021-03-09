@@ -1,6 +1,8 @@
 import { Patch } from '../@types/PatchTypes';
 
-export function getPatch(patch: string): Patch[] {
+export function getPatch(patch?: string): Patch[] {
+  if (!patch) return [];
+
   const touchLines: Patch[] = [];
   const splitter = /\n(?=@@)/g;
   const diffInfoMatcher = /@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@/;
