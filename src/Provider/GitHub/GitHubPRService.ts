@@ -202,4 +202,10 @@ export class GitHubPRService implements IGitHubPRService {
       ? GITHUB_COM_API
       : new URL('api/v3', repo.origin).toString();
   }
+
+  private static getApiBase2(repo: URL): string {
+    return repo.hostname === 'github.com'
+      ? GITHUB_COM_API
+      : new URL('api/v3', repo.origin).toString();
+  }
 }
