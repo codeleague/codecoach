@@ -18,16 +18,6 @@ type PrRequestBase = {
   repo: string;
 };
 
-type Patch = {
-  from: number;
-  to: number;
-};
-
-type Diff = {
-  file: string;
-  patch?: Patch;
-};
-
 export class GitHubPRService implements IGitHubPRService {
   private readonly requestBase: PrRequestBase;
   private readonly adapter: Octokit;
@@ -198,12 +188,6 @@ export class GitHubPRService implements IGitHubPRService {
   }
 
   private static getApiBase(repo: URL): string {
-    return repo.hostname === 'github.com'
-      ? GITHUB_COM_API
-      : new URL('api/v3', repo.origin).toString();
-  }
-
-  private static getApiBase2(repo: URL): string {
     return repo.hostname === 'github.com'
       ? GITHUB_COM_API
       : new URL('api/v3', repo.origin).toString();

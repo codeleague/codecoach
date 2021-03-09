@@ -3,11 +3,7 @@ import { Log } from '../../Logger';
 import { LogSeverity, LogType } from '../../Parser';
 import { onlyIn, onlySeverity } from '../utils/filter.util';
 import { MessageUtil } from '../utils/message.util';
-import {
-  CommentFileStructure,
-  CommentStructure,
-  Comment,
-} from '../@interfaces/CommentTypes';
+import { CommentFileStructure, CommentStructure, Comment } from '../@types/CommentTypes';
 import { CommitStatus } from './CommitStatus';
 import { IGitHubPRService } from './IGitHubPRService';
 
