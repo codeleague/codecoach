@@ -11,7 +11,16 @@ const mockedCommentId = 45346;
 const mockedReviewId = 324145;
 const mockedUserId = 1234;
 const mockedSha = '123456';
-const mockTouchedFiles = 'file1.cs';
+const mockTouchFile = 'file1.cs';
+const file1TouchLine = 11;
+const file2TouchLine = 33;
+const mockTouchDiff = {
+  file: mockTouchFile,
+  patch: [
+    { from: file1TouchLine - 1, to: file1TouchLine + 1 },
+    { from: file2TouchLine - 2, to: file2TouchLine + 2 },
+  ],
+};
 
 const mockedReviews = [
   { id: mockedReviewId, user: { id: mockedUserId } },
@@ -31,15 +40,15 @@ class PrServiceMock implements IGitHubPRService {
   getCurrentUserId = jest.fn().mockResolvedValue(mockedUserId);
   getLatestCommitSha = jest.fn().mockResolvedValue(mockedSha);
   createCommitStatus = jest.fn().mockResolvedValue(undefined);
-  files = jest.fn().mockResolvedValue([mockTouchedFiles]);
+  diff = jest.fn().mockResolvedValue([mockTouchDiff]);
 }
 
 const touchFileError = {
   log: '',
   msg: 'msg1',
   severity: LogSeverity.error,
-  source: mockTouchedFiles,
-  line: 11,
+  source: mockTouchFile,
+  line: file1TouchLine,
   lineOffset: 22,
   valid: true,
 };
@@ -47,8 +56,8 @@ const touchFileWarning = {
   log: '',
   msg: 'msg3',
   severity: LogSeverity.warning,
-  source: mockTouchedFiles,
-  line: 33,
+  source: mockTouchFile,
+  line: file2TouchLine,
   lineOffset: 44,
   valid: true,
 };
@@ -94,7 +103,7 @@ describe('VCS: GitHub', () => {
     expect(service.deleteReviewComment).toHaveBeenCalledWith(mockedReviewId);
 
     expect(service.getLatestCommitSha).toHaveBeenCalledTimes(1);
-    expect(service.files).toHaveBeenCalledTimes(1);
+    expect(service.diff).toHaveBeenCalledTimes(1);
 
     expect(service.createReviewComment).toHaveBeenNthCalledWith(
       1,

@@ -5,7 +5,9 @@ import { URL } from 'url';
 import { GITHUB_COM_API } from '../../app.constants';
 import { TIME_ZONE, USER_AGENT } from '../../Config/constants/defaults';
 import { Log } from '../../Logger';
+import { Diff } from '../@types/PatchTypes';
 import { API_PAGE_SIZE_LIMIT } from '../constants/github.provider.constant';
+import { getPatch } from '../utils/patchProcessor';
 import { CommitStatus } from './CommitStatus';
 import { IGitHubPRService } from './IGitHubPRService';
 import {
@@ -155,8 +157,8 @@ export class GitHubPRService implements IGitHubPRService {
     }
   }
 
-  async files(): Promise<string[]> {
-    const files: string[] = [];
+  async diff(): Promise<Diff[]> {
+    const files: Diff[] = [];
     let page = 0;
     let hasNext = true;
 
@@ -168,7 +170,7 @@ export class GitHubPRService implements IGitHubPRService {
         page: ++page,
       });
 
-      files.push(...data.map((d) => d.filename));
+      files.push(...data.map((d) => ({ file: d.filename, patch: getPatch(d.patch) })));
       hasNext = GitHubPRService.hasNext(headers);
     }
 
