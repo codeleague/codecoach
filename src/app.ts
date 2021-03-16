@@ -14,6 +14,7 @@ import {
   ScalaStyleParser,
 } from './Parser';
 import { GitHub, GitHubPRService, VCS } from './Provider';
+import {DartLintParser} from "./Parser/DartLintParser";
 
 class App {
   private readonly vcs: VCS;
@@ -55,7 +56,7 @@ class App {
       case ProjectType.androidlint:
         return new AndroidLintStyleParser(cwd);
       case ProjectType.dartlint:
-        return new AndroidLintStyleParser(cwd);
+        return new DartLintParser(cwd);
     }
   }
 

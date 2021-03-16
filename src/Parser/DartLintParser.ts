@@ -7,7 +7,6 @@ import { DartLineEnum } from './@enums/dart.line.enum';
 import { DartLocationLineEnum } from './@enums/dart.location.line.enum';
 
 export class DartLintParser extends Parser {
-
   parse(content: string): LogType[] {
     return content
       .split(DartIndicatorEnum.newLine)
