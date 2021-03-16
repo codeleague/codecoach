@@ -5,4 +5,5 @@ export enum ProjectType {
   eslint = 'eslint',
   scalastyle = 'scalastyle',
   androidlint = 'androidlint',
+  dartlint = 'dartlint',
 }

@@ -54,6 +54,8 @@ class App {
         return new ScalaStyleParser(cwd);
       case ProjectType.androidlint:
         return new AndroidLintStyleParser(cwd);
+      case ProjectType.dartlint:
+        return new AndroidLintStyleParser(cwd);
     }
   }
 
