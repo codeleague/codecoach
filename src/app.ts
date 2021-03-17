@@ -14,7 +14,7 @@ import {
   ScalaStyleParser,
 } from './Parser';
 import { GitHub, GitHubPRService, VCS } from './Provider';
-import {DartLintParser} from "./Parser/DartLintParser";
+import { DartLintParser } from './Parser/DartLintParser';
 
 class App {
   private readonly vcs: VCS;

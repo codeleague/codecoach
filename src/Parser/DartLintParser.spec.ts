@@ -51,7 +51,7 @@ describe('DartLintStyleParser', () => {
     });
 
     expect(result[3]).toEqual({
-      source: `test_driver/tests/offline/offline_test.dart:13:2`,
+      source: `test_driver/tests/offline/offline_test.dart`,
       severity: LogSeverity.error,
       line: 13,
       lineOffset: 2,
@@ -62,16 +62,14 @@ describe('DartLintStyleParser', () => {
   });
 
   it('Should do nothing if put empty string', () => {
-    const result = new DartLintParser(cwd).parse('');
-    expect(result).toHaveLength(0);
+    expect(() => new DartLintParser(cwd).parse('')).toHaveLength(0);
   });
 
-  it('Should throw error if the line not match the rule', () => {
-    expect(() => new DartLintParser(cwd).parse(':')).toThrow();
+  it('Should be empty when the line not match the rule', () => {
+    expect(() => new DartLintParser(cwd).parse(':')).toHaveLength(0);
   });
 
   it('Should parse content with no error correctly', () => {
-    const result = new DartLintParser(cwd).parse(mockedContentWithNoError);
-    expect(result).toHaveLength(0);
+    expect(() => new DartLintParser(cwd).parse(mockedContentWithNoError)).toHaveLength(0);
   });
 });

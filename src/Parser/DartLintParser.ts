@@ -30,7 +30,7 @@ export class DartLintParser extends Parser {
       line: location.line,
       lineOffset: location.offset,
       msg: lineParts[DartLineEnum.Message].trim(),
-      source: location.fileLocation,
+      source: location.fileLocation.trim(),
       severity: DartLintParser.stringToSeverity(lineParts[DartLineEnum.Severity].trim()),
       valid: true,
     };
@@ -39,8 +39,8 @@ export class DartLintParser extends Parser {
   private static linePartsToLocation(lineParts: string[]): DartLocation {
     return {
       fileLocation: lineParts[DartLocationLineEnum.FileLocation],
-      line: Number(DartLocationLineEnum.Line),
-      offset: Number(DartLocationLineEnum.Offset),
+      line: Number(lineParts[DartLocationLineEnum.Line]),
+      offset: Number(lineParts[DartLocationLineEnum.Offset]),
     };
   }
 
@@ -56,6 +56,6 @@ export class DartLintParser extends Parser {
   }
 
   private static isLineValid(lines: string[]): boolean {
-    return lines.length == Object.keys(DartLineEnum).length;
+    return lines.length == Object.keys(DartLineEnum).length / 2;
   }
 }
