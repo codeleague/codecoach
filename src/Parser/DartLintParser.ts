@@ -11,14 +11,14 @@ export class DartLintParser extends Parser {
     return content
       .split(DartIndicatorEnum.newLine)
       .map((line: string) => DartLintParser.lineToLog(line))
-      .filter((f: LogType | null) => f != null) as LogType[];
+      .filter((f: LogType) => f != DartLintParser.emptyLog);
   }
 
-  private static lineToLog(line: string): LogType | null {
+  private static lineToLog(line: string): LogType {
     const lineParts = line.split(DartIndicatorEnum.lineItem);
     return DartLintParser.isLineValid(lineParts)
       ? DartLintParser.linePartsToLog(lineParts)
-      : null;
+      : DartLintParser.emptyLog;
   }
 
   private static linePartsToLog(lineParts: string[]): LogType {
@@ -48,6 +48,8 @@ export class DartLintParser extends Parser {
     switch (levelText) {
       case 'error':
         return LogSeverity.error;
+      case 'warning':
+        return LogSeverity.warning;
       case 'info':
         return LogSeverity.info;
       default:
@@ -58,4 +60,12 @@ export class DartLintParser extends Parser {
   private static isLineValid(lines: string[]): boolean {
     return lines.length == Object.keys(DartLineEnum).length / 2;
   }
+
+  private static emptyLog: LogType = {
+    log: '',
+    msg: '',
+    severity: LogSeverity.unknown,
+    source: '',
+    valid: false,
+  };
 }
