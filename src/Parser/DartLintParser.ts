@@ -1,46 +1,30 @@
 import { Parser } from './@interfaces/parser.interface';
 import { LogType } from './@types';
-import { DartIndicatorEnum } from './@enums/dart.indicator.enum';
 import { LogSeverity } from './@enums/log.severity.enum';
-import { DartLocation } from './@types/DartLocation';
-import { DartLineEnum } from './@enums/dart.line.enum';
-import { DartLocationLineEnum } from './@enums/dart.location.line.enum';
+import { splitByLine } from './utils/lineBreak.util';
 
 export class DartLintParser extends Parser {
   parse(content: string): LogType[] {
-    return content
-      .split(DartIndicatorEnum.newLine)
+    return splitByLine(content)
       .map((line: string) => DartLintParser.lineToLog(line))
       .filter((f: LogType) => f != DartLintParser.emptyLog);
   }
 
   private static lineToLog(line: string): LogType {
-    const lineParts = line.split(DartIndicatorEnum.lineItem);
-    return DartLintParser.isLineValid(lineParts)
-      ? DartLintParser.linePartsToLog(lineParts)
-      : DartLintParser.emptyLog;
+    const lineMatch = line.match(/^(.*) • (.*) • (.*):(\d+):(\d+) • (.*)/);
+    return lineMatch ? DartLintParser.lineMatchToLog(lineMatch) : DartLintParser.emptyLog;
   }
 
-  private static linePartsToLog(lineParts: string[]): LogType {
-    const location = DartLintParser.linePartsToLocation(
-      lineParts[DartLineEnum.Location].split(DartIndicatorEnum.locationItem),
-    );
+  private static lineMatchToLog(lineMatch: RegExpMatchArray): LogType {
+    const [, severityText, message, source, line, offset, log] = lineMatch;
     return {
-      log: lineParts[DartLineEnum.Log].trim(),
-      line: location.line,
-      lineOffset: location.offset,
-      msg: lineParts[DartLineEnum.Message].trim(),
-      source: location.fileLocation.trim(),
-      severity: DartLintParser.stringToSeverity(lineParts[DartLineEnum.Severity].trim()),
+      log: log,
+      line: Number(line),
+      lineOffset: Number(offset),
+      msg: message,
+      source: source,
+      severity: DartLintParser.stringToSeverity(severityText),
       valid: true,
-    };
-  }
-
-  private static linePartsToLocation(lineParts: string[]): DartLocation {
-    return {
-      fileLocation: lineParts[DartLocationLineEnum.FileLocation],
-      line: Number(lineParts[DartLocationLineEnum.Line]),
-      offset: Number(lineParts[DartLocationLineEnum.Offset]),
     };
   }
 
@@ -55,10 +39,6 @@ export class DartLintParser extends Parser {
       default:
         return LogSeverity.unknown;
     }
-  }
-
-  private static isLineValid(lines: string[]): boolean {
-    return lines.length == Object.keys(DartLineEnum).length / 2;
   }
 
   private static emptyLog: LogType = {
