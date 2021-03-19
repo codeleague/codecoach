@@ -27,7 +27,7 @@ describe('DartLintStyleParser', () => {
     expect(result).toHaveLength(4);
 
     expect(result[0]).toEqual({
-      source: 'api/modules/host_manage_api/lib/auth/auth.dart',
+      source: 'api/modules/lib/auth/auth.dart',
       severity: LogSeverity.info,
       line: 1,
       lineOffset: 8,
