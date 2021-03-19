@@ -8,8 +8,6 @@ info • 'await' applied to 'void', which is not a 'Future' • lib/domain/provi
 info • Sort child properties last in widget instance creations • lib/presentation/widgets/platform_flat_button.dart:34:9 • sort_child_properties_last
 info • The annotation 'Timeout' can only be used on libraries • test_driver/tests/offline/offline_test.dart:13:2 • invalid_annotation_target
 info • 'await' applied to 'void', which is not a 'Future' • lib/domain/reload_center.dart:24:9 • await_only_futures
-info • `Future` results in `async` function bodies must be `await`ed or marked `unawaited` using `package:pedantic` • lib/presentation/screens/property_verification/property_verification.dart:340:9 • unawaited_futures
-info • Prefer final for variable declarations if they are not reassigned • lib/presentation/utils/location_formatter.dart:17:9 • prefer_final_locals
 info • Prefer final for variable declarations if they are not reassigned • lib/presentation/utils/name_formatter.dart:17:9 • prefer_final_locals
 info • 'RaisedButton' is deprecated and shouldn't be used. Use ElevatedButton instead. See the migration guide in flutter.dev/go/material-button-migration-guide). This feature was deprecated after v1.25.0-8.1.pre. • lib/presentation/widgets/buttons/cta_button.dart:14:14 • deprecated_member_use
 info • Sort child properties last in widget instance creations • lib/presentation/widgets/buttons/cta_button.dart:16:9 • sort_child_properties_last
@@ -34,7 +32,6 @@ info • 'maxLengthEnforced' is deprecated and shouldn't be used. Use maxLengthE
 warning • Publishable packages can't have git dependencies • pubspec.yaml:32:5 • invalid_dependency
 warning • Publishable packages can't have path dependencies • pubspec.yaml:44:5 • invalid_dependency
 info • The annotation 'Timeout' can only be used on libraries • test_driver/tests/offline/offline_test.dart:13:2 • invalid_annotation_target
-info • Prefer final for variable declarations if they are not reassigned • test_driver/utils/element.dart:10:9 • prefer_final_locals
 info • Prefer final for variable declarations if they are not reassigned • test_driver/utils/element.dart:31:9 • prefer_final_locals
 error • The method 'load' isn't defined for the type 'IsolateRef' • test_driver/utils/isolate_workaround.dart:60:40 • undefined_method
 error • Conditions must have a static type of 'bool' • test_driver/utils/isolate_workaround.dart:61:11 • non_bool_condition
