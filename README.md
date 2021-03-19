@@ -102,5 +102,9 @@ Result is already written to `target/scalastyle-result.xml` when project is buil
 Use `-o <filename>` to output lint result to file
 (_[ref.](http://tools.android.com/tips/lint)_)
 
+#### DartLint
+Use `-o <filename>` on output lint result created by command `dart analyze > <filename>` in dart project
+(_[ref.](https://dart-lang.github.io/linter/lints/)_)
+
 ### Contribute
 For contribution guidelines and project dev setup. Please see [CONTRIBUTING.md](CONTRIBUTING.md)

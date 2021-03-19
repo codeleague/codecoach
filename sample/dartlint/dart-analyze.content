@@ -1,0 +1,42 @@
+The plugin `flutter_plugin_android_lifecycle` is built using an older version of the Android plugin API which assumes that it's running in a full-Flutter environment. It may have undefined behaviors when Flutter is integrated into an existing app as a module.
+The plugin can be updated to the v2 Android Plugin APIs by following https://flutter.dev/go/android-plugin-migration.
+The plugin `flutter_user_agent` is built using an older version of the Android plugin API which assumes that it's running in a full-Flutter environment. It may have undefined behaviors when Flutter is integrated into an existing app as a module.
+The plugin can be updated to the v2 Android Plugin APIs by following https://flutter.dev/go/android-plugin-migration.
+Analyzing host_app...
+
+info • 'await' applied to 'void', which is not a 'Future' • lib/domain/providers/sharable_images_repo.dart:114:5 • await_only_futures
+info • Sort child properties last in widget instance creations • lib/presentation/widgets/platform_flat_button.dart:34:9 • sort_child_properties_last
+info • The annotation 'Timeout' can only be used on libraries • test_driver/tests/offline/offline_test.dart:13:2 • invalid_annotation_target
+info • 'await' applied to 'void', which is not a 'Future' • lib/domain/reload_center.dart:24:9 • await_only_futures
+info • Prefer final for variable declarations if they are not reassigned • lib/presentation/utils/name_formatter.dart:17:9 • prefer_final_locals
+info • 'RaisedButton' is deprecated and shouldn't be used. Use ElevatedButton instead. See the migration guide in flutter.dev/go/material-button-migration-guide). This feature was deprecated after v1.25.0-8.1.pre. • lib/presentation/widgets/buttons/cta_button.dart:14:14 • deprecated_member_use
+info • Sort child properties last in widget instance creations • lib/presentation/widgets/buttons/cta_button.dart:16:9 • sort_child_properties_last
+info • Prefer final for variable declarations if they are not reassigned • lib/presentation/widgets/loading_view.dart:68:9 • prefer_final_locals
+info • Sort child properties last in widget instance creations • lib/presentation/widgets/media_picker_sheet/media_picker_sheet.dart:84:7 • sort_child_properties_last
+info • 'pickImage' is deprecated and shouldn't be used. Use imagePicker.getImage() method instead. • lib/presentation/widgets/media_picker_sheet/media_picker_sheet.dart:112:28 • deprecated_member_use
+info • Dead code • lib/presentation/widgets/media_picker_sheet/media_picker_sheet.dart:113:9 • dead_code
+info • Sort child properties last in widget instance creations • lib/presentation/widgets/platform_flat_button.dart:34:9 • sort_child_properties_last
+info • 'FlatButton' is deprecated and shouldn't be used. Use TextButton instead. See the migration guide in flutter.dev/go/material-button-migration-guide). This feature was deprecated after v1.25.0-8.1.pre. • lib/presentation/widgets/platform_flat_button.dart:67:12 • deprecated_member_use
+info • Sort child properties last in widget instance creations • lib/presentation/widgets/platform_flat_button.dart:75:7 • sort_child_properties_last
+info • Prefer final for variable declarations if they are not reassigned • lib/presentation/widgets/platform_icon_button.dart:57:12 • prefer_final_locals
+info • Sort child properties last in widget instance creations • lib/presentation/widgets/platform_icon_button.dart:64:11 • sort_child_properties_last
+info • Prefer final for variable declarations if they are not reassigned • lib/presentation/widgets/processing_view.dart:157:9 • prefer_final_locals
+info • Sort child properties last in widget instance creations • lib/presentation/widgets/processing_view.dart:159:9 • sort_child_properties_last
+info • This class (or a class that this class inherits from) is marked as '@immutable', but one or more of its instance fields aren't final: SuccessPage.message • lib/presentation/widgets/success_page.dart:7:7 • must_be_immutable
+info • Only use double quotes for strings containing single quotes • lib/presentation/widgets/success_page.dart:8:20 • prefer_single_quotes
+info • 'RaisedButton' is deprecated and shouldn't be used. Use ElevatedButton instead. See the migration guide in flutter.dev/go/material-button-migration-guide). This feature was deprecated after v1.25.0-8.1.pre. • lib/presentation/widgets/success_page.dart:33:15 • deprecated_member_use
+info • Prefer final for variable declarations if they are not reassigned • lib/presentation/widgets/technical_error.dart:34:9 • prefer_final_locals
+info • 'RaisedButton' is deprecated and shouldn't be used. Use ElevatedButton instead. See the migration guide in flutter.dev/go/material-button-migration-guide). This feature was deprecated after v1.25.0-8.1.pre. • lib/presentation/widgets/technical_error.dart:34:58 • deprecated_member_use
+info • Prefer final for variable declarations if they are not reassigned • lib/presentation/widgets/text_field_cell/text_field_cell.dart:97:9 • prefer_final_locals
+info • 'maxLengthEnforced' is deprecated and shouldn't be used. Use maxLengthEnforcement parameter which provides more specific behavior related to the maxLength limit. This feature was deprecated after v1.25.0-5.0.pre. • lib/presentation/widgets/text_field_cell/text_field_cell.dart:149:7 • deprecated_member_use
+warning • Publishable packages can't have git dependencies • pubspec.yaml:32:5 • invalid_dependency
+warning • Publishable packages can't have path dependencies • pubspec.yaml:44:5 • invalid_dependency
+info • The annotation 'Timeout' can only be used on libraries • test_driver/tests/offline/offline_test.dart:13:2 • invalid_annotation_target
+info • Prefer final for variable declarations if they are not reassigned • test_driver/utils/element.dart:31:9 • prefer_final_locals
+error • The method 'load' isn't defined for the type 'IsolateRef' • test_driver/utils/isolate_workaround.dart:60:40 • undefined_method
+error • Conditions must have a static type of 'bool' • test_driver/utils/isolate_workaround.dart:61:11 • non_bool_condition
+info • Only use double quotes for strings containing single quotes • test_driver/utils/isolate_workaround.dart:64:17 • prefer_single_quotes
+error • A value of type 'dynamic' can't be assigned to a variable of type 'StreamSubscription<dynamic>' • test_driver/utils/isolate_workaround.dart:71:27 • invalid_assignment
+error • The getter 'onIsolateRunnable' isn't defined for the type 'VmService' • test_driver/utils/isolate_workaround.dart:71:49 • undefined_getter
+error • Conditions must have a static type of 'bool' • test_driver/utils/isolate_workaround.dart:75:11 • non_bool_condition
+info • Only use double quotes for strings containing single quotes • test_driver/utils/isolate_workaround.dart:78:17 • prefer_single_quotes
