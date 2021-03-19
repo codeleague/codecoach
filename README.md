@@ -20,6 +20,7 @@ So it can be integrated with any CI with ease.
 - MSBuild (both `msbuild.exe` and `dotnet build` commands)
 - ScalaStyle
 - AndroidLint
+- DartLint
 
 #### Supported source controls
 - GitHub
@@ -62,7 +63,7 @@ Repository access token. For GitHub, it's _"Personal access tokens"_ in settings
 ##### `--buildLogFile` or `-f`
 ###### Required, Repeatable  
 Build log content files config. Splitted in to 3 part, formatted in `<type>;<path>[;<cwd>]`
-- Type: one of `dotnetbuild`, `msbuild`, `tslint`, `eslint`, `scalastyle` or `androidlint`
+- Type: one of `dotnetbuild`, `msbuild`, `tslint`, `eslint`, `scalastyle`, `androidlint` or `dartlint`
 - Path: Path to lint output file to be processed
 - cwd: Repository root directory for lint context (optional, will use current context if not provided)
 
