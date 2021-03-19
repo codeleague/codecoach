@@ -6,7 +6,7 @@ describe('DartLintStyleParser', () => {
   const mockedContent = `
     The plugin can be updated to the v2 Android Plugin APIs by following https://flutter.dev/go/android-plugin-migration.
     Analyzing host_app...                                           
-    info • Unused import: 'dart:async' • api/modules/host_manage_api/lib/auth/auth.dart:1:8 • unused_import
+    info • Unused import: 'dart:async' • api/modules/lib/auth/auth.dart:1:8 • unused_import
     info • 'await' applied to 'void', which is not a 'Future' • lib/domain/providers/sharable_images_repo.dart:114:5 • await_only_futures
     error • Sort child properties last in widget instance creations • lib/presentation/widgets/platform_flat_button.dart:34:9 • sort_child_properties_last
     error • The annotation 'Timeout' can only be used on libraries • test_driver/tests/offline/offline_test.dart:13:2 • invalid_annotation_target
