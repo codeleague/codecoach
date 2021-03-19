@@ -4,89 +4,22 @@ The plugin `flutter_user_agent` is built using an older version of the Android p
 The plugin can be updated to the v2 Android Plugin APIs by following https://flutter.dev/go/android-plugin-migration.
 Analyzing host_app...
 
-info • Unused import: 'dart:async' • api/modules/host_manage_api/lib/auth/auth.dart:1:8 • unused_import
 info • 'await' applied to 'void', which is not a 'Future' • lib/domain/providers/sharable_images_repo.dart:114:5 • await_only_futures
 info • Sort child properties last in widget instance creations • lib/presentation/widgets/platform_flat_button.dart:34:9 • sort_child_properties_last
 info • The annotation 'Timeout' can only be used on libraries • test_driver/tests/offline/offline_test.dart:13:2 • invalid_annotation_target
-
-info • Unused import: 'package:built_value/json_object.dart' • api/modules/host_manage_api/lib/serializers.dart:6:8 • unused_import
-info • The value of the local variable 'instance' isn't used • api/modules/host_manage_api/test/instructions_content_test.dart:6:9 • unused_local_variable
-info • The value of the local variable 'instance' isn't used • api/modules/host_manage_api/test/instructions_dto_test.dart:6:9 • unused_local_variable
-info • The value of the local variable 'instance' isn't used • api/modules/host_manage_api/test/instructions_test.dart:6:9 • unused_local_variable
-info • The value of the local variable 'instance' isn't used • api/modules/host_manage_api/test/message_template_test.dart:6:9 • unused_local_variable
-info • The value of the local variable 'instance' isn't used • api/modules/host_manage_api/test/message_template_type_test.dart:6:9 • unused_local_variable
-info • The value of the local variable 'instance' isn't used • api/modules/host_manage_api/test/message_templates_api_api_test.dart:8:9 • unused_local_variable
-info • The value of the local variable 'instance' isn't used • api/modules/host_manage_api/test/property_instructions_api_api_test.dart:8:9 • unused_local_variable
-info • Unused import: '../../presentation/screens/property/saved_responses/list/saved_responses_list_bloc.dart' • lib/admin/menu/menu.dart:14:8 • unused_import
-info • Unused import: '../../presentation/screens/property/saved_responses/list/saved_responses_list_page.dart' • lib/admin/menu/menu.dart:15:8 • unused_import
-info • Unused import: '../../domain/di.dart' • lib/data/client/HostManageBasePathInterceptor.dart:1:8 • unused_import
-info • Avoid using braces in interpolation when not needed • lib/data/client/HostManageBasePathInterceptor.dart:11:36 • unnecessary_brace_in_string_interps
-info • Prefer final for variable declarations if they are not reassigned • lib/data/client/dio/dio.dart:15:7 • prefer_final_locals
-info • 'await' applied to 'Map<String, dynamic>', which is not a 'Future' • lib/data/client/interceptors/context_header_interceptor.dart:12:52 • await_only_futures
-info • 'await' applied to 'Map<String, dynamic>', which is not a 'Future' • lib/data/client/interceptors/context_json_body_interceptor.dart:13:18 • await_only_futures
-info • Prefer final for variable declarations if they are not reassigned • lib/data/webservices/attachment_service.dart:72:11 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • lib/data/webservices/checkin_instruction_webservice.dart:32:11 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • lib/data/webservices/checkin_instruction_webservice.dart:45:11 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • lib/data/webservices/conversation_webservice.dart:57:9 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • lib/data/webservices/property_webservice.dart:51:9 • prefer_final_locals
-info • 'await' applied to 'void', which is not a 'Future' • lib/domain/bridge.dart:194:5 • await_only_futures
-info • 'await' applied to 'void', which is not a 'Future' • lib/domain/bridge.dart:199:5 • await_only_futures
-info • 'await' applied to 'void', which is not a 'Future' • lib/domain/bridge.dart:239:5 • await_only_futures
-info • Avoid using braces in interpolation when not needed • lib/domain/bridge.dart:246:42 • unnecessary_brace_in_string_interps
-info • Prefer final for variable declarations if they are not reassigned • lib/domain/message_broadcaster.dart:57:11 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • lib/domain/providers/sharable_images_repo.dart:43:9 • prefer_final_locals
-info • Avoid using braces in interpolation when not needed • lib/domain/providers/sharable_images_repo.dart:100:54 • unnecessary_brace_in_string_interps
-info • Avoid using braces in interpolation when not needed • lib/domain/providers/sharable_images_repo.dart:102:118 • unnecessary_brace_in_string_interps
-info • 'await' applied to 'void', which is not a 'Future' • lib/domain/providers/sharable_images_repo.dart:114:5 • await_only_futures
-info • Prefer final for variable declarations if they are not reassigned • lib/domain/providers/sharable_images_repo.dart:119:9 • prefer_final_locals
 info • 'await' applied to 'void', which is not a 'Future' • lib/domain/reload_center.dart:24:9 • await_only_futures
-info • Prefer final for variable declarations if they are not reassigned • lib/domain/repositories/check_in_instruction_repo.dart:32:11 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • lib/domain/repositories/check_in_instruction_repo.dart:34:11 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • lib/domain/repositories/check_in_instruction_repo.dart:60:11 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • lib/domain/repositories/check_in_instruction_repo.dart:61:11 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • lib/domain/repositories/check_in_instruction_repo.dart:63:11 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • lib/presentation/screens/app_feedback/app_feedback.dart:237:9 • prefer_final_locals
-info • Sort child properties last in widget instance creations • lib/presentation/screens/main_menu/main_menu.dart:165:11 • sort_child_properties_last
-info • Prefer final for variable declarations if they are not reassigned • lib/presentation/screens/main_menu/main_menu.dart:186:9 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • lib/presentation/screens/profile/profile/profile.dart:120:9 • prefer_final_locals
-info • 'await' applied to 'Stream<OperationStatus>', which is not a 'Future' • lib/presentation/screens/profile/profile/profile.dart:194:11 • await_only_futures
-info • Sort child properties last in widget instance creations • lib/presentation/screens/profile/profile_location/search_cell.dart:40:9 • sort_child_properties_last
-info • 'RaisedButton' is deprecated and shouldn't be used. Use ElevatedButton instead. See the migration guide in flutter.dev/go/material-button-migration-guide). This feature was deprecated after v1.25.0-8.1.pre. • lib/presentation/screens/property/property_photos/photo_form/photo_form.dart:33:9 • deprecated_member_use
-info • Sort child properties last in widget instance creations • lib/presentation/screens/property/property_photos/photo_form/photo_form.dart:34:11 • sort_child_properties_last
-info • 'await' applied to 'void', which is not a 'Future' • lib/presentation/screens/property/shareable_images/shareable_image_caption.dart:47:7 • await_only_futures
-info • 'await' applied to 'void', which is not a 'Future' • lib/presentation/screens/property/shareable_images/shareable_images.dart:66:7 • await_only_futures
-info • Prefer final for variable declarations if they are not reassigned • lib/presentation/screens/property_verification/property_verification.dart:93:9 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • lib/presentation/screens/property_verification/property_verification.dart:98:13 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • lib/presentation/screens/property_verification/property_verification.dart:107:13 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • lib/presentation/screens/property_verification/property_verification.dart:118:11 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • lib/presentation/screens/property_verification/property_verification.dart:120:11 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • lib/presentation/screens/property_verification/property_verification.dart:135:9 • prefer_final_locals
-info • Sort child properties last in widget instance creations • lib/presentation/screens/property_verification/property_verification.dart:210:23 • sort_child_properties_last
-info • 'RaisedButton' is deprecated and shouldn't be used. Use ElevatedButton instead. See the migration guide in flutter.dev/go/material-button-migration-guide). This feature was deprecated after v1.25.0-8.1.pre. • lib/presentation/screens/property_verification/property_verification.dart:225:20 • deprecated_member_use
-info • Sort child properties last in widget instance creations • lib/presentation/screens/property_verification/property_verification.dart:230:15 • sort_child_properties_last
-info • Prefer final for variable declarations if they are not reassigned • lib/presentation/screens/property_verification/property_verification.dart:292:13 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • lib/presentation/screens/property_verification/property_verification.dart:304:13 • prefer_final_locals
-info • `Future` results in `async` function bodies must be `await`ed or marked `unawaited` using `package:pedantic` • lib/presentation/screens/property_verification/property_verification.dart:328:9 • unawaited_futures
-info • Avoid using braces in interpolation when not needed • lib/presentation/screens/property_verification/property_verification.dart:335:56 • unnecessary_brace_in_string_interps
-info • Avoid using braces in interpolation when not needed • lib/presentation/screens/property_verification/property_verification.dart:335:62 • unnecessary_brace_in_string_interps
 info • `Future` results in `async` function bodies must be `await`ed or marked `unawaited` using `package:pedantic` • lib/presentation/screens/property_verification/property_verification.dart:340:9 • unawaited_futures
-info • Prefer final for variable declarations if they are not reassigned • lib/presentation/screens/property_verification/property_verification.dart:348:9 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • lib/presentation/screens/property_verification/property_verification.dart:349:9 • prefer_final_locals
 info • Prefer final for variable declarations if they are not reassigned • lib/presentation/utils/location_formatter.dart:17:9 • prefer_final_locals
 info • Prefer final for variable declarations if they are not reassigned • lib/presentation/utils/name_formatter.dart:17:9 • prefer_final_locals
 info • 'RaisedButton' is deprecated and shouldn't be used. Use ElevatedButton instead. See the migration guide in flutter.dev/go/material-button-migration-guide). This feature was deprecated after v1.25.0-8.1.pre. • lib/presentation/widgets/buttons/cta_button.dart:14:14 • deprecated_member_use
 info • Sort child properties last in widget instance creations • lib/presentation/widgets/buttons/cta_button.dart:16:9 • sort_child_properties_last
 info • Prefer final for variable declarations if they are not reassigned • lib/presentation/widgets/loading_view.dart:68:9 • prefer_final_locals
 info • Sort child properties last in widget instance creations • lib/presentation/widgets/media_picker_sheet/media_picker_sheet.dart:84:7 • sort_child_properties_last
-info • 'pickImage' is deprecated and shouldn't be used. Use imagePicker.getImage() method instead. • lib/presentation/widgets/media_picker_sheet/media_picker_sheet.dart:108:28 • deprecated_member_use
-info • 'pickVideo' is deprecated and shouldn't be used. Use imagePicker.getVideo() method instead. • lib/presentation/widgets/media_picker_sheet/media_picker_sheet.dart:110:28 • deprecated_member_use
 info • 'pickImage' is deprecated and shouldn't be used. Use imagePicker.getImage() method instead. • lib/presentation/widgets/media_picker_sheet/media_picker_sheet.dart:112:28 • deprecated_member_use
 info • Dead code • lib/presentation/widgets/media_picker_sheet/media_picker_sheet.dart:113:9 • dead_code
-info • 'FlatButton' is deprecated and shouldn't be used. Use TextButton instead. See the migration guide in flutter.dev/go/material-button-migration-guide). This feature was deprecated after v1.25.0-8.1.pre. • lib/presentation/widgets/platform_flat_button.dart:31:14 • deprecated_member_use
 info • Sort child properties last in widget instance creations • lib/presentation/widgets/platform_flat_button.dart:34:9 • sort_child_properties_last
 info • 'FlatButton' is deprecated and shouldn't be used. Use TextButton instead. See the migration guide in flutter.dev/go/material-button-migration-guide). This feature was deprecated after v1.25.0-8.1.pre. • lib/presentation/widgets/platform_flat_button.dart:67:12 • deprecated_member_use
 info • Sort child properties last in widget instance creations • lib/presentation/widgets/platform_flat_button.dart:75:7 • sort_child_properties_last
-info • Sort child properties last in widget instance creations • lib/presentation/widgets/platform_flat_button.dart:76:9 • sort_child_properties_last
 info • Prefer final for variable declarations if they are not reassigned • lib/presentation/widgets/platform_icon_button.dart:57:12 • prefer_final_locals
 info • Sort child properties last in widget instance creations • lib/presentation/widgets/platform_icon_button.dart:64:11 • sort_child_properties_last
 info • Prefer final for variable declarations if they are not reassigned • lib/presentation/widgets/processing_view.dart:157:9 • prefer_final_locals
@@ -94,35 +27,12 @@ info • Sort child properties last in widget instance creations • lib/present
 info • This class (or a class that this class inherits from) is marked as '@immutable', but one or more of its instance fields aren't final: SuccessPage.message • lib/presentation/widgets/success_page.dart:7:7 • must_be_immutable
 info • Only use double quotes for strings containing single quotes • lib/presentation/widgets/success_page.dart:8:20 • prefer_single_quotes
 info • 'RaisedButton' is deprecated and shouldn't be used. Use ElevatedButton instead. See the migration guide in flutter.dev/go/material-button-migration-guide). This feature was deprecated after v1.25.0-8.1.pre. • lib/presentation/widgets/success_page.dart:33:15 • deprecated_member_use
-info • Prefer final for variable declarations if they are not reassigned • lib/presentation/widgets/technical_error.dart:13:9 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • lib/presentation/widgets/technical_error.dart:14:9 • prefer_final_locals
 info • Prefer final for variable declarations if they are not reassigned • lib/presentation/widgets/technical_error.dart:34:9 • prefer_final_locals
 info • 'RaisedButton' is deprecated and shouldn't be used. Use ElevatedButton instead. See the migration guide in flutter.dev/go/material-button-migration-guide). This feature was deprecated after v1.25.0-8.1.pre. • lib/presentation/widgets/technical_error.dart:34:58 • deprecated_member_use
 info • Prefer final for variable declarations if they are not reassigned • lib/presentation/widgets/text_field_cell/text_field_cell.dart:97:9 • prefer_final_locals
 info • 'maxLengthEnforced' is deprecated and shouldn't be used. Use maxLengthEnforcement parameter which provides more specific behavior related to the maxLength limit. This feature was deprecated after v1.25.0-5.0.pre. • lib/presentation/widgets/text_field_cell/text_field_cell.dart:149:7 • deprecated_member_use
 warning • Publishable packages can't have git dependencies • pubspec.yaml:32:5 • invalid_dependency
 warning • Publishable packages can't have path dependencies • pubspec.yaml:44:5 • invalid_dependency
-info • Prefer final for variable declarations if they are not reassigned • test/domain/repositories/check_in_instruction_repo_test.dart:26:11 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • test/domain/repositories/check_in_instruction_repo_test.dart:28:11 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • test/domain/repositories/check_in_instruction_repo_test.dart:30:11 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • test/domain/repositories/check_in_instruction_repo_test.dart:39:11 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • test/domain/repositories/check_in_instruction_repo_test.dart:49:11 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • test/domain/repositories/check_in_instruction_repo_test.dart:51:11 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • test/domain/repositories/check_in_instruction_repo_test.dart:53:11 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • test/domain/repositories/check_in_instruction_repo_test.dart:60:11 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • test/domain/repositories/check_in_instruction_repo_test.dart:67:11 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • test/domain/repositories/check_in_instruction_repo_test.dart:68:11 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • test/domain/repositories/check_in_instruction_repo_test.dart:70:11 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • test/domain/repositories/check_in_instruction_repo_test.dart:81:11 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • test/domain/repositories/check_in_instruction_repo_test.dart:90:11 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • test/domain/repositories/check_in_instruction_repo_test.dart:91:11 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • test/domain/repositories/check_in_instruction_repo_test.dart:93:11 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • test/domain/repositories/check_in_instruction_repo_test.dart:99:11 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • test/domain/repositories/check_in_instruction_repo_test.dart:108:11 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • test/domain/repositories/check_in_instruction_repo_test.dart:117:11 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • test/domain/repositories/check_in_instruction_repo_test.dart:118:11 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • test/domain/repositories/check_in_instruction_repo_test.dart:120:11 • prefer_final_locals
-info • Prefer final for variable declarations if they are not reassigned • test/domain/repositories/check_in_instruction_repo_test.dart:130:11 • prefer_final_locals
 info • The annotation 'Timeout' can only be used on libraries • test_driver/tests/offline/offline_test.dart:13:2 • invalid_annotation_target
 info • Prefer final for variable declarations if they are not reassigned • test_driver/utils/element.dart:10:9 • prefer_final_locals
 info • Prefer final for variable declarations if they are not reassigned • test_driver/utils/element.dart:31:9 • prefer_final_locals
