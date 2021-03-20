@@ -82,6 +82,10 @@ For example,
 ###### Optional
 Parsed lint result output.
 
+##### `--removeOldComment`
+###### Optional
+Remove existing CodeCoach comments before putting the new one in.
+
 ### How to get lint output for CodeCoach
 #### ESLint
 Use `-o <filename>` to output lint result to file and `-f json` to format logs as JSON.
