@@ -25,7 +25,7 @@ class App {
       Config.provider.repoUrl,
       Config.provider.prId,
     );
-    this.vcs = new GitHub(githubPRService);
+    this.vcs = new GitHub(githubPRService, Config.provider.removeOldComment);
   }
 
   async start(): Promise<void> {

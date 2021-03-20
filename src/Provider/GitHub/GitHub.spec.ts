@@ -39,7 +39,7 @@ class PrServiceMock implements IGitHubPRService {
   createReviewComment = jest.fn().mockResolvedValue(undefined);
   getCurrentUserId = jest.fn().mockResolvedValue(mockedUserId);
   getLatestCommitSha = jest.fn().mockResolvedValue(mockedSha);
-  createCommitStatus = jest.fn().mockResolvedValue(undefined);
+  setCommitStatus = jest.fn().mockResolvedValue(undefined);
   diff = jest.fn().mockResolvedValue([mockTouchDiff]);
 }
 
@@ -83,7 +83,7 @@ const untouchedWarning = {
 describe('VCS: GitHub', () => {
   it('should remove old comments and reviews and post new ones', async () => {
     const service = new PrServiceMock();
-    const github = new GitHub(service);
+    const github = new GitHub(service, true);
 
     await github.report([
       touchFileError,
@@ -120,8 +120,8 @@ describe('VCS: GitHub', () => {
       touchFileWarning.line,
     );
 
-    expect(service.createCommitStatus).toHaveBeenCalledTimes(1);
-    expect(service.createCommitStatus).toHaveBeenCalledWith(
+    expect(service.setCommitStatus).toHaveBeenCalledTimes(1);
+    expect(service.setCommitStatus).toHaveBeenCalledWith(
       mockedSha,
       CommitStatus.failure,
       expect.any(String),
@@ -153,20 +153,11 @@ describe('VCS: GitHub', () => {
 
     expect(service.createReviewComment).toHaveBeenCalledTimes(1);
     expect(service.createComment).toHaveBeenCalledTimes(1);
-    expect(service.createCommitStatus).toHaveBeenCalledTimes(1);
-    expect(service.createCommitStatus).toHaveBeenCalledWith(
+    expect(service.setCommitStatus).toHaveBeenCalledTimes(1);
+    expect(service.setCommitStatus).toHaveBeenCalledWith(
       mockedSha,
       CommitStatus.success,
       expect.any(String),
     );
-  });
-
-  it('should not throw when create review failed (REMOVE THIS TEST WHEN WORKAROUND IS REMOVED)', async () => {
-    const service = new PrServiceMock();
-    service.createReviewComment = jest.fn(() => Promise.reject());
-
-    const github = new GitHub(service);
-
-    await expect(github.report([touchFileWarning])).resolves.not.toThrow();
   });
 });

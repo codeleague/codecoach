@@ -19,7 +19,7 @@ export interface IGitHubPRService {
   ): Promise<void>;
   getCurrentUserId(): Promise<number>;
   getLatestCommitSha(): Promise<string>;
-  createCommitStatus(
+  setCommitStatus(
     commitId: string,
     state: CommitStatus,
     description?: string,

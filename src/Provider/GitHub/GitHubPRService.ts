@@ -134,7 +134,7 @@ export class GitHubPRService implements IGitHubPRService {
     return data.head.sha;
   }
 
-  async createCommitStatus(
+  async setCommitStatus(
     sha: string,
     state: CommitStatus,
     description?: string,

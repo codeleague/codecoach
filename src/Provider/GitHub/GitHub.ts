@@ -1,6 +1,7 @@
 import { VCS } from '..';
 import { Log } from '../../Logger';
 import { LogSeverity, LogType } from '../../Parser';
+import { Diff } from '../@types/PatchTypes';
 import { onlyIn, onlySeverity } from '../utils/filter.util';
 import { MessageUtil } from '../utils/message.util';
 import { CommentFileStructure, CommentStructure, Comment } from '../@types/CommentTypes';
@@ -8,57 +9,30 @@ import { CommitStatus } from './CommitStatus';
 import { IGitHubPRService } from './IGitHubPRService';
 
 export class GitHub implements VCS {
-  constructor(private readonly prService: IGitHubPRService) {}
+  private commitId: string;
+  private touchedDiff: Diff[];
+  private invalidLogs: LogType[];
+  private comments: Comment[];
+  private nWarning: number;
+  private nError: number;
+
+  constructor(
+    private readonly prService: IGitHubPRService,
+    private readonly removeOldComment: boolean = false,
+  ) {}
 
   async report(logs: LogType[]): Promise<void> {
     try {
-      await this.removeExistingComments();
-      const commitId = await this.prService.getLatestCommitSha();
-      const touchedDiffs = await this.prService.diff();
-      const invalidLogs = logs.filter((l) => !l.valid);
+      await this.setup(logs);
 
-      const touchedFileLog = logs
-        .filter(onlyIn(touchedDiffs))
-        .filter(onlySeverity(LogSeverity.error, LogSeverity.warning));
-
-      Log.debug(`Commit SHA ${commitId}`);
-      Log.debug('Touched diff', touchedDiffs);
-
-      const comments = this.groupComments(touchedFileLog);
-
-      const reviewResults = await Promise.all(
-        comments.map((comment) => this.toCreateReviewComment(commitId, comment)),
-      );
-      const reviewedComments = reviewResults.filter((log): log is Comment => !!log);
-
-      Log.info(
-        `Create ${reviewedComments.length} review comments. (with ${
-          comments.length - reviewedComments.length
-        } failed)`,
-      );
-      const nOfErrors = reviewedComments.reduce(
-        (sum, comment) => sum + comment.errors,
-        0,
-      );
-
-      const nOfWarnings = reviewedComments.reduce(
-        (sum, comment) => sum + comment.warnings,
-        0,
-      );
-
-      if (nOfWarnings + nOfErrors > 0 || invalidLogs.length > 0) {
-        const overview = MessageUtil.generateOverviewMessage(nOfErrors, nOfWarnings);
-        const otherIssues = GitHub.createOtherIssue(invalidLogs);
-
-        await this.prService.createComment(
-          overview + (otherIssues ? `\n${otherIssues}` : ''),
-        );
-        Log.info('Create summary comment completed');
+      if (this.removeOldComment) {
+        await this.removeExistingComments();
       }
 
-      const commitStatus = nOfErrors ? CommitStatus.failure : CommitStatus.success;
-      const description = MessageUtil.generateCommitDescription(nOfErrors);
-      await this.prService.createCommitStatus(commitId, commitStatus, description);
+      await Promise.all(this.comments.map((c) => this.createReviewComment(c)));
+      await this.createSummaryComment();
+      await this.setCommitStatus();
+
       Log.info('Report commit status completed');
     } catch (err) {
       Log.error('GitHub report failed', err);
@@ -66,40 +40,54 @@ export class GitHub implements VCS {
     }
   }
 
-  private static createOtherIssue(logs: LogType[]): string | null {
-    if (logs.length === 0) return null;
+  private async createSummaryComment() {
+    if (this.nWarning + this.nError > 0 || this.invalidLogs.length > 0) {
+      const overview = MessageUtil.generateOverviewMessage(this.nError, this.nWarning);
+      const other = MessageUtil.createOtherIssueReport(this.invalidLogs);
 
-    const issuesTableContent = logs.map((l) => `| ${l.source} | ${l.msg} |`).join('\n');
-
-    // Blank line required after </summary> to let markdown after it display correctly
-    return `<details>
-<summary><span>By the way, there are other issues those might not related to your code</span></summary>
-
-| source | message |
-|-|-|
-${issuesTableContent}
-</details>`;
+      await this.prService.createComment(overview + (other ? `\n${other}` : ''));
+      Log.info('Create summary comment completed');
+    } else {
+      Log.info('No summary comment needed');
+    }
   }
 
-  private toCreateReviewComment = async (
-    commitSha: string,
-    comment: Comment,
-  ): Promise<Comment | null> => {
+  private async setCommitStatus() {
+    const commitStatus = this.nError > 0 ? CommitStatus.failure : CommitStatus.success;
+    const description = MessageUtil.generateCommitDescription(this.nError);
+
+    await this.prService.setCommitStatus(this.commitId, commitStatus, description);
+  }
+
+  private async setup(logs: LogType[]) {
+    this.commitId = await this.prService.getLatestCommitSha();
+    this.touchedDiff = await this.prService.diff();
+    this.invalidLogs = logs.filter((l) => !l.valid);
+
+    const touchedFileLog = logs
+      .filter(onlySeverity(LogSeverity.error, LogSeverity.warning))
+      .filter(onlyIn(this.touchedDiff));
+
+    this.comments = GitHub.groupComments(touchedFileLog);
+    this.nError = this.comments.reduce((sum, comment) => sum + comment.errors, 0);
+    this.nWarning = this.comments.reduce((sum, comment) => sum + comment.warnings, 0);
+
+    Log.debug(`VCS Setup`, {
+      sha: this.commitId,
+      diff: this.touchedDiff,
+      comments: this.comments,
+      err: this.nError,
+      warning: this.nWarning,
+    });
+  }
+
+  private async createReviewComment(comment: Comment): Promise<Comment> {
     const { text, file, line } = comment;
-    try {
-      await this.prService.createReviewComment(commitSha, text, file, line);
-      Log.debug('GitHub create review success', { text, file, line });
-      return comment;
-    } catch (e) {
-      // todo: this is workaround; handle comment on restrict zone in github
-      const { name, status } = e ?? {};
-      Log.warn('GitHub create review failed', {
-        comment,
-        error: { name, status },
-      });
-      return null;
-    }
-  };
+
+    await this.prService.createReviewComment(this.commitId, text, file, line);
+    Log.debug('GitHub create review success', { text, file, line });
+    return comment;
+  }
 
   private async removeExistingComments(): Promise<void> {
     const [userId, comments, reviews] = await Promise.all([
@@ -121,7 +109,7 @@ ${issuesTableContent}
     Log.debug('Delete CodeCoach comments completed');
   }
 
-  private groupComments(logs: LogType[]): Comment[] {
+  private static groupComments(logs: LogType[]): Comment[] {
     const commentMap = logs.reduce((map: CommentStructure, log) => {
       const { source: file, line, severity, msg } = log;
       const text = MessageUtil.createMessageWithEmoji(msg, severity);
