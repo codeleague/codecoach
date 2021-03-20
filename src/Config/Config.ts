@@ -19,10 +19,15 @@ const args = yargs
     type: 'number',
     demandOption: true,
   })
+  .option('token', {
+    describe: 'GitHub token',
+    type: 'string',
+    demandOption: true,
+  })
   .option('buildLogFile', {
     alias: 'f',
-    describe: `Build log content files formatted in '<type>;<path>[;<cwd>]' 
-where <type> is one of [${projectTypes.join(', ')}] 
+    describe: `Build log content files formatted in '<type>;<path>[;<cwd>]'
+where <type> is one of [${projectTypes.join(', ')}]
 <path> is build log file path to be processed
 and <cwd> is build root directory (optional (Will use current context as cwd)).
 `,
@@ -44,10 +49,10 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
     type: 'string',
     default: DEFAULT_OUTPUT_FILE,
   })
-  .option('token', {
-    describe: 'GitHub token',
-    type: 'string',
-    demandOption: true,
+  .option('removeOldComment', {
+    type: 'boolean',
+    describe: 'Remove existing CodeCoach comments before putting new one',
+    default: false,
   })
   .check((options) => {
     if (!options.pr || Array.isArray(options.pr))

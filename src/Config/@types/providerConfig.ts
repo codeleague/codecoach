@@ -4,4 +4,5 @@ export type ProviderConfig = {
   prId: number;
   userAgent: string;
   timeZone: string;
+  removeOldComment: boolean;
 };
