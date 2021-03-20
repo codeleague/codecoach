@@ -33,8 +33,3 @@ jobs:
       - run: yarn test --ci
 
       - run: yarn build
-
-      - run: |
-          echo "
-          ${{ toJson(github) }}
-          "
