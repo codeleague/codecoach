@@ -7,23 +7,33 @@ on:
 
 jobs:
   build:
-    name: Build
+    name: Build and test
     runs-on: ubuntu-18.04
 
     steps:
       - uses: actions/checkout@v1
+
       - name: Use Node.js 14-latest
         uses: actions/setup-node@v1
         with:
           node-version: '14.x'
+
       - name: Cache node_modules
         uses: actions/cache@v1
         with:
           path: node_modules
           key: yarn-${{ hashFiles('yarn.lock') }}
           restore-keys: yarn-
+
       - name: Dependency install and integrety check
         run: yarn install --frozen-lockfile
+
       - run: yarn lint-ci
+
       - run: yarn test --ci
+
       - run: yarn build
+
+      - run: |
+          echo "
+          ${{ toJson(github) }}
