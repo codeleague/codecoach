@@ -52,6 +52,7 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
   .option('removeOldComment', {
     type: 'boolean',
     describe: 'Remove existing CodeCoach comments before putting new one',
+    default: false,
   })
   .check((options) => {
     if (!options.pr || Array.isArray(options.pr))

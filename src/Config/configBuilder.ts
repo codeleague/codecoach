@@ -5,6 +5,7 @@ export const buildProviderConfig = (arg: ConfigArgument): ProviderConfig => ({
   token: arg.token,
   repoUrl: arg.url,
   prId: arg.pr,
+  removeOldComment: arg.removeOldComment,
   userAgent: USER_AGENT,
   timeZone: TIME_ZONE,
 });
