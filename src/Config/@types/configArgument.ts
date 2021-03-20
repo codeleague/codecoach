@@ -6,4 +6,5 @@ export type ConfigArgument = {
   buildLogFile: BuildLogFile[];
   output: string;
   token: string;
+  removeOldComment: boolean;
 };
