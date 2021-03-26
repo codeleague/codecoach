@@ -11,7 +11,6 @@ import { IGitHubPRService } from './IGitHubPRService';
 export class GitHub implements VCS {
   private commitId: string;
   private touchedDiff: Diff[];
-  private invalidLogs: LogType[];
   private comments: Comment[];
   private nWarning: number;
   private nError: number;
@@ -41,11 +40,9 @@ export class GitHub implements VCS {
   }
 
   private async createSummaryComment() {
-    if (this.nWarning + this.nError > 0 || this.invalidLogs.length > 0) {
+    if (this.nWarning + this.nError > 0) {
       const overview = MessageUtil.generateOverviewMessage(this.nError, this.nWarning);
-      const other = MessageUtil.createOtherIssueReport(this.invalidLogs);
-
-      await this.prService.createComment(overview + (other ? `\n${other}` : ''));
+      await this.prService.createComment(overview);
       Log.info('Create summary comment completed');
     } else {
       Log.info('No summary comment needed');
@@ -62,7 +59,6 @@ export class GitHub implements VCS {
   private async setup(logs: LogType[]) {
     this.commitId = await this.prService.getLatestCommitSha();
     this.touchedDiff = await this.prService.diff();
-    this.invalidLogs = logs.filter((l) => !l.valid);
 
     const touchedFileLog = logs
       .filter(onlySeverity(LogSeverity.error, LogSeverity.warning))
