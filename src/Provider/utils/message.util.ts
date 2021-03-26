@@ -36,21 +36,6 @@ ${errorMsg}
 ${warningMsg}`;
   }
 
-  static createOtherIssueReport(logs: LogType[]): string | null {
-    if (logs.length === 0) return null;
-
-    const issuesTableContent = logs.map((l) => `| ${l.source} | ${l.msg} |`).join('\n');
-
-    // Blank line required after </summary> to let markdown after it display correctly
-    return `<details>
-<summary><span>By the way, there are other issues those might not related to your code</span></summary>
-
-| source | message |
-|-|-|
-${issuesTableContent}
-</details>`;
-  }
-
   private static pluralize(word: string, n: number): string {
     const fill = word.split('').shift() === 's' ? 'es' : 's';
     return n + ' ' + (n > 1 ? `${word}${fill}` : word);
