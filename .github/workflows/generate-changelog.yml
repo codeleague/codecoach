@@ -36,15 +36,13 @@ jobs:
       - name: Store query output
         run: |
           cat << 'EOF' > .changes.json
-                ${{ steps.get_all_releases_note.outputs.data }}
+          ${{ steps.get_all_releases_note.outputs.data }}
           EOF
-
-      - run: cat .changes.json
 
       - name: Generate CHANGELOG
         run: >
-          jq '.data.repository.releases.nodes[]
-          | { version: .tagName, when: .createdAt | fromdateiso8601 | strftime("%d %B %Y"), content: .description }'
+          jq '.repository.releases.nodes[]
+          | { version: .tagName, when: .createdAt | fromdateiso8601 | strftime("%d %B %Y"), content: .description }
           | "# Version \(.version)\nReleased \(.when)\n\(.content)\n\n"'
           .changes.json
 
