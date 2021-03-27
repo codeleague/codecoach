@@ -45,11 +45,13 @@ jobs:
           | { version: .tagName, when: .createdAt | fromdateiso8601 | strftime("%d %B %Y"), content: .description }
           | "# Version \(.version)\nReleased \(.when)\n\(.content)\n\n"'
           .changes.json
+          > CHANGELOG.md
 
       - name: Commit files
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
+          git add CHANGELOG.md
           git commit -m "Add changes" -a
 
       - name: Push changes
