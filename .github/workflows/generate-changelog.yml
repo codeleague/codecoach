@@ -1,0 +1,53 @@
+name: Update CHANGELOG.md
+
+on:
+  workflow_dispatch:
+
+
+jobs:
+  update-changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+          fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
+
+      - uses: octokit/graphql-action@v2.x
+        id: get_all_releases_note
+        with:
+          query: |
+            query GetAllReleaseNote($owner:String!,$repo:String!) {
+              repository(owner: $owner, name: $repo) {
+                releases(last: 100, orderBy: {field: CREATED_AT, direction: DESC}) {
+                  nodes {
+                    tagName
+                    createdAt
+                    description
+                  }
+                }
+              }
+            }
+          owner: ${{ github.event.repository.owner.name }}
+          repo: ${{ github.event.repository.name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate CHANGELOG
+        run: >
+          echo '${{ steps.get_all_releases_note.outputs.data }}'
+          | jq '.data.repository.releases.nodes[] | { version: .tagName, when: .createdAt | fromdateiso8601 | strftime("%d %B %Y"), content: .description }'
+          | jq -r '"# Version \(.version)\nReleased \(.when)\n\(.content)\n\n"'
+          > CHANGELOG.md
+
+      - name: Commit files
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -m "Add changes" -a
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
