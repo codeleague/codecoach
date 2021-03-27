@@ -39,9 +39,10 @@ jobs:
           ${{ steps.get_all_releases_note.outputs.data }}
           EOF
 
+      - run: cat .changes.json
+
       - name: Generate CHANGELOG
         run: >
-          cat .changes.json &&
           jq '.data.repository.releases.nodes[]
           | { version: .tagName, when: .createdAt | fromdateiso8601 | strftime("%d %B %Y"), content: .description }'
           | "# Version \(.version)\nReleased \(.when)\n\(.content)\n\n"'
