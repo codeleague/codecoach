@@ -36,7 +36,7 @@ jobs:
       - name: Store query output
         run: |
           cat << 'EOF' > .changes.json
-          ${{ steps.get_all_releases_note.outputs.data }}
+                ${{ steps.get_all_releases_note.outputs.data }}
           EOF
 
       - run: cat .changes.json
