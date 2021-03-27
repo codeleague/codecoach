@@ -36,9 +36,9 @@ jobs:
       - name: Generate CHANGELOG
         run: >
           echo '${{ steps.get_all_releases_note.outputs.data }}'
-          | jq '.data.repository.releases.nodes[] | { version: .tagName, when: .createdAt | fromdateiso8601 | strftime("%d %B %Y"), content: .description }'
-          | jq -r '"# Version \(.version)\nReleased \(.when)\n\(.content)\n\n"'
           > CHANGELOG.md
+#          | jq '.data.repository.releases.nodes[]' | { version: .tagName, when: .createdAt | fromdateiso8601 | strftime("%d %B %Y"), content: .description }'
+#          | jq -r '"# Version \(.version)\nReleased \(.when)\n\(.content)\n\n"'
 
       - name: Commit files
         run: |
