@@ -35,7 +35,7 @@ jobs:
 
       - name: Generate CHANGELOG
         run: >
-          echo '${{ steps.get_all_releases_note.outputs.data }}'
+          echo '${{ fromJson(steps.get_all_releases_note.outputs.data).data.repository.releases.nodes.* }}'
           > CHANGELOG.md
 #          | jq '.data.repository.releases.nodes[]' | { version: .tagName, when: .createdAt | fromdateiso8601 | strftime("%d %B %Y"), content: .description }'
 #          | jq -r '"# Version \(.version)\nReleased \(.when)\n\(.content)\n\n"'
