@@ -41,11 +41,10 @@ jobs:
 
       - name: Generate CHANGELOG
         run: >
-          jq '
-          .data.repository.releases.nodes[]
+          cat .changes.json &&
+          jq '.data.repository.releases.nodes[]
           | { version: .tagName, when: .createdAt | fromdateiso8601 | strftime("%d %B %Y"), content: .description }'
-          | "# Version \(.version)\nReleased \(.when)\n\(.content)\n\n"
-          '
+          | "# Version \(.version)\nReleased \(.when)\n\(.content)\n\n"'
           .changes.json
 
       - name: Commit files
