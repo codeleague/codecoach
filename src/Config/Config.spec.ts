@@ -35,7 +35,7 @@ describe('Config Test', () => {
     jest.resetModules();
   });
 
-  it('Should able to parse this args correctly', async () => {
+  it('Should able to parse this args and run without throwing error', async () => {
     process.argv = MOCK_ARGS;
     config = (await import('./Config')).Config;
     expect(config.provider.repoUrl).toBe(EXPECTED_MOCK_ARGS[2]);
@@ -44,6 +44,5 @@ describe('Config Test', () => {
   it('Should able to use a config file without passing other args', async () => {
     process.argv = MOCK_ARGS_W_CONFIG_YAML;
     config = (await import('./Config')).Config;
-    console.log(config);
   });
 });
