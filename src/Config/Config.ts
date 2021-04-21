@@ -12,7 +12,7 @@ type RequiredArgs = (keyof ConfigArgument)[];
 const REQUIRED_ARGS: RequiredArgs = ['url', 'pr', 'buildLogFile', 'token'];
 
 function parseConfigfile(fileConfig?: string): boolean {
-  if (!fileConfig && fileConfig !== '') throw 'bad parse config file';
+  if (fileConfig === '') throw 'bad parse config file';
   // TODO: yml parse
   return true;
 }
@@ -64,7 +64,7 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
     default: false,
   })
   .check((options) => {
-    const useConfigFile = options.config !== '';
+    const useConfigFile = options.config !== undefined;
     const validFilePattern = parseConfigfile(options.config);
     if (useConfigFile && validFilePattern) return true;
 
