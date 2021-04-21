@@ -64,13 +64,31 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
     default: false,
   })
   .check((options) => {
+    // check config file
     const useConfigFile = options.config !== undefined;
     const validFilePattern = parseConfigfile(options.config);
-    if (useConfigFile && validFilePattern) return true;
-
-    if (!options.pr || Array.isArray(options.pr))
+    if (useConfigFile && !validFilePattern) throw 'bad parse config file';
+    return true;
+  })
+  .check((options) => {
+    // check required arguments
+    const useConfigArgs = options.config === undefined;
+    const validRequiredArgs = REQUIRED_ARGS.every(
+      (el) => options[el] != undefined || options[el] != null,
+    );
+    if (useConfigArgs && !validRequiredArgs)
+      throw `please fill all required fields ${REQUIRED_ARGS.join(', ')}`;
+    return true;
+  })
+  .check((options) => {
+    // check arguments parsing
+    const useConfigArgs = options.config === undefined;
+    if (!options.pr || (Array.isArray(options.pr) && useConfigArgs))
       throw '--pr config should be a single number';
-    if (!options.buildLogFile || options.buildLogFile.some((file) => file === null))
+    if (
+      (!options.buildLogFile || options.buildLogFile.some((file) => file === null)) &&
+      useConfigArgs
+    )
       throw 'all of `--buildLogFile` options should have correct format';
     return true;
   })
