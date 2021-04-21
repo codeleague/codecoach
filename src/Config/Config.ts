@@ -1,4 +1,4 @@
-import yargs from 'yargs';
+import yargs, { string } from 'yargs';
 
 import { BuildLogFile, ConfigArgument, ConfigObject } from './@types';
 import { ProjectType } from './@enums';
@@ -8,21 +8,31 @@ import { DEFAULT_OUTPUT_FILE } from './constants/defaults';
 
 const projectTypes = Object.keys(ProjectType);
 
+type RequiredArgs = (keyof ConfigArgument)[];
+const REQUIRED_ARGS: RequiredArgs = ['url', 'pr', 'buildLogFile', 'token'];
+
+function parseConfigfile(fileConfig?: string): boolean {
+  if (!fileConfig && fileConfig !== '') throw 'bad parse config file';
+  // TODO: yml parse
+  return true;
+}
+
 const args = yargs
+  .option('config', {
+    describe: 'use config file',
+    type: 'string',
+  })
   .option('url', {
     describe: 'GitHub repo url (https or ssh)',
     type: 'string',
-    demandOption: true,
   })
   .option('pr', {
     describe: 'PR number',
     type: 'number',
-    demandOption: true,
   })
   .option('token', {
     describe: 'GitHub token',
     type: 'string',
-    demandOption: true,
   })
   .option('buildLogFile', {
     alias: 'f',
@@ -34,7 +44,6 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
     type: 'array',
     string: true,
     number: false,
-    demandOption: true,
   })
   .coerce('buildLogFile', (files: string[]) => {
     return files.map((opt) => {
@@ -55,6 +64,10 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
     default: false,
   })
   .check((options) => {
+    const useConfigFile = options.config !== '';
+    const validFilePattern = parseConfigfile(options.config);
+    if (useConfigFile && validFilePattern) return true;
+
     if (!options.pr || Array.isArray(options.pr))
       throw '--pr config should be a single number';
     if (!options.buildLogFile || options.buildLogFile.some((file) => file === null))
