@@ -83,12 +83,11 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
   .check((options) => {
     // check arguments parsing
     const useConfigArgs = options.config === undefined;
-    if (!options.pr || (Array.isArray(options.pr) && useConfigArgs))
+    if (!useConfigArgs) return true;
+
+    if (!options.pr || Array.isArray(options.pr))
       throw '--pr config should be a single number';
-    if (
-      (!options.buildLogFile || options.buildLogFile.some((file) => file === null)) &&
-      useConfigArgs
-    )
+    if (!options.buildLogFile || options.buildLogFile.some((file) => file === null))
       throw 'all of `--buildLogFile` options should have correct format';
     return true;
   })
