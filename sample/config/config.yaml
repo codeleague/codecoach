@@ -1,0 +1,12 @@
+repo:
+  url: https://github.com/codeleague/codecoach
+  pr: 40
+  token: 123qwe123qwe123qwe123
+buildLogFiles:
+  - type: tslint
+    file: /path/to/log.json
+    cwd: /current/dir/of/lint/output
+  - type: msbuild
+    file: /path/to/output/log
+    cwd: /path/of/cwd
+output: /path/to/codecoach/output.json
