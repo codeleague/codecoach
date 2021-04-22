@@ -21,7 +21,7 @@ export const EXPECTED_MOCK_ARGS = [
   '/usr/local/Cellar/node/15.13.0/bin/node',
   '/Users/codecoach/src/app.ts',
   'https://github.com/codeleague/codecoach.git',
-  'removeOldComment',
+  true,
   'placeyourtokenhere',
   15,
   'dotnetbuild;./sample/dotnetbuild/build.content;/repo/src',
@@ -39,6 +39,7 @@ describe('Config Test', () => {
     process.argv = MOCK_ARGS;
     config = (await import('./Config')).Config;
     expect(config.provider.repoUrl).toBe(EXPECTED_MOCK_ARGS[2]);
+    expect(config.provider.removeOldComment).toBe(EXPECTED_MOCK_ARGS[3]);
   });
 
   it('Should able to use a config file without passing other args', async () => {
