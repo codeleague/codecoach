@@ -47,7 +47,7 @@ describe('Config Test', () => {
     process.argv = MOCK_ARGS_W_CONFIG_YAML;
     config = (await import('./Config')).Config;
     const fullfillConfig = await config;
-    console.log('config jaa', fullfillConfig);
+    console.log('use file config', fullfillConfig);
     // expect(config.app.buildLogFiles[0].type).toBe('tslint');
   });
 });
