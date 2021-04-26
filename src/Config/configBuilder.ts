@@ -1,6 +1,6 @@
-import { YML } from '.';
 import { AppConfig, ConfigArgument, ProviderConfig } from './@types';
 import { TIME_ZONE, USER_AGENT } from './constants/defaults';
+import { YML } from './YML';
 
 const buildYMLConfig = async (args: ConfigArgument) => {
   if (!args.config) return;
