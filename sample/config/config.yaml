@@ -6,9 +6,9 @@ provider:
   timeZone: Asia/Bangkok
 buildLogFiles:
   - type: tslint
-    file: /path/to/log.json
+    path: /path/to/log.json
     cwd: /current/dir/of/lint/output
   - type: msbuild
-    file: /path/to/output/log
+    path: /path/to/output/log
     cwd: /path/of/cwd
 output: /path/to/codecoach/output.json
