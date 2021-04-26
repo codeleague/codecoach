@@ -3,12 +3,9 @@ import { ProjectType } from './@enums';
 import { BuildLogFile, ConfigArgument, ConfigObject } from './@types';
 import { buildAppConfig, buildProviderConfig } from './configBuilder';
 import { DEFAULT_OUTPUT_FILE } from './constants/defaults';
-import { YML } from './YML';
+import { REQUIRED_ARGS } from './constants/required';
 
 const projectTypes = Object.keys(ProjectType);
-
-type RequiredArgs = (keyof ConfigArgument)[];
-const REQUIRED_ARGS: RequiredArgs = ['url', 'pr', 'buildLogFile', 'token'];
 
 const args = yargs
   .option('config', {
