@@ -7,8 +7,5 @@ provider:
 buildLogFiles:
   - type: tslint
     path: /path/to/log.json
-    cwd: /current/dir/of/lint/output
-  - type: msbuild
-    path: /path/to/output/log
-    cwd: /path/of/cwd
-output: /path/to/codecoach/output.json
+    cwd: /repo/src
+output: ./output.json
