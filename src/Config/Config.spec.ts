@@ -14,7 +14,7 @@ const MOCK_ARGS = [
 const MOCK_ARGS_W_CONFIG_YAML = [
   '/usr/local/Cellar/node/15.13.0/bin/node',
   '/Users/codecoach/src/app.ts',
-  '--config=sample/config/config.yml',
+  '--config=sample/config/config.yaml',
 ];
 
 export const EXPECTED_MOCK_ARGS = [
@@ -38,12 +38,16 @@ describe('Config Test', () => {
   it('Should able to parse this args and run without throwing error', async () => {
     process.argv = MOCK_ARGS;
     config = (await import('./Config')).Config;
-    expect(config.provider.repoUrl).toBe(EXPECTED_MOCK_ARGS[2]);
-    expect(config.provider.removeOldComment).toBe(EXPECTED_MOCK_ARGS[3]);
+    const fullfillConfig = await config;
+    expect(fullfillConfig.provider.repoUrl).toBe(EXPECTED_MOCK_ARGS[2]);
+    expect(fullfillConfig.provider.removeOldComment).toBe(EXPECTED_MOCK_ARGS[3]);
   });
 
   it('Should able to use a config file without passing other args', async () => {
     process.argv = MOCK_ARGS_W_CONFIG_YAML;
     config = (await import('./Config')).Config;
+    const fullfillConfig = await config;
+    console.log('config jaa', fullfillConfig);
+    // expect(config.app.buildLogFiles[0].type).toBe('tslint');
   });
 });

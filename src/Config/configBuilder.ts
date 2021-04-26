@@ -1,7 +1,9 @@
 import { AppConfig, ConfigArgument, ProviderConfig } from './@types';
 import { TIME_ZONE, USER_AGENT } from './constants/defaults';
 
-export const buildProviderConfig = (arg: ConfigArgument): ProviderConfig => ({
+export const buildProviderConfig = async (
+  arg: ConfigArgument,
+): Promise<ProviderConfig> => ({
   token: arg.token,
   repoUrl: arg.url,
   prId: arg.pr,
@@ -10,7 +12,7 @@ export const buildProviderConfig = (arg: ConfigArgument): ProviderConfig => ({
   timeZone: TIME_ZONE,
 });
 
-export const buildAppConfig = (arg: ConfigArgument): AppConfig => {
+export const buildAppConfig = async (arg: ConfigArgument): Promise<AppConfig> => {
   return {
     logFilePath: arg.output,
     buildLogFiles: arg.buildLogFile,
