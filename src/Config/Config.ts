@@ -12,12 +12,6 @@ const args = yargs
     describe: 'use config file',
     type: 'string',
   })
-  // .coerce('config', async (path: string) => {
-  //   if (!path || path === '') return;
-  //   const parsed = await YML.parse<ConfigArgument>(path);
-  //   console.log('parsed', parsed);
-  //   return parsed;
-  // })
   .option('url', {
     describe: 'GitHub repo url (https or ssh)',
     type: 'string',
@@ -59,13 +53,6 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
     describe: 'Remove existing CodeCoach comments before putting new one',
     default: false,
   })
-  // .check((options) => {
-  //   // check config file
-  //   const useConfigFile = options.config !== undefined;
-  //   const validFilePattern = parseConfigfile(options.config);
-  //   if (useConfigFile && !validFilePattern) throw 'bad parse config file';
-  //   return true;
-  // })
   .check((options) => {
     // check required arguments
     const useConfigArgs = options.config === undefined;
