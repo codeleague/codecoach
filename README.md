@@ -3,7 +3,7 @@
     <a href="https://www.npmjs.com/package/codecoach"><img alt="npm version badge" src="https://img.shields.io/npm/v/codecoach.svg?label=Latest&style=for-the-badge&logo=npm"/></a>
     <a href="https://www.npmjs.com/package/codecoach"><img alt="npm download badge" src="https://img.shields.io/npm/dm/codecoach.svg?style=for-the-badge"/></a>
     <br/>
-    <a href="https://github.com/codeleague/codecoach/actions/workflows/publish-npm.yml"><img alt="Publish to npm" src="https://github.com/codeleague/codecoach/actions/workflows/publish-npm.yml/badge.svg"></a>
+    <a href="https://github.com/codeleague/codecoach/actions/workflows/release.yml"><img alt="Release" src="https://github.com/codeleague/codecoach/actions/workflows/release.yml/badge.svg"></a>
 </p>
 <p align="center">
 <img alt="CodeCoach logo" src="https://user-images.githubusercontent.com/5965883/110232495-8cb95700-7f50-11eb-99ee-c223786e39a9.png"/>
