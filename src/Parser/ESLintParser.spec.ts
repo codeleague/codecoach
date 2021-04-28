@@ -56,7 +56,7 @@ describe('ESLintParser', () => {
     expect(result[0]).toEqual({
       source: '',
       severity: LogSeverity.error,
-      line: 60,
+      line: 59,
       lineOffset: 8,
       msg: `Parsing error: ')' expected.`,
       log: JSON.stringify(mockedContent[0].messages[0]),
@@ -66,7 +66,7 @@ describe('ESLintParser', () => {
     expect(result[1]).toEqual({
       source: `src/app.ts`,
       severity: LogSeverity.warning,
-      line: 25,
+      line: 24,
       lineOffset: 15,
       msg: `'content' is defined but never used.`,
       log: JSON.stringify(mockedContent[1].messages[0]),
