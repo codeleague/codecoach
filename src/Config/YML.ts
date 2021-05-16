@@ -5,7 +5,7 @@ import { ConfigYAML } from './@types/configYAML';
 
 export class YML {
   private static transform(config: ConfigYAML): ConfigYAML {
-    if (!config.provider.pr || !Number.isInteger(config.provider.pr))
+    if (!config.repo.pr || !Number.isInteger(config.repo.pr))
       throw 'provider.pr is required or invalid number type';
 
     // required types
@@ -15,17 +15,17 @@ export class YML {
     if (!validRequiredArgs)
       throw `please fill all required fields ${REQUIRED_YAML_ARGS.join(', ')}`;
     const validRequiredProviderArgs = REQUIRED_YAML_PROVIDER_ARGS.every(
-      (el) => config.provider[el] != undefined || config.provider[el] != null,
+      (el) => config.repo[el] != undefined || config.repo[el] != null,
     );
     if (!validRequiredProviderArgs)
       throw `please fill all required fields ${REQUIRED_YAML_PROVIDER_ARGS.join(', ')}`;
 
     return {
       ...config,
-      provider: {
-        ...config.provider,
-        pr: Number(config.provider.pr),
-        removeOldComment: Boolean(config.provider.removeOldComment),
+      repo: {
+        ...config.repo,
+        pr: Number(config.repo.pr),
+        removeOldComment: Boolean(config.repo.removeOldComment),
       },
     };
   }

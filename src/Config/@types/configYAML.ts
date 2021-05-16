@@ -1,7 +1,7 @@
 import { BuildLogFile } from './buildLogFile';
 
 export type ConfigYAML = {
-  provider: {
+  repo: {
     url: string;
     pr: number;
     token: string;

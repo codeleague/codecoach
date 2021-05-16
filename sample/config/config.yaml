@@ -1,4 +1,4 @@
-provider:
+repo:
   url: https://github.com/codeleague/codecoach
   pr: 40
   token: 123qwe123qwe123qwe123

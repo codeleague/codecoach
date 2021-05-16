@@ -13,12 +13,12 @@ export const buildProviderConfig = async (
   const configFile = await buildYMLConfig(arg);
 
   return {
-    token: configFile?.provider.token || arg.token,
-    repoUrl: configFile?.provider.url || arg.url,
-    prId: configFile?.provider.pr || arg.pr,
-    removeOldComment: configFile?.provider.removeOldComment || arg.removeOldComment,
-    userAgent: configFile?.provider.userAgent || USER_AGENT,
-    timeZone: configFile?.provider.timeZone || TIME_ZONE,
+    token: configFile?.repo.token || arg.token,
+    repoUrl: configFile?.repo.url || arg.url,
+    prId: configFile?.repo.pr || arg.pr,
+    removeOldComment: configFile?.repo.removeOldComment || arg.removeOldComment,
+    userAgent: configFile?.repo.userAgent || USER_AGENT,
+    timeZone: configFile?.repo.timeZone || TIME_ZONE,
   };
 };
 
