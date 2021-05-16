@@ -1,5 +1,4 @@
 import { AppConfig, ConfigArgument, ProviderConfig } from './@types';
-import { TIME_ZONE, USER_AGENT } from './constants/defaults';
 import { YML } from './YML';
 
 const buildYMLConfig = async (args: ConfigArgument) => {
@@ -17,8 +16,6 @@ export const buildProviderConfig = async (
     repoUrl: configFile?.repo.url || arg.url,
     prId: configFile?.repo.pr || arg.pr,
     removeOldComment: configFile?.repo.removeOldComment || arg.removeOldComment,
-    userAgent: configFile?.repo.userAgent || USER_AGENT,
-    timeZone: configFile?.repo.timeZone || TIME_ZONE,
   };
 };
 
