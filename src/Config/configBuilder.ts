@@ -4,8 +4,7 @@ import { YML } from './YML';
 
 const buildYMLConfig = async (args: ConfigArgument) => {
   if (!args.config) return;
-  const parsed = await YML.parse(args.config);
-  return parsed;
+  return YML.parse(args.config);
 };
 
 export const buildProviderConfig = async (
