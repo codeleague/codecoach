@@ -1,18 +1,28 @@
 import { AppConfig, ConfigArgument, ProviderConfig } from './@types';
-import { TIME_ZONE, USER_AGENT } from './constants/defaults';
+import { YML } from './YML';
 
-export const buildProviderConfig = (arg: ConfigArgument): ProviderConfig => ({
-  token: arg.token,
-  repoUrl: arg.url,
-  prId: arg.pr,
-  removeOldComment: arg.removeOldComment,
-  userAgent: USER_AGENT,
-  timeZone: TIME_ZONE,
-});
+const buildYMLConfig = async (args: ConfigArgument) => {
+  if (!args.config) return;
+  return YML.parse(args.config);
+};
 
-export const buildAppConfig = (arg: ConfigArgument): AppConfig => {
+export const buildProviderConfig = async (
+  arg: ConfigArgument,
+): Promise<ProviderConfig> => {
+  const configFile = await buildYMLConfig(arg);
+
   return {
-    logFilePath: arg.output,
-    buildLogFiles: arg.buildLogFile,
+    token: configFile?.repo.token || arg.token,
+    repoUrl: configFile?.repo.url || arg.url,
+    prId: configFile?.repo.pr || arg.pr,
+    removeOldComment: configFile?.repo.removeOldComment || arg.removeOldComment,
+  };
+};
+
+export const buildAppConfig = async (arg: ConfigArgument): Promise<AppConfig> => {
+  const configFile = await buildYMLConfig(arg);
+  return {
+    logFilePath: configFile?.output || arg.output,
+    buildLogFiles: configFile?.buildLogFiles || arg.buildLogFile,
   };
 };

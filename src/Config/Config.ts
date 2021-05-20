@@ -1,28 +1,28 @@
 import yargs from 'yargs';
-
-import { BuildLogFile, ConfigArgument, ConfigObject } from './@types';
 import { ProjectType } from './@enums';
-
+import { BuildLogFile, ConfigArgument, ConfigObject } from './@types';
 import { buildAppConfig, buildProviderConfig } from './configBuilder';
 import { DEFAULT_OUTPUT_FILE } from './constants/defaults';
+import { REQUIRED_ARGS } from './constants/required';
 
 const projectTypes = Object.keys(ProjectType);
 
 const args = yargs
+  .option('config', {
+    describe: 'use config file',
+    type: 'string',
+  })
   .option('url', {
     describe: 'GitHub repo url (https or ssh)',
     type: 'string',
-    demandOption: true,
   })
   .option('pr', {
     describe: 'PR number',
     type: 'number',
-    demandOption: true,
   })
   .option('token', {
     describe: 'GitHub token',
     type: 'string',
-    demandOption: true,
   })
   .option('buildLogFile', {
     alias: 'f',
@@ -34,7 +34,6 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
     type: 'array',
     string: true,
     number: false,
-    demandOption: true,
   })
   .coerce('buildLogFile', (files: string[]) => {
     return files.map((opt) => {
@@ -55,6 +54,20 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
     default: false,
   })
   .check((options) => {
+    // check required arguments
+    const useConfigArgs = options.config === undefined;
+    const validRequiredArgs = REQUIRED_ARGS.every(
+      (el) => options[el] != undefined || options[el] != null,
+    );
+    if (useConfigArgs && !validRequiredArgs)
+      throw `please fill all required fields ${REQUIRED_ARGS.join(', ')}`;
+    return true;
+  })
+  .check((options) => {
+    // check arguments parsing
+    const useConfigArgs = options.config === undefined;
+    if (!useConfigArgs) return true;
+
     if (!options.pr || Array.isArray(options.pr))
       throw '--pr config should be a single number';
     if (!options.buildLogFile || options.buildLogFile.some((file) => file === null))
@@ -65,7 +78,9 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
   .wrap(120)
   .parse(process.argv.slice(1)) as ConfigArgument;
 
-export const Config: ConfigObject = Object.freeze({
-  app: buildAppConfig(args),
-  provider: buildProviderConfig(args),
-});
+export const Config: Promise<ConfigObject> = (async () => {
+  return Object.freeze({
+    app: await buildAppConfig(args),
+    provider: await buildProviderConfig(args),
+  });
+})();

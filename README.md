@@ -48,6 +48,11 @@ $ codecoach --url="https://github.com/codeleague/codecoach" --pr=99 --token="tok
 ```
 
 #### Configs
+
+##### `--config`
+###### Optional
+config codecoach via yml format file. [example](./sample/config/config.yaml), a config argument will override this configuration
+
 ##### `--url`
 ###### Required
 Repository url

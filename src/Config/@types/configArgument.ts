@@ -7,4 +7,5 @@ export type ConfigArgument = {
   output: string;
   token: string;
   removeOldComment: boolean;
+  config: string;
 };
