@@ -4,6 +4,7 @@ import { IGitlabMRService } from './IGitlabMRService';
 import { CommitSchema, MergeRequestNoteSchema } from '@gitbeaker/core/dist/types/types';
 import { Gitlab } from '@gitbeaker/core';
 import { Commits, MergeRequestNotes, MergeRequests } from '@gitbeaker/node';
+import { URL } from 'url';
 
 export class GitlabMRService implements IGitlabMRService {
   private readonly projectId: string;
@@ -17,7 +18,8 @@ export class GitlabMRService implements IGitlabMRService {
     private readonly pr: number,
     projectId: string,
   ) {
-    this.host = 'https://gitlab.agodadev.io';
+    const repoUrlObj = new URL(repoUrl);
+    this.host = repoUrlObj.origin;
     this.token = token;
     this.projectId = projectId;
   }
@@ -96,5 +98,9 @@ export class GitlabMRService implements IGitlabMRService {
     } else {
       return changes?.map((d) => ({ file: d.new_path, patch: getPatch(d.diff) }));
     }
+  }
+
+  private static getOrigin(repo: URL): string {
+    return repo.origin
   }
 }
