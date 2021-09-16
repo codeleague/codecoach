@@ -1,36 +1,25 @@
-import { Octokit } from '@octokit/rest';
-import { ResponseHeaders } from '@octokit/types';
-import { URL } from 'url';
-
-import { GITHUB_COM_API } from '../../app.constants';
-import { TIME_ZONE, USER_AGENT } from '../../Config/constants/defaults';
-import { Log } from '../../Logger';
 import { Diff } from '../@types/PatchTypes';
-import { API_PAGE_SIZE_LIMIT } from '../constants/github.provider.constant';
 import { getPatch } from '../utils/patchProcessor';
-import { CommitStatus } from '../GitHub/CommitStatus';
 import { IGitlabMRService } from './IGitlabMRService';
 import { CommitSchema, MergeRequestNoteSchema } from '@gitbeaker/core/dist/types/types';
 import { Gitlab } from '@gitbeaker/core';
-import { Commits, MergeRequestNotes } from '@gitbeaker/node';
-
-type MrRequestBase = {
-  owner: string;
-  repo: string;
-};
+import { Commits, MergeRequestNotes, MergeRequests } from '@gitbeaker/node';
 
 export class GitlabMRService implements IGitlabMRService {
-  private readonly requestBase: MrRequestBase;
+  private readonly projectId: string;
   private readonly adapter: Gitlab;
   private readonly token: string;
   private readonly host: string;
 
-  constructor(token: string, repoUrl: string, private readonly pr: number) {
-    const repoUrlObj = new URL(repoUrl);
+  constructor(
+    token: string,
+    repoUrl: string,
+    private readonly pr: number,
+    projectId: string,
+  ) {
     this.host = 'https://gitlab.agodadev.io';
     this.token = token;
-    const [, owner, repo] = repoUrlObj.pathname.replace(/\.git$/gi, '').split('/');
-    this.requestBase = { owner, repo };
+    this.projectId = projectId;
   }
 
   async getCurrentUserId(): Promise<number> {
@@ -38,29 +27,74 @@ export class GitlabMRService implements IGitlabMRService {
     return user.id;
   }
 
-  async listAllNotes(): Promise<MergeRequestNoteSchema[]>{
+  async listAllNotes(): Promise<MergeRequestNoteSchema[]> {
     const mergeRequestNotes = new MergeRequestNotes({
       host: this.host,
-      token: this.token
+      token: this.token,
     });
 
-    return mergeRequestNotes.all(12, 12); // todo: replace the place holder projectId and MergeRequest Id
+    return await mergeRequestNotes.all(this.projectId, this.pr);
   }
 
   async getLatestCommitSha(): Promise<string> {
-    const commits = new Commits({
+    const mergeRequests = new MergeRequests({
       host: this.host,
-      token: this.token
+      token: this.token,
     });
 
-    const allCommits =  await commits.all(12); // todo: replace the place holder projectId 
-    return allCommits[0].id;
+    const commits = await mergeRequests.commits(this.projectId, this.pr);
+    const sortedCommits = commits.sort((a: CommitSchema, b: CommitSchema) => {
+      return a.created_at.getTime() - b.created_at.getTime();
+    });
+
+    return sortedCommits[0].id;
   }
 
-  async diff(): Promise<CommitDiffSchema> {
-    
+  async deleteNote(noteId: number): Promise<void> {
+    const mergeRequestNotes = new MergeRequestNotes({
+      host: this.host,
+      token: this.token,
+    });
+
+    mergeRequestNotes.remove(this.projectId, this.pr, noteId);
   }
 
+  // github can do someone fancy shit here we cant
+  async createNote(note: string): Promise<void> {
+    const mergeRequestNotes = new MergeRequestNotes({
+      host: this.host,
+      token: this.token,
+    });
+
+    mergeRequestNotes.create(this.projectId, this.pr, note);
+  }
+
+  async createReviewComment(
+    commitId: string,
+    note: string,
+    file: string,
+    line: number,
+  ): Promise<void> {
+    const commit = new Commits({
+      host: this.host,
+      token: this.token,
+    });
+
+    commit.createComment(this.projectId, commitId, note, { path: file, line: line });
+  }
+
+  async diff(): Promise<Diff[]> {
+    const mergeRequests = new MergeRequests({
+      host: this.host,
+      token: this.token,
+    });
+
+    const changes = (await mergeRequests.changes(this.projectId, this.pr)).changes;
+
+    if (!changes) {
+      return [];
+    } else {
+      return changes?.map((d) => ({ file: d.new_path, patch: getPatch(d.diff) }));
+    }
+  }
 }
-
-  
