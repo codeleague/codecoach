@@ -1,4 +1,5 @@
 import { AppConfig, ConfigArgument, ProviderConfig } from './@types';
+import { ConfigArgumentGitlab } from './@types/configArgument';
 import { YML } from './YML';
 
 const buildYMLConfig = async (args: ConfigArgument) => {
@@ -7,7 +8,7 @@ const buildYMLConfig = async (args: ConfigArgument) => {
 };
 
 export const buildProviderConfig = async (
-  arg: ConfigArgument,
+  arg: ConfigArgumentGitlab,
 ): Promise<ProviderConfig> => {
   const configFile = await buildYMLConfig(arg);
 
@@ -16,6 +17,7 @@ export const buildProviderConfig = async (
     repoUrl: configFile?.repo.url || arg.url,
     prId: configFile?.repo.pr || arg.pr,
     removeOldComment: configFile?.repo.removeOldComment || arg.removeOldComment,
+    gitlabProjectId: configFile?.repo.gitlabProjectId || arg.gitlabProjectId,
   };
 };
 

@@ -2,13 +2,11 @@ import { Diff } from '../@types/PatchTypes';
 import { getPatch } from '../utils/patchProcessor';
 import { IGitlabMRService } from './IGitlabMRService';
 import { CommitSchema, MergeRequestNoteSchema } from '@gitbeaker/core/dist/types/types';
-import { Gitlab } from '@gitbeaker/core';
-import { Commits, MergeRequestNotes, MergeRequests } from '@gitbeaker/node';
+import { Commits, MergeRequestNotes, MergeRequests, Users } from '@gitbeaker/node';
 import { URL } from 'url';
 
 export class GitlabMRService implements IGitlabMRService {
-  private readonly projectId: string;
-  private readonly adapter: Gitlab;
+  private readonly projectId: string | number;
   private readonly token: string;
   private readonly host: string;
 
@@ -16,7 +14,7 @@ export class GitlabMRService implements IGitlabMRService {
     token: string,
     repoUrl: string,
     private readonly pr: number,
-    projectId: string,
+    projectId: string | number,
   ) {
     const repoUrlObj = new URL(repoUrl);
     this.host = repoUrlObj.origin;
@@ -25,7 +23,11 @@ export class GitlabMRService implements IGitlabMRService {
   }
 
   async getCurrentUserId(): Promise<number> {
-    const user = await this.adapter.Users.current();
+    const users = new Users({
+      host: this.host,
+      token: this.token,
+    });
+    const user = await users.current();
     return user.id;
   }
 
@@ -98,9 +100,5 @@ export class GitlabMRService implements IGitlabMRService {
     } else {
       return changes?.map((d) => ({ file: d.new_path, patch: getPatch(d.diff) }));
     }
-  }
-
-  private static getOrigin(repo: URL): string {
-    return repo.origin
   }
 }

@@ -15,6 +15,9 @@ import {
 } from './Parser';
 import { DartLintParser } from './Parser/DartLintParser';
 import { GitHub, GitHubPRService, VCS } from './Provider';
+import { Gitlab } from './Provider/Gitlab/Gitlab';
+import { GitlabMRService } from './Provider/Gitlab/GitlabMRService';
+import { isGitlab } from './Provider/utils/vcsType';
 
 class App {
   private vcs: VCS;
@@ -22,13 +25,7 @@ class App {
 
   async start(): Promise<void> {
     this.config = await Config;
-
-    const githubPRService = new GitHubPRService(
-      this.config.provider.token,
-      this.config.provider.repoUrl,
-      this.config.provider.prId,
-    );
-    this.vcs = new GitHub(githubPRService, this.config.provider.removeOldComment);
+    this.vcs = this.getVCS();
 
     const logs = await this.parseBuildData(this.config.app.buildLogFiles);
     Log.info('Build data parsing completed');
@@ -75,6 +72,31 @@ class App {
   private static async writeLogToFile(logs: LogType[]): Promise<void> {
     const config = await Config;
     await File.writeFileHelper(config.app.logFilePath, JSON.stringify(logs, null, 2));
+  }
+
+  private getVCS(): VCS {
+    return isGitlab(this.config.provider.repoUrl)
+      ? this.buildGitlab()
+      : this.buildGithub();
+  }
+
+  private buildGithub(): VCS {
+    const githubPRService = new GitHubPRService(
+      this.config.provider.token,
+      this.config.provider.repoUrl,
+      this.config.provider.prId,
+    );
+    return new GitHub(githubPRService, this.config.provider.removeOldComment);
+  }
+
+  private buildGitlab(): VCS {
+    const gitlabMRService = new GitlabMRService(
+      this.config.provider.token,
+      this.config.provider.repoUrl,
+      this.config.provider.prId,
+      this.config.provider.gitlabProjectId,
+    );
+    return new Gitlab(gitlabMRService, this.config.provider.removeOldComment);
   }
 }
 

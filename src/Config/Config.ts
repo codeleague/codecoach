@@ -3,7 +3,10 @@ import { ProjectType } from './@enums';
 import { BuildLogFile, ConfigArgument, ConfigObject } from './@types';
 import { buildAppConfig, buildProviderConfig } from './configBuilder';
 import { DEFAULT_OUTPUT_FILE } from './constants/defaults';
-import { REQUIRED_ARGS } from './constants/required';
+import { isGitlab } from '../Provider/utils/vcsType';
+
+import { REQUIRED_ARGS_GITHUB, REQUIRED_ARGS_GITLAB } from './constants/required';
+import { ConfigArgumentGitlab } from './@types/configArgument';
 
 const projectTypes = Object.keys(ProjectType);
 
@@ -22,6 +25,10 @@ const args = yargs
   })
   .option('token', {
     describe: 'GitHub token',
+    type: 'string',
+  })
+  .option('gitlabProjectId', {
+    describe: 'Gitlab Project Id',
     type: 'string',
   })
   .option('buildLogFile', {
@@ -56,11 +63,14 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
   .check((options) => {
     // check required arguments
     const useConfigArgs = options.config === undefined;
-    const validRequiredArgs = REQUIRED_ARGS.every(
+    const requiredArgs = isGitlab(options.url)
+      ? REQUIRED_ARGS_GITLAB
+      : REQUIRED_ARGS_GITHUB;
+    const validRequiredArgs = requiredArgs.every(
       (el) => options[el] != undefined || options[el] != null,
     );
     if (useConfigArgs && !validRequiredArgs)
-      throw `please fill all required fields ${REQUIRED_ARGS.join(', ')}`;
+      throw `please fill all required fields ${requiredArgs.join(', ')}`;
     return true;
   })
   .check((options) => {
@@ -76,7 +86,7 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
   })
   .help()
   .wrap(120)
-  .parse(process.argv.slice(1)) as ConfigArgument;
+  .parse(process.argv.slice(1)) as ConfigArgumentGitlab;
 
 export const Config: Promise<ConfigObject> = (async () => {
   return Object.freeze({

@@ -3,4 +3,5 @@ export type ProviderConfig = {
   repoUrl: string;
   prId: number;
   removeOldComment: boolean;
+  gitlabProjectId: string | number;
 };
