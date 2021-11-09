@@ -17,8 +17,8 @@ export class YML {
     if (!validRequiredArgs)
       throw new Error(`please fill all required fields ${REQUIRED_YAML_ARGS.join(', ')}`);
 
-    if (command === COMMAND.COLLECT) return this.transformPrConfig(config);
-    else if (command === COMMAND.DEFAULT) return this.transformDataConfig(config);
+    if (command === COMMAND.COLLECT) return this.transformDataConfig(config);
+    else if (command === COMMAND.DEFAULT) return this.transformPrConfig(config);
     throw new Error(`Command ${command} is invalid`);
   }
 
