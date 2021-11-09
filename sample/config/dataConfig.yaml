@@ -1,0 +1,10 @@
+repo:
+  url: https://github.com/codeleague/codecoach
+  runId: 40
+  latestCommit: 123qwe123qwe123qwe123qwe123qwe123qwe123q
+  token: 123qwe123qwe123qwe123
+buildLogFiles:
+  - type: tslint
+    path: /path/to/log.json
+    cwd: /repo/src
+output: ./output.json
