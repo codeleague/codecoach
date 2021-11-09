@@ -2,10 +2,12 @@ import { BuildLogFile } from './buildLogFile';
 
 export type ConfigArgument = {
   url: string;
-  pr: number;
   buildLogFile: BuildLogFile[];
   output: string;
   token: string;
-  removeOldComment: boolean;
   config: string;
+  pr?: number;
+  latestCommit?: string;
+  runId?: number;
+  removeOldComment: boolean;
 };
