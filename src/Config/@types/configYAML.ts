@@ -3,7 +3,9 @@ import { BuildLogFile } from './buildLogFile';
 export type ConfigYAML = {
   repo: {
     url: string;
-    pr: number;
+    pr?: number;
+    latestCommit?: string;
+    runId?: number;
     token: string;
     userAgent: string;
     timeZone: string;
