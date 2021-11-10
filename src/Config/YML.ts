@@ -5,7 +5,7 @@ import {
   PR_REQUIRED_YAML_PROVIDER_ARGS,
   DATA_REQUIRED_YAML_PROVIDER_ARGS,
 } from './constants/required';
-import { ConfigYAML } from './@types/configYAML';
+import { ConfigYAML, DataConfigYAML, PrConfigYAML } from './@types/configYAML';
 import { COMMAND } from './constants/defaults';
 
 export class YML {
@@ -17,12 +17,17 @@ export class YML {
     if (!validRequiredArgs)
       throw new Error(`please fill all required fields ${REQUIRED_YAML_ARGS.join(', ')}`);
 
-    if (command === COMMAND.COLLECT) return this.transformDataConfig(config);
-    else if (command === COMMAND.DEFAULT) return this.transformPrConfig(config);
-    throw new Error(`Command ${command} is invalid`);
+    switch (command) {
+      case COMMAND.COLLECT:
+        return this.transformDataConfig(config as DataConfigYAML);
+      case COMMAND.DEFAULT:
+        return this.transformPrConfig(config as PrConfigYAML);
+      default:
+        throw new Error(`Command ${command} is invalid`);
+    }
   }
 
-  private static transformDataConfig(config: ConfigYAML): ConfigYAML {
+  private static transformDataConfig(config: DataConfigYAML): DataConfigYAML {
     if (!config.repo.runId || !Number.isInteger(config.repo.runId))
       throw new Error('provider.runId is required or invalid number type');
 
@@ -39,11 +44,12 @@ export class YML {
       repo: {
         ...config.repo,
         runId: Number(config.repo.runId),
+        latestCommit: config.repo.latestCommit,
       },
     };
   }
 
-  private static transformPrConfig(config: ConfigYAML): ConfigYAML {
+  private static transformPrConfig(config: PrConfigYAML): PrConfigYAML {
     if (!config.repo.pr || !Number.isInteger(config.repo.pr))
       throw new Error('provider.pr is required or invalid number type');
 

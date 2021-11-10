@@ -1,4 +1,14 @@
-import { AppConfig, ConfigArgument, ProviderConfig } from './@types';
+import {
+  AppConfig,
+  ConfigArgument,
+  ProviderConfig,
+  DataConfigArgument,
+  PrConfigArgument,
+  DataConfigYAML,
+  PrConfigYAML,
+  PrProviderConfig,
+  DataProviderConfig,
+} from './@types';
 import { COMMAND } from './constants/defaults';
 import { YML } from './YML';
 
@@ -12,15 +22,38 @@ export const buildProviderConfig = async (
   command: COMMAND,
 ): Promise<ProviderConfig> => {
   const configFile = await buildYMLConfig(arg, command);
-  return {
-    token: configFile?.repo.token || arg.token,
-    repoUrl: configFile?.repo.url || arg.url,
-    runId: configFile?.repo.runId || arg.runId,
-    latestCommit: configFile?.repo.latestCommit || arg.latestCommit,
-    prId: configFile?.repo.pr || arg.pr,
-    removeOldComment: configFile?.repo.removeOldComment || arg.removeOldComment,
-  };
+  switch (command) {
+    case COMMAND.COLLECT:
+      return buildDataProviderConfig(
+        arg as DataConfigArgument,
+        configFile as DataConfigYAML,
+      );
+    case COMMAND.DEFAULT:
+      return buildPrProviderConfig(arg as PrConfigArgument, configFile as PrConfigYAML);
+    default:
+      throw new Error(`Command ${command} is invalid`);
+  }
 };
+
+const buildPrProviderConfig = (
+  arg: PrConfigArgument,
+  configFile: PrConfigYAML,
+): PrProviderConfig => ({
+  token: configFile?.repo.token || arg.token,
+  repoUrl: configFile?.repo.url || arg.url,
+  prId: configFile?.repo.pr || arg.pr,
+  removeOldComment: configFile?.repo.removeOldComment || arg.removeOldComment,
+});
+
+const buildDataProviderConfig = (
+  arg: DataConfigArgument,
+  configFile: DataConfigYAML,
+): DataProviderConfig => ({
+  token: configFile?.repo.token || arg.token,
+  repoUrl: configFile?.repo.url || arg.url,
+  runId: configFile?.repo.runId || arg.runId,
+  latestCommit: configFile?.repo.latestCommit || arg.latestCommit,
+});
 
 export const buildAppConfig = async (
   arg: ConfigArgument,

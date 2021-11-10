@@ -1,7 +1,12 @@
-import { ConfigArgument } from '..';
-import { ConfigYAML } from '../@types/configYAML';
+import {
+  PrConfigYAML,
+  DataConfigYAML,
+  ConfigYAML,
+  PrConfigArgument,
+  DataConfigArgument,
+} from '../@types';
 
-type DataRequiredArgs = (keyof ConfigArgument)[];
+type DataRequiredArgs = (keyof DataConfigArgument)[];
 export const DATA_REQUIRED_ARGS: DataRequiredArgs = [
   'url',
   'latestCommit',
@@ -10,19 +15,21 @@ export const DATA_REQUIRED_ARGS: DataRequiredArgs = [
   'token',
 ];
 
-type PrRequiredArgs = (keyof ConfigArgument)[];
+type PrRequiredArgs = (keyof PrConfigArgument)[];
 export const PR_REQUIRED_ARGS: PrRequiredArgs = ['pr', 'buildLogFile', 'token', 'url'];
 
 type RequiredYamlArgs = (keyof ConfigYAML)[];
 export const REQUIRED_YAML_ARGS: RequiredYamlArgs = ['repo', 'buildLogFiles'];
 
-type RequiredYamlProviderArgs = (keyof ConfigYAML['repo'])[];
-export const PR_REQUIRED_YAML_PROVIDER_ARGS: RequiredYamlProviderArgs = [
+type PrRequiredYamlProviderArgs = (keyof PrConfigYAML['repo'])[];
+export const PR_REQUIRED_YAML_PROVIDER_ARGS: PrRequiredYamlProviderArgs = [
   'url',
   'pr',
   'token',
 ];
-export const DATA_REQUIRED_YAML_PROVIDER_ARGS: RequiredYamlProviderArgs = [
+
+type DataRequiredYamlProviderArgs = (keyof DataConfigYAML['repo'])[];
+export const DATA_REQUIRED_YAML_PROVIDER_ARGS: DataRequiredYamlProviderArgs = [
   'url',
   'latestCommit',
   'token',

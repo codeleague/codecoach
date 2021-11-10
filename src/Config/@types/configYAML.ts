@@ -1,16 +1,28 @@
 import { BuildLogFile } from './buildLogFile';
 
-export type ConfigYAML = {
+type BaseConfigYAML = {
   repo: {
     url: string;
-    pr?: number;
-    latestCommit?: string;
-    runId?: number;
     token: string;
     userAgent: string;
     timeZone: string;
-    removeOldComment: boolean;
   };
   buildLogFiles: BuildLogFile[];
   output: string;
 };
+
+export type PrConfigYAML = {
+  repo: {
+    pr: number;
+    removeOldComment: boolean;
+  };
+} & BaseConfigYAML;
+
+export type DataConfigYAML = {
+  repo: {
+    latestCommit: string;
+    runId: number;
+  };
+} & BaseConfigYAML;
+
+export type ConfigYAML = PrConfigYAML | DataConfigYAML;

@@ -1,3 +1,4 @@
+import { DataProviderConfig, PrProviderConfig } from '.';
 import { Config } from './Config';
 
 const PR_MOCK_ARGS = [
@@ -80,15 +81,15 @@ describe('PR config Test', () => {
   it('Should able to parse this args and run without throwing error', async () => {
     process.argv = PR_MOCK_ARGS;
     config = (await import('./Config')).Config;
-    let fullfillConfig = await config;
-    expect(fullfillConfig.provider.repoUrl).toBe(PR_EXPECTED_MOCK_ARGS[2]);
-    expect(fullfillConfig.provider.removeOldComment).toBe(PR_EXPECTED_MOCK_ARGS[3]);
+    let fullfillConfig = (await config).provider as PrProviderConfig;
+    expect(fullfillConfig.repoUrl).toBe(PR_EXPECTED_MOCK_ARGS[2]);
+    expect(fullfillConfig.removeOldComment).toBe(PR_EXPECTED_MOCK_ARGS[3]);
 
     process.argv = PR_MOCK_ARGS_W_COMMAND;
     config = (await import('./Config')).Config;
-    fullfillConfig = await config;
-    expect(fullfillConfig.provider.repoUrl).toBe(PR_EXPECTED_MOCK_ARGS[2]);
-    expect(fullfillConfig.provider.removeOldComment).toBe(PR_EXPECTED_MOCK_ARGS[3]);
+    fullfillConfig = (await config).provider as PrProviderConfig;
+    expect(fullfillConfig.repoUrl).toBe(PR_EXPECTED_MOCK_ARGS[2]);
+    expect(fullfillConfig.removeOldComment).toBe(PR_EXPECTED_MOCK_ARGS[3]);
   });
 
   it('Should able to use a config file without passing other args', async () => {
@@ -109,10 +110,10 @@ describe('Data config Test', () => {
   it('Should able to parse this args and run without throwing error', async () => {
     process.argv = DATA_MOCK_ARGS;
     config = (await import('./Config')).Config;
-    const fullfillConfig = await config;
-    expect(fullfillConfig.provider.repoUrl).toBe(DATA_EXPECTED_MOCK_ARGS[2]);
-    expect(fullfillConfig.provider.runId).toBe(DATA_EXPECTED_MOCK_ARGS[3]);
-    expect(fullfillConfig.provider.latestCommit).toBe(DATA_EXPECTED_MOCK_ARGS[4]);
+    const fullfillConfig = (await config).provider as DataProviderConfig;
+    expect(fullfillConfig.repoUrl).toBe(DATA_EXPECTED_MOCK_ARGS[2]);
+    expect(fullfillConfig.runId).toBe(DATA_EXPECTED_MOCK_ARGS[3]);
+    expect(fullfillConfig.latestCommit).toBe(DATA_EXPECTED_MOCK_ARGS[4]);
   });
 
   it('Should able to use a config file without passing other args', async () => {
