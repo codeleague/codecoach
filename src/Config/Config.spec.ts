@@ -56,7 +56,7 @@ const DATA_MOCK_ARGS_W_CONFIG_YAML = [
   '/usr/local/Cellar/node/15.13.0/bin/node',
   '/Users/codecoach/src/app.ts',
   'collect',
-  '--config=sample/config/dataConfig.yaml',
+  '--config=sample/config/data-config.yaml',
 ];
 
 export const DATA_EXPECTED_MOCK_ARGS = [
