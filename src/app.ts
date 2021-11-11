@@ -1,6 +1,14 @@
 #!/usr/bin/env node
 
-import { BuildLogFile, Config, ConfigObject, ProjectType } from './Config';
+import {
+  BuildLogFile,
+  Config,
+  ConfigObject,
+  DataProviderConfig,
+  ProjectType,
+  PrProviderConfig,
+} from './Config';
+import { COMMAND } from './Config/constants/defaults';
 import { File } from './File';
 import { Log } from './Logger';
 import {
@@ -13,6 +21,7 @@ import {
   ScalaStyleParser,
   TSLintParser,
 } from './Parser';
+import { ParsedLogType, Run } from './Parser/@types/log.type';
 import { DartLintParser } from './Parser/DartLintParser';
 import { GitHub, GitHubPRService, VCS } from './Provider';
 
@@ -22,15 +31,10 @@ class App {
 
   async start(): Promise<void> {
     this.config = await Config;
+    const { repoUrl } = this.config.provider;
 
-    const githubPRService = new GitHubPRService(
-      this.config.provider.token,
-      this.config.provider.repoUrl,
-      this.config.provider.prId,
-    );
-    this.vcs = new GitHub(githubPRService, this.config.provider.removeOldComment);
-
-    const logs = await this.parseBuildData(this.config.app.buildLogFiles);
+    const parsedLogs = await this.parseBuildData(this.config.app.buildLogFiles);
+    const logs = parsedLogs.flatMap(({ logs }) => logs);
     Log.info('Build data parsing completed');
 
     // Fire and forget, no need to await
@@ -38,8 +42,41 @@ class App {
       .then(() => Log.info('Write output completed'))
       .catch((error) => Log.error('Write output failed', { error }));
 
-    await this.vcs.report(logs);
-    Log.info('Report to VCS completed');
+    switch (this.config.app.command) {
+      case COMMAND.DEFAULT:
+        const { token, removeOldComment, prId } = this.config
+          .provider as PrProviderConfig;
+        const githubPRService = new GitHubPRService(token, repoUrl, prId);
+        this.vcs = new GitHub(githubPRService, removeOldComment);
+
+        await this.vcs.report(logs);
+        Log.info('Report to VCS completed');
+        break;
+      case COMMAND.COLLECT:
+        const { headCommit, runId } = this.config.provider as DataProviderConfig;
+        const issues: ParsedLogType[] = parsedLogs.filter(({ logs }) =>
+          logs.filter(({ valid }) => valid),
+        );
+        const runInfomation: Run = {
+          id: runId,
+          timestamp: new Date(Date.now()),
+          issues: issues,
+          branch: 'something',
+          headCommit: {
+            sha: headCommit,
+          },
+          repository: {
+            url: repoUrl,
+          },
+        };
+
+        if (issues.length === 0) break;
+        //TODO: send api
+        break;
+      default:
+        Log.error(`Command: ${this.config.app.command} is invalid`);
+        break;
+    }
   }
 
   private static getParser(type: ProjectType, cwd: string): Parser {
@@ -61,12 +98,16 @@ class App {
     }
   }
 
-  private async parseBuildData(files: BuildLogFile[]): Promise<LogType[]> {
+  private async parseBuildData(files: BuildLogFile[]): Promise<ParsedLogType[]> {
     const logsTasks = files.map(async ({ type, path, cwd }) => {
       Log.debug('Parsing', { type, path, cwd });
       const content = await File.readFileHelper(path);
       const parser = App.getParser(type, cwd);
-      return parser.parse(content);
+      return {
+        logs: parser.parse(content),
+        raw: content,
+        linter: type,
+      };
     });
 
     return (await Promise.all(logsTasks)).flatMap((x) => x);
