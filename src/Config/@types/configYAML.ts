@@ -3,7 +3,6 @@ import { BuildLogFile } from './buildLogFile';
 type BaseConfigYAML = {
   repo: {
     url: string;
-    token: string;
     userAgent: string;
     timeZone: string;
   };
@@ -13,6 +12,7 @@ type BaseConfigYAML = {
 
 export type PrConfigYAML = {
   repo: {
+    token: string;
     pr: number;
     removeOldComment: boolean;
   };
@@ -20,7 +20,7 @@ export type PrConfigYAML = {
 
 export type DataConfigYAML = {
   repo: {
-    latestCommit: string;
+    headCommit: string;
     runId: number;
   };
 } & BaseConfigYAML;

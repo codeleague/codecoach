@@ -1,16 +1,16 @@
 type BaseProviderConfig = {
-  token: string;
   repoUrl: string;
 };
 
 export type PrProviderConfig = {
+  token: string;
   prId: number;
   removeOldComment: boolean;
 } & BaseProviderConfig;
 
 export type DataProviderConfig = {
   runId: number;
-  latestCommit: string;
+  headCommit: string;
 } & BaseProviderConfig;
 
 export type ProviderConfig = PrProviderConfig | DataProviderConfig;

@@ -9,10 +9,9 @@ import {
 type DataRequiredArgs = (keyof DataConfigArgument)[];
 export const DATA_REQUIRED_ARGS: DataRequiredArgs = [
   'url',
-  'latestCommit',
+  'headCommit',
   'runId',
   'buildLogFile',
-  'token',
 ];
 
 type PrRequiredArgs = (keyof PrConfigArgument)[];
@@ -31,6 +30,5 @@ export const PR_REQUIRED_YAML_PROVIDER_ARGS: PrRequiredYamlProviderArgs = [
 type DataRequiredYamlProviderArgs = (keyof DataConfigYAML['repo'])[];
 export const DATA_REQUIRED_YAML_PROVIDER_ARGS: DataRequiredYamlProviderArgs = [
   'url',
-  'latestCommit',
-  'token',
+  'headCommit',
 ];

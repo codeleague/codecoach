@@ -47,8 +47,7 @@ const DATA_MOCK_ARGS = [
   'collect',
   '--url=https://github.com/codeleague/codecoach.git',
   '-r=3',
-  '-c=latestcommitsha',
-  '--token=placeyourtokenhere',
+  '-c=headCommitsha',
   '-f=dotnetbuild;./sample/dotnetbuild/build.content;/repo/src',
   '-o=./tmp/out.json',
 ];
@@ -65,8 +64,7 @@ export const DATA_EXPECTED_MOCK_ARGS = [
   '/Users/codecoach/src/app.ts',
   'https://github.com/codeleague/codecoach.git',
   3,
-  'latestcommitsha',
-  'placeyourtokenhere',
+  'headCommitsha',
   'dotnetbuild;./sample/dotnetbuild/build.content;/repo/src',
   './tmp/out.json',
 ];
@@ -113,7 +111,7 @@ describe('Data config Test', () => {
     const fullfillConfig = (await config).provider as DataProviderConfig;
     expect(fullfillConfig.repoUrl).toBe(DATA_EXPECTED_MOCK_ARGS[2]);
     expect(fullfillConfig.runId).toBe(DATA_EXPECTED_MOCK_ARGS[3]);
-    expect(fullfillConfig.latestCommit).toBe(DATA_EXPECTED_MOCK_ARGS[4]);
+    expect(fullfillConfig.headCommit).toBe(DATA_EXPECTED_MOCK_ARGS[4]);
   });
 
   it('Should able to use a config file without passing other args', async () => {

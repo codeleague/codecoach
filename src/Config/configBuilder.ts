@@ -49,10 +49,9 @@ const buildDataProviderConfig = (
   arg: DataConfigArgument,
   configFile: DataConfigYAML,
 ): DataProviderConfig => ({
-  token: configFile?.repo.token || arg.token,
   repoUrl: configFile?.repo.url || arg.url,
   runId: configFile?.repo.runId || arg.runId,
-  latestCommit: configFile?.repo.latestCommit || arg.latestCommit,
+  headCommit: configFile?.repo.headCommit || arg.headCommit,
 });
 
 export const buildAppConfig = async (

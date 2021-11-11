@@ -4,17 +4,17 @@ type BaseConfigArgument = {
   url: string;
   buildLogFile: BuildLogFile[];
   output: string;
-  token: string;
   config: string;
 };
 
 export type PrConfigArgument = {
   pr: number;
   removeOldComment: boolean;
+  token: string;
 } & BaseConfigArgument;
 
 export type DataConfigArgument = {
-  latestCommit: string;
+  headCommit: string;
   runId: number;
 } & BaseConfigArgument;
 

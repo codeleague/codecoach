@@ -44,7 +44,7 @@ export class YML {
       repo: {
         ...config.repo,
         runId: Number(config.repo.runId),
-        latestCommit: config.repo.latestCommit,
+        headCommit: config.repo.headCommit,
       },
     };
   }

@@ -26,10 +26,6 @@ const args = yargs
     describe: 'GitHub repo url (https or ssh)',
     type: 'string',
   })
-  .option('token', {
-    describe: 'GitHub token',
-    type: 'string',
-  })
   .option('output', {
     alias: 'o',
     describe: 'Output parsed log file',
@@ -66,6 +62,10 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
         describe: 'Remove existing CodeCoach comments before putting new one',
         default: false,
       })
+      .option('token', {
+        describe: 'GitHub token',
+        type: 'string',
+      })
       .check((options) => {
         // check arguments parsing
         const useConfigArgs = options.config === undefined;
@@ -83,7 +83,7 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
     'des',
     (yarg) =>
       yarg
-        .option('latestCommit', {
+        .option('headCommit', {
           alias: 'c',
           describe: 'The latest commit sha',
           type: 'string',
