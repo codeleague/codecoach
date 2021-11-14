@@ -45,6 +45,7 @@ export class YML {
         ...config.repo,
         runId: Number(config.repo.runId),
         headCommit: config.repo.headCommit,
+        branch: config.repo.branch,
       },
     };
   }

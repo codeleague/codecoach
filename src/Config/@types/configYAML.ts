@@ -22,6 +22,7 @@ export type DataConfigYAML = {
   repo: {
     headCommit: string;
     runId: number;
+    branch: string;
   };
 } & BaseConfigYAML;
 

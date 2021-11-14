@@ -31,4 +31,5 @@ type DataRequiredYamlProviderArgs = (keyof DataConfigYAML['repo'])[];
 export const DATA_REQUIRED_YAML_PROVIDER_ARGS: DataRequiredYamlProviderArgs = [
   'url',
   'headCommit',
+  'branch',
 ];

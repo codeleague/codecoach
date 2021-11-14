@@ -52,6 +52,7 @@ const buildDataProviderConfig = (
   repoUrl: configFile?.repo.url || arg.url,
   runId: configFile?.repo.runId || arg.runId,
   headCommit: configFile?.repo.headCommit || arg.headCommit,
+  branch: configFile?.repo.branch || arg.branch,
 });
 
 export const buildAppConfig = async (

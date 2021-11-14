@@ -50,12 +50,11 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
       return { type, path, cwd: cwd ?? process.cwd() } as BuildLogFile;
     });
   })
-  .command(['$0', 'comment'], 'desc', (yarg) =>
+  .command(['$0', 'comment'], 'Report Lint results on a pull request', (yarg) =>
     yarg
       .option('pr', {
         describe: 'PR number',
         type: 'number',
-        global: true,
       })
       .option('removeOldComment', {
         type: 'boolean',
@@ -80,20 +79,23 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
   )
   .command(
     'collect',
-    'des',
+    'Collect and store Lint results',
     (yarg) =>
       yarg
         .option('headCommit', {
           alias: 'c',
           describe: 'The latest commit sha',
           type: 'string',
-          global: true,
         })
         .option('runId', {
           alias: 'r',
           describe: 'The latest run id',
           type: 'number',
-          global: true,
+        })
+        .option('branch', {
+          alias: 'b',
+          describe: 'The branch that this command is run on',
+          type: 'string',
         })
         .check((options) => {
           // check arguments parsing

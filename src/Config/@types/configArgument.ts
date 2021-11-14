@@ -16,6 +16,7 @@ export type PrConfigArgument = {
 export type DataConfigArgument = {
   headCommit: string;
   runId: number;
+  branch: string;
 } & BaseConfigArgument;
 
 export type ConfigArgument = PrConfigArgument | DataConfigArgument;

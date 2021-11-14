@@ -11,6 +11,7 @@ export type PrProviderConfig = {
 export type DataProviderConfig = {
   runId: number;
   headCommit: string;
+  branch: string;
 } & BaseProviderConfig;
 
 export type ProviderConfig = PrProviderConfig | DataProviderConfig;
