@@ -9,13 +9,13 @@ export type LogType = {
   line?: number;
   lineOffset?: number;
   valid: boolean;
+  linter?: ProjectType;
 };
 
-export type ParsedLogType = {
-  linter: ProjectType;
-  raw?: string;
-  logs: LogType[];
-};
+export type Issue = { message: string; filePath: string; column?: number } & Omit<
+  LogType,
+  'msg' | 'valid' | 'lineOffset' | 'log' | 'source'
+>;
 
 export type Run = {
   id: number;
@@ -27,5 +27,5 @@ export type Run = {
     url: string;
   };
   branch: string;
-  issues: ParsedLogType[];
+  issues: Issue[];
 };

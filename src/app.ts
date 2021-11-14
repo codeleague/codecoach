@@ -21,7 +21,7 @@ import {
   ScalaStyleParser,
   TSLintParser,
 } from './Parser';
-import { ParsedLogType, Run } from './Parser/@types/log.type';
+import { Issue, Run } from './Parser/@types/log.type';
 import { DartLintParser } from './Parser/DartLintParser';
 import { GitHub, GitHubPRService, VCS } from './Provider';
 
@@ -33,8 +33,7 @@ class App {
     this.config = await Config;
     const { repoUrl } = this.config.provider;
 
-    const parsedLogs = await this.parseBuildData(this.config.app.buildLogFiles);
-    const logs = parsedLogs.flatMap(({ logs }) => logs);
+    const logs = await this.parseBuildData(this.config.app.buildLogFiles);
     Log.info('Build data parsing completed');
 
     // Fire and forget, no need to await
@@ -53,15 +52,13 @@ class App {
         Log.info('Report to VCS completed');
         break;
       case COMMAND.COLLECT:
-        const { headCommit, runId } = this.config.provider as DataProviderConfig;
-        const issues: ParsedLogType[] = parsedLogs.filter(({ logs }) =>
-          logs.filter(({ valid }) => valid),
-        );
+        const { headCommit, runId, branch } = this.config.provider as DataProviderConfig;
+        const issues = this.mapLogTypeToIssue(logs);
         const runInfomation: Run = {
           id: runId,
           timestamp: new Date(Date.now()),
-          issues: issues,
-          branch: 'something',
+          issues: issues['false'],
+          branch: branch,
           headCommit: {
             sha: headCommit,
           },
@@ -70,14 +67,31 @@ class App {
           },
         };
 
-        if (issues.length === 0) break;
+        if (issues['false'].length === 0) break;
         //TODO: send api
+        Log.info('Data sent');
         break;
       default:
         Log.error(`Command: ${this.config.app.command} is invalid`);
         break;
     }
   }
+  private mapLogTypeToIssue = (list: LogType[]) =>
+    list.reduce((previous: Record<string, Issue[]>, currentItem: LogType) => {
+      const { msg, severity, source, valid, line, lineOffset, linter } = currentItem;
+      const group = valid.toString();
+      const issue: Issue = {
+        filePath: source,
+        message: msg,
+        severity: severity,
+        line: line,
+        column: lineOffset,
+        linter: linter,
+      };
+      if (!previous[group]) previous[group] = [];
+      previous[group].push(issue);
+      return previous;
+    }, {} as Record<string, Issue[]>);
 
   private static getParser(type: ProjectType, cwd: string): Parser {
     switch (type) {
@@ -98,16 +112,12 @@ class App {
     }
   }
 
-  private async parseBuildData(files: BuildLogFile[]): Promise<ParsedLogType[]> {
+  private async parseBuildData(files: BuildLogFile[]): Promise<LogType[]> {
     const logsTasks = files.map(async ({ type, path, cwd }) => {
       Log.debug('Parsing', { type, path, cwd });
       const content = await File.readFileHelper(path);
       const parser = App.getParser(type, cwd);
-      return {
-        logs: parser.parse(content),
-        raw: content,
-        linter: type,
-      };
+      return parser.parse(content).map((log) => ({ ...log, linter: type }));
     });
 
     return (await Promise.all(logsTasks)).flatMap((x) => x);
