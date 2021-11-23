@@ -40,4 +40,4 @@ jobs:
       - name: Publish version ${{ env.VERSION }}
         run: yarn publish --new-version ${{ env.VERSION }} --no-git-tag-version
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUB_KEY }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
