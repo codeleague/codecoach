@@ -19,4 +19,13 @@ describe('MSBuildParser tests', () => {
       valid: true,
     });
   });
+
+  it('should ignore framework warnings', () => {
+    const cwd = 'C:\\source';
+    const log = `C:\\source\\Project\\Project.csproj : warning NU1701: Package 'Microsoft.AspNet.WebApi.Client 5.2.3' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETStandard,Version=v2.0'. This package may not be fully compatible with your project.`;
+
+    const result = new MSBuildParser(cwd).parse(log);
+
+    expect(result[0].valid).toBe(false);
+  });
 });

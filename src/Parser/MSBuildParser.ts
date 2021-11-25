@@ -17,7 +17,7 @@ export class MSBuildParser extends Parser {
 
   private toLog(log: string): LogType {
     const structureMatch = log.match(
-      /^(.+)(?:\((\d+),(\d+)\)): (\w+) (\w+): ([^\[]+)(?:\[(.+)])?$/,
+      /^([\\/\w\d.:_-]+)(?:\((\d+),(\d+)\))? ?: (\w+) (\w+): ([^\[]+)(?:\[(.+)])?$/,
     );
     if (!structureMatch) {
       const message = "MSBuildParser Error: log structure doesn't match";
@@ -36,7 +36,10 @@ export class MSBuildParser extends Parser {
       _csprojFullPath,
     ] = structureMatch;
 
-    const fileFullPath = slash(join(slash(_csprojFullPath), '..', slash(_filepath)));
+    const fileFullPath =
+      _csprojFullPath && _filepath
+        ? slash(join(slash(_csprojFullPath), '..', slash(_filepath)))
+        : '';
     const fileRelativePath = getRelativePath(this.cwd, fileFullPath);
 
     return {
