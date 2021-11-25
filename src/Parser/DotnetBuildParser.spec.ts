@@ -10,6 +10,7 @@ describe('DotnetBuildParser tests', () => {
   const logWithNoSource = `1:7>CSC : error CS5001: Program does not contain a static 'Main' method suitable for an entry point [C:\\source\\Broken.csproj]`;
   const logWithUnrelatedSource = `9:8>/usr/share/dotnet/sdk/3.1.402/Microsoft.Common.CurrentVersion.targets(2084,5): warning MSB3277: some message [/dir/Tests/project.csproj]`;
   const contentWithNoPathAtTheEnd = `13:11>/dir/File.csproj : warning NU1701: This package may not be fully compatible with your project.`;
+  const multilinePart = `/usr/share/dotnet/sdk/5.0.401/Microsoft.Common.CurrentVersion.targets(2203,5): warning MSB3277: some message [/dir/Tests/project.csproj]`;
 
   it('Should parse log with source path correctly', () => {
     const result = new DotnetBuildParser(cwdWin).parse(logWithSource);
@@ -66,5 +67,9 @@ describe('DotnetBuildParser tests', () => {
     expect(() =>
       new DotnetBuildParser(cwdUnix).parse(contentWithNoPathAtTheEnd),
     ).not.toThrowError();
+  });
+
+  it('should ignore multiline-part messages', () => {
+    expect(() => new DotnetBuildParser(cwdUnix).parse(multilinePart)).not.toThrowError();
   });
 });
