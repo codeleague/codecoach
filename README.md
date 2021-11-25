@@ -32,11 +32,11 @@ Node.js v14 or later
 ### Installation
 Install it globally using npm
 ```shell script
-$ npm i -g codecoach
+$ npm i -g @codecoach/cli
 ```
 or Yarn
 ```shell script
-$ yarn global add codecoach
+$ yarn global add @codecoach/cli
 ```
 
 ### Usage
