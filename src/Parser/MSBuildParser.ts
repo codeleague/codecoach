@@ -17,7 +17,7 @@ export class MSBuildParser extends Parser {
 
   private toLog(log: string): LogType {
     const structureMatch = log.match(
-      /^([\\/\w\d.:_-]+)(?:\((\d+),(\d+)\))? ?: (\w+) (\w+): ([^\[]+)(?:\[(.+)])?$/,
+      /^([\\/\w\d.:_ ()-]+)(?:\((\d+),(\d+)\))? ?: (\w+) (\w+): ([^\[]+)(?:\[(.+)])?$/,
     );
     if (!structureMatch) {
       const message = "MSBuildParser Error: log structure doesn't match";
