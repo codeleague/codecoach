@@ -8,3 +8,4 @@ buildLogFiles:
     path: /path/to/log.json
     cwd: /repo/src
 output: ./output.json
+apiServer: https://localhost:3000

@@ -51,6 +51,7 @@ const DATA_MOCK_ARGS = [
   '-c=headCommitsha',
   '-f=dotnetbuild;./sample/dotnetbuild/build.content;/repo/src',
   '-o=./tmp/out.json',
+  '--api=https://localhost:3000',
 ];
 
 const DATA_MOCK_ARGS_W_CONFIG_YAML = [
@@ -69,6 +70,7 @@ export const DATA_EXPECTED_MOCK_ARGS = [
   'headCommitsha',
   'dotnetbuild;./sample/dotnetbuild/build.content;/repo/src',
   './tmp/out.json',
+  'https://localhost:3000',
 ];
 
 describe('PR config Test', () => {
@@ -110,11 +112,12 @@ describe('Data config Test', () => {
   it('Should able to parse this args and run without throwing error', async () => {
     process.argv = DATA_MOCK_ARGS;
     config = (await import('./Config')).Config;
-    const fullfillConfig = (await config).provider as DataProviderConfig;
-    expect(fullfillConfig.repoUrl).toBe(DATA_EXPECTED_MOCK_ARGS[2]);
-    expect(fullfillConfig.runId).toBe(DATA_EXPECTED_MOCK_ARGS[3]);
-    expect(fullfillConfig.branch).toBe(DATA_EXPECTED_MOCK_ARGS[4]);
-    expect(fullfillConfig.headCommit).toBe(DATA_EXPECTED_MOCK_ARGS[5]);
+    const providerConfig = (await config).provider as DataProviderConfig;
+    expect(providerConfig.repoUrl).toBe(DATA_EXPECTED_MOCK_ARGS[2]);
+    expect(providerConfig.runId).toBe(DATA_EXPECTED_MOCK_ARGS[3]);
+    expect(providerConfig.branch).toBe(DATA_EXPECTED_MOCK_ARGS[4]);
+    expect(providerConfig.headCommit).toBe(DATA_EXPECTED_MOCK_ARGS[5]);
+    expect((await config).app.apiServer).toBe(DATA_EXPECTED_MOCK_ARGS[8]);
   });
 
   it('Should able to use a config file without passing other args', async () => {

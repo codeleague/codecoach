@@ -1,3 +1,4 @@
+import { COMMAND } from './@enums';
 import {
   AppConfig,
   ConfigArgument,
@@ -9,7 +10,6 @@ import {
   PrProviderConfig,
   DataProviderConfig,
 } from './@types';
-import { COMMAND } from './constants/defaults';
 import { YML } from './YML';
 
 const buildYMLConfig = async (args: ConfigArgument, command: COMMAND) => {
@@ -64,5 +64,6 @@ export const buildAppConfig = async (
     command: command,
     logFilePath: configFile?.output || arg.output,
     buildLogFiles: configFile?.buildLogFiles || arg.buildLogFile,
+    apiServer: configFile?.apiServer || arg.apiServer,
   };
 };

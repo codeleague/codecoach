@@ -1,8 +1,8 @@
 import yargs, { Arguments } from 'yargs';
-import { ProjectType } from './@enums';
+import { ProjectType, COMMAND } from './@enums';
 import { BuildLogFile, ConfigArgument, ConfigObject } from './@types';
 import { buildAppConfig, buildProviderConfig } from './configBuilder';
-import { DEFAULT_OUTPUT_FILE, COMMAND } from './constants/defaults';
+import { DEFAULT_OUTPUT_FILE } from './constants/defaults';
 import { DATA_REQUIRED_ARGS, PR_REQUIRED_ARGS } from './constants/required';
 
 const projectTypes = Object.keys(ProjectType);
@@ -95,6 +95,11 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
         .option('branch', {
           alias: 'b',
           describe: 'The branch that this command is run on',
+          type: 'string',
+        })
+        .option('apiServer', {
+          alias: 'api',
+          describe: 'The url of api server, e.g., http://localhost:3000',
           type: 'string',
         })
         .check((options) => {

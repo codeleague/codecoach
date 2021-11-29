@@ -4,18 +4,21 @@ import {
   REQUIRED_YAML_ARGS,
   PR_REQUIRED_YAML_PROVIDER_ARGS,
   DATA_REQUIRED_YAML_PROVIDER_ARGS,
+  DATA_REQUIRED_YAML_ARGS,
 } from './constants/required';
 import { ConfigYAML, DataConfigYAML, PrConfigYAML } from './@types/configYAML';
-import { COMMAND } from './constants/defaults';
+import { COMMAND } from './@enums';
 
 export class YML {
   private static transform(config: ConfigYAML, command: COMMAND): ConfigYAML {
-    // required types
-    const validRequiredArgs = REQUIRED_YAML_ARGS.every(
+    // require types
+    const requiredArgs =
+      command === COMMAND.COLLECT ? DATA_REQUIRED_YAML_ARGS : REQUIRED_YAML_ARGS;
+    const validRequiredArg = requiredArgs.every(
       (el) => config[el] != undefined || config[el] != null,
     );
-    if (!validRequiredArgs)
-      throw new Error(`please fill all required fields ${REQUIRED_YAML_ARGS.join(', ')}`);
+    if (!validRequiredArg)
+      throw new Error(`please fill all required fields ${requiredArgs.join(', ')}`);
 
     switch (command) {
       case COMMAND.COLLECT:
@@ -32,8 +35,9 @@ export class YML {
       throw new Error('provider.runId is required or invalid number type');
 
     const validRequiredProviderArgs = DATA_REQUIRED_YAML_PROVIDER_ARGS.every(
-      (el) => config.repo[el] != undefined || config.repo[el] != null,
+      (el) => config.repo[el] !== undefined || config.repo[el] != null,
     );
+
     if (!validRequiredProviderArgs)
       throw new Error(
         `please fill all required fields ${DATA_REQUIRED_YAML_PROVIDER_ARGS.join(', ')}`,

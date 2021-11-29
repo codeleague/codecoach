@@ -1,5 +1,5 @@
 import { DataConfigYAML, PrConfigYAML } from '.';
-import { COMMAND } from './constants/defaults';
+import { COMMAND } from './@enums';
 import { YML } from './YML';
 
 describe('PR YML Test', () => {

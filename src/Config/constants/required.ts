@@ -16,6 +16,7 @@ export const DATA_REQUIRED_ARGS: DataRequiredArgs = [
   'runId',
   'buildLogFile',
   'branch',
+  'apiServer',
 ];
 
 type RequiredYamlArgs = (keyof ConfigYAML)[];
@@ -30,7 +31,12 @@ export const PR_REQUIRED_YAML_PROVIDER_ARGS: PrRequiredYamlProviderArgs = [
 
 type DataRequiredYamlProviderArgs = (keyof DataConfigYAML['repo'])[];
 export const DATA_REQUIRED_YAML_PROVIDER_ARGS: DataRequiredYamlProviderArgs = [
-  'url',
-  'headCommit',
   'branch',
+  'headCommit',
+  'runId',
+];
+
+export const DATA_REQUIRED_YAML_ARGS: (keyof DataConfigYAML)[] = [
+  ...REQUIRED_YAML_ARGS,
+  'apiServer',
 ];

@@ -45,6 +45,7 @@
     "typescript": "^4.1.2"
   },
   "dependencies": {
+    "@codecoach/api-client": "^1.0.45",
     "@octokit/core": "^3.2.4",
     "@octokit/rest": "^18.12.0",
     "js-yaml": "^4.1.0",

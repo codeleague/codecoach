@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import { IIssue } from '@codecoach/api-client';
+import { Api } from './Api';
 import {
   BuildLogFile,
   Config,
@@ -8,7 +10,7 @@ import {
   ProjectType,
   PrProviderConfig,
 } from './Config';
-import { COMMAND } from './Config/constants/defaults';
+import { COMMAND } from '../src/Config/@enums';
 import { File } from './File';
 import { Log } from './Logger';
 import {
@@ -21,10 +23,8 @@ import {
   ScalaStyleParser,
   TSLintParser,
 } from './Parser';
-import { Issue, Run } from './Parser/@types/log.type';
 import { DartLintParser } from './Parser/DartLintParser';
 import { GitHub, GitHubPRService, VCS } from './Provider';
-
 class App {
   private vcs: VCS;
   private config: ConfigObject;
@@ -51,47 +51,49 @@ class App {
         await this.vcs.report(logs);
         Log.info('Report to VCS completed');
         break;
+
       case COMMAND.COLLECT:
         const { headCommit, runId, branch } = this.config.provider as DataProviderConfig;
         const issues = this.mapLogTypeToIssue(logs);
-        const runInfomation: Run = {
-          id: runId,
-          timestamp: new Date(Date.now()),
-          issues: issues['false'],
-          branch: branch,
+
+        await new Api(this.config.app.apiServer).runClient.createRun({
+          githubRunId: runId,
+          timestamp: new Date().toISOString(),
+          issues: issues['true'],
+          invalidIssues: issues['false'],
+          branch,
           headCommit: {
             sha: headCommit,
           },
           repository: {
             url: repoUrl,
           },
-        };
-
-        if (issues['false'].length === 0) break;
-        //TODO: send api
-        Log.info('Data sent');
+        });
+        Log.info('Data successfully sent');
         break;
+
       default:
         Log.error(`Command: ${this.config.app.command} is invalid`);
         break;
     }
   }
+
   private mapLogTypeToIssue = (list: LogType[]) =>
-    list.reduce((previous: Record<string, Issue[]>, currentItem: LogType) => {
+    list.reduce((previous: Record<string, IIssue[]>, currentItem: LogType) => {
       const { msg, severity, source, valid, line, lineOffset, linter } = currentItem;
       const group = valid.toString();
-      const issue: Issue = {
-        filePath: source,
+      const issue: IIssue = {
+        filepath: source,
         message: msg,
         severity: severity,
-        line: line,
+        line: line as number,
         column: lineOffset,
-        linter: linter,
+        linter: linter ?? '',
       };
       if (!previous[group]) previous[group] = [];
       previous[group].push(issue);
       return previous;
-    }, {} as Record<string, Issue[]>);
+    }, {} as Record<string, IIssue[]>);
 
   private static getParser(type: ProjectType, cwd: string): Parser {
     switch (type) {

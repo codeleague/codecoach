@@ -16,6 +16,7 @@ export type PrConfigYAML = {
     pr: number;
     removeOldComment: boolean;
   };
+  apiServer: never;
 } & BaseConfigYAML;
 
 export type DataConfigYAML = {
@@ -24,6 +25,7 @@ export type DataConfigYAML = {
     runId: number;
     branch: string;
   };
+  apiServer: string;
 } & BaseConfigYAML;
 
 export type ConfigYAML = PrConfigYAML | DataConfigYAML;
