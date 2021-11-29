@@ -1,7 +1,7 @@
 <h1 align="center">CodeCoach</h1>
 <p align="center">
-    <a href="https://www.npmjs.com/package/codecoach"><img alt="npm version badge" src="https://img.shields.io/npm/v/codecoach.svg?label=Latest&style=for-the-badge&logo=npm"/></a>
-    <a href="https://www.npmjs.com/package/codecoach"><img alt="npm download badge" src="https://img.shields.io/npm/dm/codecoach.svg?style=for-the-badge"/></a>
+    <a href="https://www.npmjs.com/package/@codecoach/cli"><img alt="npm version badge" src="https://img.shields.io/npm/v/@codecoach/cli.svg?label=@codecoach/cli&style=for-the-badge&logo=npm"/></a>
+    <a href="https://www.npmjs.com/package/@codecoach/cli"><img alt="npm download badge" src="https://img.shields.io/npm/dm/@codecoach/cli.svg?style=for-the-badge"/></a>
     <br/>
     <a href="https://github.com/codeleague/codecoach/actions/workflows/release.yml"><img alt="Release" src="https://github.com/codeleague/codecoach/actions/workflows/release.yml/badge.svg"></a>
 </p>
@@ -32,11 +32,11 @@ Node.js v14 or later
 ### Installation
 Install it globally using npm
 ```shell script
-$ npm i -g codecoach
+$ npm i -g @codecoach/cli
 ```
 or Yarn
 ```shell script
-$ yarn global add codecoach
+$ yarn global add @codecoach/cli
 ```
 
 ### Usage

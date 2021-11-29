@@ -17,7 +17,7 @@ export class DotnetBuildParser extends Parser {
 
   private toLog(log: string): LogType {
     const structureMatch = log.match(
-      />([^\s()]+)(?:\((\d+),(\d+)\))?\s*:\s*(\w+)\s*(\w+)\s*:\s*([^\[]+)(?:\[(.+)])?$/,
+      /(?:[\d:>]+)?([^ ()]+)(?:\((\d+),(\d+)\))? *: *(\w+) *(\w+) *: *([^\[]+)(?:\[(.+)])?$/,
     );
     if (!structureMatch) {
       const message = "DotnetBuildParser Error: log structure doesn't match";
