@@ -6,7 +6,7 @@ export class Api {
   private readonly axiosInstance;
   constructor(private readonly apiServer: string) {
     this.axiosInstance = axios.create({
-      baseURL: process.env.NODE_ENV === 'development' ? '' : this.apiServer,
+      baseURL: this.apiServer,
     });
   }
 

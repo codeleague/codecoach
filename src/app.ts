@@ -66,7 +66,7 @@ class App {
             sha: headCommit,
           },
           repository: {
-            url: repoUrl,
+            url: repoUrl.replace(/.git$/i, ''),
           },
         });
         Log.info('Data successfully sent');
