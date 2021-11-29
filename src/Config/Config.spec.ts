@@ -1,6 +1,7 @@
+import { DataProviderConfig, PrProviderConfig } from '.';
 import { Config } from './Config';
 
-const MOCK_ARGS = [
+const PR_MOCK_ARGS = [
   '/usr/local/Cellar/node/15.13.0/bin/node',
   '/Users/codecoach/src/app.ts',
   '--url=https://github.com/codeleague/codecoach.git',
@@ -11,13 +12,25 @@ const MOCK_ARGS = [
   '-o=./tmp/out.json',
 ];
 
-const MOCK_ARGS_W_CONFIG_YAML = [
+const PR_MOCK_ARGS_W_COMMAND = [
+  '/usr/local/Cellar/node/15.13.0/bin/node',
+  '/Users/codecoach/src/app.ts',
+  'comment',
+  '--url=https://github.com/codeleague/codecoach.git',
+  '--removeOldComment',
+  '--token=placeyourtokenhere',
+  '--pr=15',
+  '-f=dotnetbuild;./sample/dotnetbuild/build.content;/repo/src',
+  '-o=./tmp/out.json',
+];
+
+const PR_MOCK_ARGS_W_CONFIG_YAML = [
   '/usr/local/Cellar/node/15.13.0/bin/node',
   '/Users/codecoach/src/app.ts',
   '--config=sample/config/config.yaml',
 ];
 
-export const EXPECTED_MOCK_ARGS = [
+export const PR_EXPECTED_MOCK_ARGS = [
   '/usr/local/Cellar/node/15.13.0/bin/node',
   '/Users/codecoach/src/app.ts',
   'https://github.com/codeleague/codecoach.git',
@@ -28,7 +41,39 @@ export const EXPECTED_MOCK_ARGS = [
   './tmp/out.json',
 ];
 
-describe('Config Test', () => {
+const DATA_MOCK_ARGS = [
+  '/usr/local/Cellar/node/15.13.0/bin/node',
+  '/Users/codecoach/src/app.ts',
+  'collect',
+  '--url=https://github.com/codeleague/codecoach.git',
+  '-r=3',
+  '-b=main',
+  '-c=headCommitsha',
+  '-f=dotnetbuild;./sample/dotnetbuild/build.content;/repo/src',
+  '-o=./tmp/out.json',
+  '--api=https://localhost:3000',
+];
+
+const DATA_MOCK_ARGS_W_CONFIG_YAML = [
+  '/usr/local/Cellar/node/15.13.0/bin/node',
+  '/Users/codecoach/src/app.ts',
+  'collect',
+  '--config=sample/config/data-config.yaml',
+];
+
+export const DATA_EXPECTED_MOCK_ARGS = [
+  '/usr/local/Cellar/node/15.13.0/bin/node',
+  '/Users/codecoach/src/app.ts',
+  'https://github.com/codeleague/codecoach.git',
+  3,
+  'main',
+  'headCommitsha',
+  'dotnetbuild;./sample/dotnetbuild/build.content;/repo/src',
+  './tmp/out.json',
+  'https://localhost:3000',
+];
+
+describe('PR config Test', () => {
   let config: typeof Config;
 
   beforeEach(() => {
@@ -36,15 +81,47 @@ describe('Config Test', () => {
   });
 
   it('Should able to parse this args and run without throwing error', async () => {
-    process.argv = MOCK_ARGS;
+    process.argv = PR_MOCK_ARGS;
     config = (await import('./Config')).Config;
-    const fullfillConfig = await config;
-    expect(fullfillConfig.provider.repoUrl).toBe(EXPECTED_MOCK_ARGS[2]);
-    expect(fullfillConfig.provider.removeOldComment).toBe(EXPECTED_MOCK_ARGS[3]);
+    let fullfillConfig = (await config).provider as PrProviderConfig;
+    expect(fullfillConfig.repoUrl).toBe(PR_EXPECTED_MOCK_ARGS[2]);
+    expect(fullfillConfig.removeOldComment).toBe(PR_EXPECTED_MOCK_ARGS[3]);
+
+    process.argv = PR_MOCK_ARGS_W_COMMAND;
+    config = (await import('./Config')).Config;
+    fullfillConfig = (await config).provider as PrProviderConfig;
+    expect(fullfillConfig.repoUrl).toBe(PR_EXPECTED_MOCK_ARGS[2]);
+    expect(fullfillConfig.removeOldComment).toBe(PR_EXPECTED_MOCK_ARGS[3]);
   });
 
   it('Should able to use a config file without passing other args', async () => {
-    process.argv = MOCK_ARGS_W_CONFIG_YAML;
+    process.argv = PR_MOCK_ARGS_W_CONFIG_YAML;
+    config = (await import('./Config')).Config;
+    const fullfillConfig = await config;
+    expect(fullfillConfig.app.buildLogFiles[0].type).toBe('tslint');
+  });
+});
+
+describe('Data config Test', () => {
+  let config: typeof Config;
+
+  beforeEach(() => {
+    jest.resetModules();
+  });
+
+  it('Should able to parse this args and run without throwing error', async () => {
+    process.argv = DATA_MOCK_ARGS;
+    config = (await import('./Config')).Config;
+    const providerConfig = (await config).provider as DataProviderConfig;
+    expect(providerConfig.repoUrl).toBe(DATA_EXPECTED_MOCK_ARGS[2]);
+    expect(providerConfig.runId).toBe(DATA_EXPECTED_MOCK_ARGS[3]);
+    expect(providerConfig.branch).toBe(DATA_EXPECTED_MOCK_ARGS[4]);
+    expect(providerConfig.headCommit).toBe(DATA_EXPECTED_MOCK_ARGS[5]);
+    expect((await config).app.apiServer).toBe(DATA_EXPECTED_MOCK_ARGS[8]);
+  });
+
+  it('Should able to use a config file without passing other args', async () => {
+    process.argv = DATA_MOCK_ARGS_W_CONFIG_YAML;
     config = (await import('./Config')).Config;
     const fullfillConfig = await config;
     expect(fullfillConfig.app.buildLogFiles[0].type).toBe('tslint');

@@ -1,11 +1,21 @@
-import yargs from 'yargs';
-import { ProjectType } from './@enums';
+import yargs, { Arguments } from 'yargs';
+import { ProjectType, COMMAND } from './@enums';
 import { BuildLogFile, ConfigArgument, ConfigObject } from './@types';
 import { buildAppConfig, buildProviderConfig } from './configBuilder';
 import { DEFAULT_OUTPUT_FILE } from './constants/defaults';
-import { REQUIRED_ARGS } from './constants/required';
+import { DATA_REQUIRED_ARGS, PR_REQUIRED_ARGS } from './constants/required';
 
 const projectTypes = Object.keys(ProjectType);
+let command: COMMAND = COMMAND.DEFAULT;
+
+const validateRequiredArgs = (options: Arguments, requiredArgs: string[]) => {
+  const validRequiredArgs = requiredArgs.every(
+    (el) => options[el] != undefined || options[el] != null,
+  );
+  if (!validRequiredArgs)
+    throw new Error(`please fill all required fields ${requiredArgs.join(', ')}`);
+  return true;
+};
 
 const args = yargs
   .option('config', {
@@ -16,13 +26,11 @@ const args = yargs
     describe: 'GitHub repo url (https or ssh)',
     type: 'string',
   })
-  .option('pr', {
-    describe: 'PR number',
-    type: 'number',
-  })
-  .option('token', {
-    describe: 'GitHub token',
+  .option('output', {
+    alias: 'o',
+    describe: 'Output parsed log file',
     type: 'string',
+    default: DEFAULT_OUTPUT_FILE,
   })
   .option('buildLogFile', {
     alias: 'f',
@@ -42,45 +50,87 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
       return { type, path, cwd: cwd ?? process.cwd() } as BuildLogFile;
     });
   })
-  .option('output', {
-    alias: 'o',
-    describe: 'Output parsed log file',
-    type: 'string',
-    default: DEFAULT_OUTPUT_FILE,
-  })
-  .option('removeOldComment', {
-    type: 'boolean',
-    describe: 'Remove existing CodeCoach comments before putting new one',
-    default: false,
-  })
-  .check((options) => {
-    // check required arguments
-    const useConfigArgs = options.config === undefined;
-    const validRequiredArgs = REQUIRED_ARGS.every(
-      (el) => options[el] != undefined || options[el] != null,
-    );
-    if (useConfigArgs && !validRequiredArgs)
-      throw `please fill all required fields ${REQUIRED_ARGS.join(', ')}`;
-    return true;
-  })
+  .command(['$0', 'comment'], 'Report Lint results on a pull request', (yarg) =>
+    yarg
+      .option('pr', {
+        describe: 'PR number',
+        type: 'number',
+      })
+      .option('removeOldComment', {
+        type: 'boolean',
+        describe: 'Remove existing CodeCoach comments before putting new one',
+        default: false,
+      })
+      .option('token', {
+        describe: 'GitHub token',
+        type: 'string',
+      })
+      .check((options) => {
+        // check arguments parsing
+        const useConfigArgs = options.config === undefined;
+        if (!useConfigArgs) return true;
+
+        validateRequiredArgs(options, PR_REQUIRED_ARGS);
+
+        if (!options.pr || Array.isArray(options.pr))
+          throw new Error('--pr config should be a single number');
+        return true;
+      }),
+  )
+  .command(
+    'collect',
+    'Collect and store Lint results',
+    (yarg) =>
+      yarg
+        .option('headCommit', {
+          alias: 'c',
+          describe: 'The latest commit sha',
+          type: 'string',
+        })
+        .option('runId', {
+          alias: 'r',
+          describe: 'The latest run id',
+          type: 'number',
+        })
+        .option('branch', {
+          alias: 'b',
+          describe: 'The branch that this command is run on',
+          type: 'string',
+        })
+        .option('apiServer', {
+          alias: 'api',
+          describe: 'The url of api server, e.g., http://localhost:3000',
+          type: 'string',
+        })
+        .check((options) => {
+          // check arguments parsing
+          const useConfigArgs = options.config === undefined;
+          if (!useConfigArgs) return true;
+
+          validateRequiredArgs(options, DATA_REQUIRED_ARGS);
+
+          if (!options.runId || Array.isArray(options.runId))
+            throw new Error('--runId config should be a single number');
+          return true;
+        }),
+    () => {
+      command = COMMAND.COLLECT;
+    },
+  )
   .check((options) => {
     // check arguments parsing
     const useConfigArgs = options.config === undefined;
     if (!useConfigArgs) return true;
-
-    if (!options.pr || Array.isArray(options.pr))
-      throw '--pr config should be a single number';
     if (!options.buildLogFile || options.buildLogFile.some((file) => file === null))
-      throw 'all of `--buildLogFile` options should have correct format';
+      throw new Error('all of `--buildLogFile` options should have correct format');
     return true;
   })
   .help()
-  .wrap(120)
-  .parse(process.argv.slice(1)) as ConfigArgument;
+  .wrap(120).argv as ConfigArgument;
 
 export const Config: Promise<ConfigObject> = (async () => {
   return Object.freeze({
-    app: await buildAppConfig(args),
-    provider: await buildProviderConfig(args),
+    app: await buildAppConfig(args, command),
+    provider: await buildProviderConfig(args, command),
   });
 })();

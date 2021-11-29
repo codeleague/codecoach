@@ -1,11 +1,24 @@
 import { BuildLogFile } from './buildLogFile';
 
-export type ConfigArgument = {
+type BaseConfigArgument = {
   url: string;
-  pr: number;
   buildLogFile: BuildLogFile[];
   output: string;
-  token: string;
-  removeOldComment: boolean;
   config: string;
 };
+
+export type PrConfigArgument = {
+  pr: number;
+  removeOldComment: boolean;
+  token: string;
+  apiServer: never;
+} & BaseConfigArgument;
+
+export type DataConfigArgument = {
+  headCommit: string;
+  runId: number;
+  branch: string;
+  apiServer: string;
+} & BaseConfigArgument;
+
+export type ConfigArgument = PrConfigArgument | DataConfigArgument;
