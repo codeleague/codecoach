@@ -1,14 +1,26 @@
-import { ConfigArgument } from '..';
+import { ConfigArgumentGitlab } from '../@types/configArgument';
 import { ConfigYAML } from '../@types/configYAML';
 
-type RequiredArgs = (keyof ConfigArgument)[];
-export const REQUIRED_ARGS: RequiredArgs = ['url', 'pr', 'buildLogFile', 'token'];
+export type RequiredArgs = (keyof ConfigArgumentGitlab)[];
+export const REQUIRED_ARGS_GITHUB: RequiredArgs = ['url', 'pr', 'buildLogFile', 'token'];
+export const REQUIRED_ARGS_GITLAB: RequiredArgs = [
+  'url',
+  'pr',
+  'buildLogFile',
+  'token',
+  'gitlabProjectId',
+];
 
 type RequiredYamlArgs = (keyof ConfigYAML)[];
 export const REQUIRED_YAML_ARGS: RequiredYamlArgs = ['repo', 'buildLogFiles'];
 
-type RequiredYamlProviderArgs = (keyof ConfigYAML['repo'])[];
-export const REQUIRED_YAML_PROVIDER_ARGS: RequiredYamlProviderArgs = [
+export type RequiredYamlProviderArgs = (keyof ConfigYAML['repo'])[];
+export const REQUIRED_GITHUB_YAML_PROVIDER_ARGS: RequiredYamlProviderArgs = [
+  'url',
+  'pr',
+  'token',
+];
+export const REQUIRED_GITLAB_YAML_PROVIDER_ARGS: RequiredYamlProviderArgs = [
   'url',
   'pr',
   'token',

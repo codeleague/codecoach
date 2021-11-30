@@ -1,7 +1,12 @@
 import { File } from '../File';
 import yaml from 'js-yaml';
-import { REQUIRED_YAML_ARGS, REQUIRED_YAML_PROVIDER_ARGS } from './constants/required';
+import {
+  REQUIRED_YAML_ARGS,
+  REQUIRED_GITHUB_YAML_PROVIDER_ARGS,
+  REQUIRED_GITLAB_YAML_PROVIDER_ARGS,
+} from './constants/required';
 import { ConfigYAML } from './@types/configYAML';
+import { isGitlab } from '../Provider/utils/vcsType';
 
 export class YML {
   private static transform(config: ConfigYAML): ConfigYAML {
@@ -14,11 +19,14 @@ export class YML {
     );
     if (!validRequiredArgs)
       throw `please fill all required fields ${REQUIRED_YAML_ARGS.join(', ')}`;
-    const validRequiredProviderArgs = REQUIRED_YAML_PROVIDER_ARGS.every(
+    const requiredYamlProviderArgs = isGitlab(config.repo.url)
+      ? REQUIRED_GITLAB_YAML_PROVIDER_ARGS
+      : REQUIRED_GITHUB_YAML_PROVIDER_ARGS;
+    const validRequiredProviderArgs = requiredYamlProviderArgs.every(
       (el) => config.repo[el] != undefined || config.repo[el] != null,
     );
     if (!validRequiredProviderArgs)
-      throw `please fill all required fields ${REQUIRED_YAML_PROVIDER_ARGS.join(', ')}`;
+      throw `please fill all required fields ${requiredYamlProviderArgs.join(', ')}`;
 
     return {
       ...config,

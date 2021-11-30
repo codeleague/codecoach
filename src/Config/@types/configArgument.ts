@@ -1,6 +1,6 @@
 import { BuildLogFile } from './buildLogFile';
 
-export type ConfigArgument = {
+export interface ConfigArgument {
   url: string;
   pr: number;
   buildLogFile: BuildLogFile[];
@@ -8,4 +8,8 @@ export type ConfigArgument = {
   token: string;
   removeOldComment: boolean;
   config: string;
-};
+}
+
+export interface ConfigArgumentGitlab extends ConfigArgument {
+  gitlabProjectId: string | number;
+}
