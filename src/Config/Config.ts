@@ -10,6 +10,7 @@ const projectTypes = Object.keys(ProjectType);
 const args = yargs
   .config('config', (configPath) => JSON.parse(fs.readFileSync(configPath, 'utf-8')))
   .option('vcs', {
+    alias: 'g',
     describe: 'VCS Type',
     choices: ['github', 'gitlab'],
     demandOption: true,
@@ -42,6 +43,7 @@ const args = yargs
     describe: 'GitLab token',
     type: 'string',
   })
+  .group(['vcs', 'buildLogFile', 'output', 'removeOldComment'], 'Parsing options:')
   .group(GITLAB_ARGS, 'GitLab options:')
   .group(GITHUB_ARGS, 'GitHub options:')
   .check((options) => {
@@ -92,6 +94,7 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
     default: DEFAULT_OUTPUT_FILE,
   })
   .option('removeOldComment', {
+    alias: 'r',
     type: 'boolean',
     describe: 'Remove existing CodeCoach comments before putting new one',
     default: false,
