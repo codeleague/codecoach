@@ -13,7 +13,7 @@
     "format": "prettier --write 'src/**/*.{js,ts}'",
     "test": "jest",
     "build": "tsc --project tsconfig.build.json",
-    "dev": "nodemon --inspect=5858 --config ./nodemon.json -- --url=https://github.com/codeleague/codecoach.git --removeOldComment --token=placeyourtokenhere --pr=15 -f='dotnetbuild\\;./sample/dotnetbuild/build.content\\;/repo/src' -o=./tmp/out.json",
+    "dev": "nodemon --inspect=5858 --config ./nodemon.json -- --config=\"config-test.json\"",
     "prepublishOnly": "yarn build"
   },
   "bin": {
@@ -45,6 +45,7 @@
     "typescript": "^4.1.2"
   },
   "dependencies": {
+    "@gitbeaker/node": "^35.6.0",
     "@octokit/core": "^3.2.4",
     "@octokit/rest": "^18.12.0",
     "js-yaml": "^4.1.0",

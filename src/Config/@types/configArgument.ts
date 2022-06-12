@@ -1,11 +1,15 @@
 import { BuildLogFile } from './buildLogFile';
 
 export type ConfigArgument = {
-  url: string;
-  pr: number;
+  vcs: 'gitlab' | 'github';
+  githubRepoUrl: string;
+  githubPr: number;
+  githubToken: string;
+  gitlabHost: string;
+  gitlabProjectId: number;
+  gitlabMr: number;
+  gitlabToken: string;
   buildLogFile: BuildLogFile[];
-  output: string;
-  token: string;
+  output: string; // =logFilePath
   removeOldComment: boolean;
-  config: string;
 };
