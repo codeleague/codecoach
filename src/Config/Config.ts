@@ -15,6 +15,7 @@ const args = yargs
     choices: ['github', 'gitlab'],
     demandOption: true,
   })
+
   .option('githubRepoUrl', {
     describe: 'GitHub repo url (https or ssh)',
     type: 'string',
@@ -27,6 +28,7 @@ const args = yargs
     describe: 'GitHub token',
     type: 'string',
   })
+
   .option('gitlabHost', {
     describe: 'GitLab server URL (https://gitlab.yourcompany.com)',
     type: 'string',
@@ -70,7 +72,6 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
   .coerce('buildLogFile', (files: string[]) => {
     return files.map((opt) => {
       const [type, path, cwd] = opt.split(';');
-      console.log(type, path, cwd);
       if (!projectTypes.includes(type) || !path) return null;
       return { type, path, cwd: cwd ?? process.cwd() } as BuildLogFile;
     });
@@ -96,7 +97,7 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
   .option('removeOldComment', {
     alias: 'r',
     type: 'boolean',
-    describe: 'Remove existing CodeCoach comments before putting new one',
+    describe: 'Remove existing CodeCoach comments before putting new one (GitHub Only)',
     default: false,
   })
   .strict()
