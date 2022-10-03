@@ -22,7 +22,7 @@ export class GitLabMRService implements IGitLabMRService {
     this.host = configs.gitlabHost;
     this.token = configs.gitlabToken;
     this.projectId = configs.gitlabProjectId;
-    this.mr = configs.gitlabMr;
+    this.mr = configs.gitlabMrIid;
 
     this.api = new Gitlab({
       host: this.host,

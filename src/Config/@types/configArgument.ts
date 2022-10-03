@@ -7,7 +7,7 @@ export type ConfigArgument = {
   githubToken: string;
   gitlabHost: string;
   gitlabProjectId: number;
-  gitlabMr: number;
+  gitlabMrIid: number;
   gitlabToken: string;
   buildLogFile: BuildLogFile[];
   output: string; // =logFilePath
