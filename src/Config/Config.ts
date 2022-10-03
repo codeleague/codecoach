@@ -83,7 +83,6 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
 
     // if (!options.pr || Array.isArray(options.pr))
     //   throw '--pr config should be a single number';
-    console.log(options);
     if (!options.buildLogFile || options.buildLogFile.some((file) => file === null))
       throw 'all of `--buildLogFile` options should have correct format';
     return true;
