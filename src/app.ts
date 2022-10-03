@@ -15,6 +15,8 @@ import {
 } from './Parser';
 import { DartLintParser } from './Parser/DartLintParser';
 import { GitHub, GitHubPRService, VCS } from './Provider';
+import { GitLab } from './Provider/GitLab/GitLab';
+import { GitLabMRService } from './Provider/GitLab/GitLabMRService';
 
 class App {
   private vcs: VCS;
@@ -28,6 +30,7 @@ class App {
       );
       this.vcs = new GitHub(githubPRService, configs.removeOldComment);
     } else if (configs.vcs === 'gitlab') {
+      this.vcs = new GitLab(new GitLabMRService());
     }
 
     const logs = await this.parseBuildData(configs.buildLogFile);

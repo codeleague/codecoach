@@ -9,7 +9,7 @@ import { IGitLabMRService } from './IGitLabMRService';
 import { groupComments } from '../utils/commentUtil';
 import { configs } from '../../Config';
 
-export class Gitlab implements VCS {
+export class GitLab implements VCS {
   private commitId: string;
   private touchedDiff: Diff[];
   private comments: Comment[];
@@ -35,7 +35,7 @@ export class Gitlab implements VCS {
 
       Log.info('Report commit status completed');
     } catch (err) {
-      Log.error('GitHub report failed', err);
+      Log.error('GitLab report failed', err);
       throw err;
     }
   }
@@ -75,7 +75,7 @@ export class Gitlab implements VCS {
     const { text, file, line } = comment;
 
     await this.mrService.createReviewComment(this.commitId, text, file, line);
-    Log.debug('GitHub create review success', { text, file, line });
+    Log.debug('GitLab create review success', { text, file, line });
     return comment;
   }
 
