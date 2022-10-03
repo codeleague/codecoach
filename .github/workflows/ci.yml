@@ -6,20 +6,20 @@ on:
       - main
 
 jobs:
-  build:
-    name: Build and test
-    runs-on: ubuntu-18.04
+  npm-build:
+    name: "node: Build and test"
+    runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
 
-      - name: Use Node.js 14-latest
-        uses: actions/setup-node@v1
+      - name: Use Node.js 18-latest
+        uses: actions/setup-node@v3
         with:
-          node-version: '14.x'
+          node-version: 18
 
       - name: Cache node_modules
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: node_modules
           key: yarn-${{ hashFiles('yarn.lock') }}
@@ -33,3 +33,17 @@ jobs:
       - run: yarn test --ci
 
       - run: yarn build
+
+  docker-build:
+    name: "docker: Build"
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: Dockerfile
+          push: false
