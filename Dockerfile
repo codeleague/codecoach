@@ -1,4 +1,4 @@
-FROM node:slim AS build
+FROM node:alpine AS build
 
 WORKDIR /app
 COPY package.json yarn.lock ./
@@ -6,7 +6,7 @@ RUN yarn
 COPY . .
 RUN yarn build
 
-FROM node:slim AS final
+FROM node:alpine AS final
 WORKDIR /app
 COPY --from=build /app/package.json /app/yarn.lock ./
 RUN yarn install --production
