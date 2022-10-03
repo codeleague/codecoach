@@ -1,0 +1,11 @@
+dist/
+node_modules/
+*.log
+.idea/
+.github/
+.vscode/
+.gitignore/
+Dockerfile
+.dockerignore
+nodemon.json
+sample/
