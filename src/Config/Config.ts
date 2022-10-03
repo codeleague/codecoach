@@ -37,8 +37,8 @@ const args = yargs
     describe: 'GitLab project ID',
     type: 'number',
   })
-  .option('gitlabMr', {
-    describe: 'GitLab merge request ID (not to be confused with IID)',
+  .option('gitlabMrIid', {
+    describe: 'GitLab merge request IID (not to be confused with ID)',
     type: 'number',
   })
   .option('gitlabToken', {

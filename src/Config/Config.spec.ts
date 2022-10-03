@@ -6,7 +6,7 @@ const mockGitHubToken = 'mockGitHubToken';
 
 const mockGitLabHost = 'https://gitlab.myawesomecompany.com';
 const mockGitLabProjectId = 1234;
-const mockGitLabMr = 69;
+const mockGitLabMrIid = 69;
 const mockGitLabToken = 'mockGitLabToken';
 
 const mockLogType = 'dotnetbuild';
@@ -35,7 +35,7 @@ const GITLAB_ENV_ARGS = [
   '--vcs="gitlab"',
   `--gitlabHost=${mockGitLabHost}`,
   `--gitlabProjectId=${mockGitLabProjectId}`,
-  `--gitlabMr=${mockGitLabMr}`,
+  `--gitlabMrIid=${mockGitLabMrIid}`,
   `--gitlabToken=${mockGitLabToken}`,
   `-f=${mockBuildLogFile}`,
   `-o=${mockOutput}`,
@@ -85,7 +85,7 @@ describe('Config parsing Test', () => {
     expect(config.vcs).toBe('gitlab');
     expect(config.gitlabHost).toBe(mockGitLabHost);
     expect(config.gitlabProjectId).toBe(mockGitLabProjectId);
-    expect(config.gitlabMr).toBe(mockGitLabMr);
+    expect(config.gitlabMrIid).toBe(mockGitLabMrIid);
     expect(config.gitlabToken).toBe(mockGitLabToken);
 
     validateBuildLog(config.buildLogFile);
@@ -97,7 +97,7 @@ describe('Config parsing Test', () => {
     expect(config.vcs).toBe('gitlab');
     expect(config.gitlabHost).toBe(mockGitLabHost);
     expect(config.gitlabProjectId).toBe(mockGitLabProjectId);
-    expect(config.gitlabMr).toBe(mockGitLabMr);
+    expect(config.gitlabMrIid).toBe(mockGitLabMrIid);
     expect(config.gitlabToken).toBe(mockGitLabToken);
     expect(config.removeOldComment).toBe(true);
 
