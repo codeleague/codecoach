@@ -1,0 +1,8 @@
+{
+  "vcs": "github",
+  "githubPr": 14,
+  "buildLogFile": [
+    "dotnetbuild;./sample/dotnetbuild/build.content;/repo/src"
+  ],
+  "output": "./tmp/out.json"
+}

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { BuildLogFile, Config, ConfigObject, ProjectType } from './Config';
+import { BuildLogFile, configs, ProjectType } from './Config';
 import { File } from './File';
 import { Log } from './Logger';
 import {
@@ -15,22 +15,25 @@ import {
 } from './Parser';
 import { DartLintParser } from './Parser/DartLintParser';
 import { GitHub, GitHubPRService, VCS } from './Provider';
+import { GitLab } from './Provider/GitLab/GitLab';
+import { GitLabMRService } from './Provider/GitLab/GitLabMRService';
 
 class App {
   private vcs: VCS;
-  private config: ConfigObject;
 
   async start(): Promise<void> {
-    this.config = await Config;
+    if (configs.vcs === 'github') {
+      const githubPRService = new GitHubPRService(
+        configs.githubToken,
+        configs.githubRepoUrl,
+        configs.githubPr,
+      );
+      this.vcs = new GitHub(githubPRService, configs.removeOldComment);
+    } else if (configs.vcs === 'gitlab') {
+      this.vcs = new GitLab(new GitLabMRService());
+    }
 
-    const githubPRService = new GitHubPRService(
-      this.config.provider.token,
-      this.config.provider.repoUrl,
-      this.config.provider.prId,
-    );
-    this.vcs = new GitHub(githubPRService, this.config.provider.removeOldComment);
-
-    const logs = await this.parseBuildData(this.config.app.buildLogFiles);
+    const logs = await this.parseBuildData(configs.buildLogFile);
     Log.info('Build data parsing completed');
 
     // Fire and forget, no need to await
@@ -73,8 +76,7 @@ class App {
   }
 
   private static async writeLogToFile(logs: LogType[]): Promise<void> {
-    const config = await Config;
-    await File.writeFileHelper(config.app.logFilePath, JSON.stringify(logs, null, 2));
+    await File.writeFileHelper(configs.output, JSON.stringify(logs, null, 2));
   }
 }
 

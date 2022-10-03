@@ -1,52 +1,106 @@
-import { Config } from './Config';
+import { BuildLogFile } from './@types';
 
-const MOCK_ARGS = [
-  '/usr/local/Cellar/node/15.13.0/bin/node',
-  '/Users/codecoach/src/app.ts',
-  '--url=https://github.com/codeleague/codecoach.git',
+const mockGitHubRepo = 'https://github.com/codeleague/codecoach.git';
+const mockGitHubPr = 42;
+const mockGitHubToken = 'mockGitHubToken';
+
+const mockGitLabHost = 'https://gitlab.myawesomecompany.com';
+const mockGitLabProjectId = 1234;
+const mockGitLabMr = 69;
+const mockGitLabToken = 'mockGitLabToken';
+
+const mockLogType = 'dotnetbuild';
+const mockLogFile = './sample/dotnetbuild/build.content';
+const mockLogCwd = '/repo/src';
+const mockBuildLogFile = `${mockLogType};${mockLogFile};${mockLogCwd}`;
+const mockOutput = './tmp/out.json';
+
+const GITHUB_ENV_ARGS = [
+  'node',
+  'app.ts',
+  '--vcs="github"',
+  `--githubRepoUrl=${mockGitHubRepo}`,
+  `--githubPr=${mockGitHubPr}`,
+  `--githubToken=${mockGitHubToken}`,
   '--removeOldComment',
-  '--token=placeyourtokenhere',
-  '--pr=15',
-  '-f=dotnetbuild;./sample/dotnetbuild/build.content;/repo/src',
-  '-o=./tmp/out.json',
+  `-f=${mockBuildLogFile}`,
+  `-o=${mockOutput}`,
 ];
 
-const MOCK_ARGS_W_CONFIG_YAML = [
-  '/usr/local/Cellar/node/15.13.0/bin/node',
-  '/Users/codecoach/src/app.ts',
-  '--config=sample/config/config.yaml',
+const GITHUB_FILE_ARGS = ['node', 'app.ts', '--config=sample/config/github.json'];
+
+const GITLAB_ENV_ARGS = [
+  'node',
+  'app.ts',
+  '--vcs="gitlab"',
+  `--gitlabHost=${mockGitLabHost}`,
+  `--gitlabProjectId=${mockGitLabProjectId}`,
+  `--gitlabMr=${mockGitLabMr}`,
+  `--gitlabToken=${mockGitLabToken}`,
+  `-f=${mockBuildLogFile}`,
+  `-o=${mockOutput}`,
 ];
 
-export const EXPECTED_MOCK_ARGS = [
-  '/usr/local/Cellar/node/15.13.0/bin/node',
-  '/Users/codecoach/src/app.ts',
-  'https://github.com/codeleague/codecoach.git',
-  true,
-  'placeyourtokenhere',
-  15,
-  'dotnetbuild;./sample/dotnetbuild/build.content;/repo/src',
-  './tmp/out.json',
-];
+const GITLAB_FILE_ARGS = ['node', 'app.ts', '--config=sample/config/gitlab.json'];
 
-describe('Config Test', () => {
-  let config: typeof Config;
-
+describe('Config parsing Test', () => {
   beforeEach(() => {
     jest.resetModules();
   });
 
-  it('Should able to parse this args and run without throwing error', async () => {
-    process.argv = MOCK_ARGS;
-    config = (await import('./Config')).Config;
-    const fullfillConfig = await config;
-    expect(fullfillConfig.provider.repoUrl).toBe(EXPECTED_MOCK_ARGS[2]);
-    expect(fullfillConfig.provider.removeOldComment).toBe(EXPECTED_MOCK_ARGS[3]);
+  const validateBuildLog = (buildLog: BuildLogFile[]) => {
+    expect(buildLog).toHaveLength(1);
+    expect(buildLog[0].type).toBe(mockLogType);
+    expect(buildLog[0].path).toBe(mockLogFile);
+    expect(buildLog[0].cwd).toBe(mockLogCwd);
+  };
+
+  it('should be able to parse GitHub config provided by environment variables', async () => {
+    process.argv = GITHUB_ENV_ARGS;
+    const config = (await import('./Config')).configs;
+    expect(config.vcs).toBe('github');
+    expect(config.githubRepoUrl).toBe(mockGitHubRepo);
+    expect(config.githubPr).toBe(mockGitHubPr);
+    expect(config.githubToken).toBe(mockGitHubToken);
+    expect(config.removeOldComment).toBe(true);
+
+    validateBuildLog(config.buildLogFile);
   });
 
-  it('Should able to use a config file without passing other args', async () => {
-    process.argv = MOCK_ARGS_W_CONFIG_YAML;
-    config = (await import('./Config')).Config;
-    const fullfillConfig = await config;
-    expect(fullfillConfig.app.buildLogFiles[0].type).toBe('tslint');
+  it('should be able to parse GitHub config provided by file', async () => {
+    process.argv = GITHUB_FILE_ARGS;
+    const config = (await import('./Config')).configs;
+    expect(config.vcs).toBe('github');
+    expect(config.githubRepoUrl).toBe(mockGitHubRepo);
+    expect(config.githubPr).toBe(mockGitHubPr);
+    expect(config.githubToken).toBe(mockGitHubToken);
+    expect(config.removeOldComment).toBe(false);
+
+    validateBuildLog(config.buildLogFile);
+  });
+
+  it('should be able to parse GitLab config provided by environment variables', async () => {
+    process.argv = GITLAB_ENV_ARGS;
+    const config = (await import('./Config')).configs;
+    expect(config.vcs).toBe('gitlab');
+    expect(config.gitlabHost).toBe(mockGitLabHost);
+    expect(config.gitlabProjectId).toBe(mockGitLabProjectId);
+    expect(config.gitlabMr).toBe(mockGitLabMr);
+    expect(config.gitlabToken).toBe(mockGitLabToken);
+
+    validateBuildLog(config.buildLogFile);
+  });
+
+  it('should be able to parse GitLab config provided by file', async () => {
+    process.argv = GITLAB_FILE_ARGS;
+    const config = (await import('./Config')).configs;
+    expect(config.vcs).toBe('gitlab');
+    expect(config.gitlabHost).toBe(mockGitLabHost);
+    expect(config.gitlabProjectId).toBe(mockGitLabProjectId);
+    expect(config.gitlabMr).toBe(mockGitLabMr);
+    expect(config.gitlabToken).toBe(mockGitLabToken);
+    expect(config.removeOldComment).toBe(true);
+
+    validateBuildLog(config.buildLogFile);
   });
 });

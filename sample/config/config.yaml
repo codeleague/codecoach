@@ -1,9 +1,0 @@
-repo:
-  url: https://github.com/codeleague/codecoach
-  pr: 40
-  token: 123qwe123qwe123qwe123
-buildLogFiles:
-  - type: tslint
-    path: /path/to/log.json
-    cwd: /repo/src
-output: ./output.json

@@ -25,6 +25,7 @@ So it can be integrated with any CI with ease.
 #### Supported source controls
 - GitHub
 - GitHub Enterprise
+- GitLab
 
 ### Prerequisite
 Node.js v14 or later
@@ -42,35 +43,67 @@ $ yarn global add @codecoach/cli
 ### Usage
 Use command `codecoach` with required config.
 
-_Example_
-```shell script
-$ codecoach --url="https://github.com/codeleague/codecoach" --pr=99 --token="token1234567890token" -f="eslint;/path/to/eslintoutput/json"
+#### Configs
+Configuration could be supplied by arguments options or config JSON file.
+
+##### Example: Supplying config by options
+```shell
+$ codecoach \
+  -g="github"
+  --githubRepoUrl="https://github.com/codeleague/codecoach" \
+  --githubPr=99 \
+  --githubToken="yourtoken" \
+  -f="eslint;/path/to/eslintoutput.json" \
+  -f="dotnetbuild;/path/to/dotnetbuild;/repo/src" \
+  -r
 ```
 
-#### Configs
+##### Example: Supplying config by json
+```shell
+$ codecoach --config="codecoach.json"
+```
+and in `codecoach.json`
+```json
+{
+  "vcs": "github",
+  "githubRepoUrl": "https://github.com/codeleague/codecoach",
+  "githubPr": 99,
+  "githubToken": "yourtoken",
+  "buildLogFile": [
+    "eslint;/path/to/eslintoutput.json",
+    "dotnetbuild;/path/to/dotnetbuild;/repo/src"
+  ],
+  "removeOldComment": true
+}
+```
+Will do the same thing.
 
-##### `--config`
-###### Optional
-config codecoach via yml format file. [example](./sample/config/config.yaml), a config argument will override this configuration
+> Warning: If both config file and options are supplied, options will override config in file.
 
-##### `--url`
-###### Required
-Repository url
+| Option                    | Required               | Value                        | Description                                           | 
+|---------------------------|------------------------|------------------------------|-------------------------------------------------------|
+| `vcs` / `-g`              | yes                    | `github` or `gitlab`         |                                                       |
+|                           |                        |                              |                                                       |
+| `githubRepoUrl`           | when `vcs` is `github` |                              | Repository's HTTPS URL                                |
+| `githubPr`                | when `vcs` is `github` |                              | Pull request ID                                       |
+| `githubToken`             | when `vcs` is `github` |                              | Personal Access Token                                 |
+|                           |                        |                              |                                                       |
+| `gitlabHost`              | when `vcs` is `gitlab` | `https://gitlab.company.com` | GitLab Server (Could also be `https://gitlab.com`)    |
+| `gitlabProjectId`         | when `vcs` is `gitlab` |                              | Project ID                                            |
+| `gitlabMrIid`             | when `vcs` is `gitlab` |                              | MergeRequest IID (not to be confused with ID)         |
+| `gitlabToken`             | when `vcs` is `gitlab` |                              | Access Token                                          |
+|                           |                        |                              |                                                       |
+| `buildLogFile` / `-f`     | yes, repeatable        |                              | Read below                                            |
+| `output` / `-o`           | no                     |                              | CodeCoach parsed output for debugging                 |
+| `removeOldComment` / `-r` | no                     | `true` or `false`            | Remove CodeCoach's old comments before adding new one |
 
-##### `--pr`
-###### Required
-PR number to review
-
-##### `--token`
-###### Required
-Repository access token. For GitHub, it's _"Personal access tokens"_ in settings.
 
 ##### `--buildLogFile` or `-f`
 ###### Required, Repeatable  
 Build log content files config. Splitted in to 3 part, formatted in `<type>;<path>[;<cwd>]`
 - Type: one of `dotnetbuild`, `msbuild`, `tslint`, `eslint`, `scalastyle`, `androidlint` or `dartlint`
 - Path: Path to lint output file to be processed
-- cwd: Repository root directory for lint context (optional, will use current context if not provided)
+- cwd: Linter context repository root (optional, will use current directory if not provided)
 
 For example,  
 **Case 1**: Run CodeCoach from repo root for `eslint` and `dotnetbuild` in the same lint context directory
@@ -78,18 +111,11 @@ For example,
 --buildLogFile="eslint;./src/client/eslint-out.json" --buildLogFile="dotnetbuild;./src/api/msbuild.log"
 ```
 
-**Case 2**: Run CodeCoach from somewhere else for `androidlint` (linter context is `/path/to/project/root`)
+**Case 2**: Run CodeCoach from somewhere else for `androidlint` (linter context root was `/path/to/project/root`)
 ```
 --buildLogFile="androidlint;./android-lint.xml;/path/to/project/root"
 ```
 
-##### `--output` or `-o`
-###### Optional
-Parsed lint result output.
-
-##### `--removeOldComment`
-###### Optional
-Remove existing CodeCoach comments before putting the new one in.
 
 ### How to get lint output for CodeCoach
 #### ESLint

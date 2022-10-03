@@ -1,3 +1,0 @@
-export { CSharpAgent } from './CSharpAgent';
-export { TSAgent } from './TSAgent';
-export { Agent } from './@interfaces/agent.interface';
