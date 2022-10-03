@@ -51,7 +51,7 @@ $ codecoach --url="https://github.com/codeleague/codecoach" --pr=99 --token="tok
 
 ##### `--config`
 ###### Optional
-config codecoach via yml format file. [example](./sample/config/config.yaml), a config argument will override this configuration
+config codecoach via JSON file. [example](./sample/config/github.yaml), a config argument will override this configuration
 
 ##### `--url`
 ###### Required

@@ -7,6 +7,7 @@ import { MessageUtil } from '../utils/message.util';
 import { CommentFileStructure, CommentStructure, Comment } from '../@types/CommentTypes';
 import { CommitStatus } from './CommitStatus';
 import { IGitHubPRService } from './IGitHubPRService';
+import { groupComments } from '../utils/commentUtil';
 
 export class GitHub implements VCS {
   private commitId: string;
@@ -64,7 +65,7 @@ export class GitHub implements VCS {
       .filter(onlySeverity(LogSeverity.error, LogSeverity.warning))
       .filter(onlyIn(this.touchedDiff));
 
-    this.comments = GitHub.groupComments(touchedFileLog);
+    this.comments = groupComments(touchedFileLog);
     this.nError = this.comments.reduce((sum, comment) => sum + comment.errors, 0);
     this.nWarning = this.comments.reduce((sum, comment) => sum + comment.warnings, 0);
 
@@ -103,34 +104,5 @@ export class GitHub implements VCS {
 
     await Promise.all([...deleteComments, ...deleteReviews]);
     Log.debug('Delete CodeCoach comments completed');
-  }
-
-  private static groupComments(logs: LogType[]): Comment[] {
-    const commentMap = logs.reduce((map: CommentStructure, log) => {
-      const { source: file, line, severity, msg } = log;
-      const text = MessageUtil.createMessageWithEmoji(msg, severity);
-
-      if (!line) return map;
-
-      const currentWarnings = map?.[file]?.[line]?.warnings ?? 0;
-      const currentErrors = map?.[file]?.[line]?.errors ?? 0;
-      const currentText = map?.[file]?.[line]?.text ?? '';
-
-      const nextObject: Comment = {
-        text: `${currentText}\n${text}`,
-        errors: currentErrors + (severity === LogSeverity.error ? 1 : 0),
-        warnings: currentWarnings + (severity === LogSeverity.warning ? 1 : 0),
-        file,
-        line,
-      };
-
-      const fileCommentUpdater: CommentFileStructure = { [line]: nextObject };
-      const updatedFileComment = Object.assign({}, map?.[file], fileCommentUpdater);
-
-      const mapUpdater: CommentStructure = { [file]: updatedFileComment };
-      return Object.assign({}, map, mapUpdater);
-    }, {});
-
-    return Object.values(commentMap).flatMap((file) => Object.values(file));
   }
 }
