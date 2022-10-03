@@ -8,10 +8,11 @@ import { onlyIn, onlySeverity } from '../utils/filter.util';
 import { IGitLabMRService } from './IGitLabMRService';
 import { groupComments } from '../utils/commentUtil';
 import { configs } from '../../Config';
+import { DiffSchema } from '@gitbeaker/core/dist/types/types';
 
 export class GitLab implements VCS {
-  private commitId: string;
   private touchedDiff: Diff[];
+  private latestMrVersion: DiffSchema;
   private comments: Comment[];
   private nWarning: number;
   private nError: number;
@@ -51,7 +52,7 @@ export class GitLab implements VCS {
   }
 
   private async setup(logs: LogType[]) {
-    this.commitId = await this.mrService.getLatestCommitSha();
+    this.latestMrVersion = await this.mrService.getLatestVersion();
     this.touchedDiff = await this.mrService.diff();
 
     const touchedFileLog = logs
@@ -63,7 +64,7 @@ export class GitLab implements VCS {
     this.nWarning = this.comments.reduce((sum, comment) => sum + comment.warnings, 0);
 
     Log.debug(`VCS Setup`, {
-      sha: this.commitId,
+      sha: this.latestMrVersion.head_commit_sha,
       diff: this.touchedDiff,
       comments: this.comments,
       err: this.nError,
@@ -74,7 +75,7 @@ export class GitLab implements VCS {
   private async createReviewComment(comment: Comment): Promise<Comment> {
     const { text, file, line } = comment;
 
-    await this.mrService.createReviewComment(this.commitId, text, file, line);
+    await this.mrService.createMRDiscussion(this.latestMrVersion, file, line, text);
     Log.debug('GitLab create review success', { text, file, line });
     return comment;
   }
@@ -87,7 +88,7 @@ export class GitLab implements VCS {
     Log.debug('Get existing CodeCoach comments completed');
 
     const deleteNotes = notes
-      .filter((note) => note.author.id === userId)
+      .filter((note) => note.author.id === userId && !note.system)
       .map((note) => this.mrService.deleteNote(note.id));
 
     await Promise.all([...deleteNotes]);
