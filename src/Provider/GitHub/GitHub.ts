@@ -4,7 +4,7 @@ import { LogSeverity, LogType } from '../../Parser';
 import { Diff } from '../@types/PatchTypes';
 import { onlyIn, onlySeverity } from '../utils/filter.util';
 import { MessageUtil } from '../utils/message.util';
-import { CommentFileStructure, CommentStructure, Comment } from '../@types/CommentTypes';
+import { Comment } from '../@types/CommentTypes';
 import { CommitStatus } from './CommitStatus';
 import { IGitHubPRService } from './IGitHubPRService';
 import { groupComments } from '../utils/commentUtil';
@@ -21,7 +21,7 @@ export class GitHub implements VCS {
     private readonly removeOldComment: boolean = false,
   ) {}
 
-  async report(logs: LogType[]): Promise<void> {
+  async report(logs: LogType[]): Promise<boolean> {
     try {
       await this.setup(logs);
 
@@ -38,6 +38,8 @@ export class GitHub implements VCS {
       Log.error('GitHub report failed', err);
       throw err;
     }
+
+    return true; // As GitHub has commit status report separately
   }
 
   private async createSummaryComment() {

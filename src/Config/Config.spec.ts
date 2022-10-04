@@ -87,6 +87,7 @@ describe('Config parsing Test', () => {
     expect(config.gitlabProjectId).toBe(mockGitLabProjectId);
     expect(config.gitlabMrIid).toBe(mockGitLabMrIid);
     expect(config.gitlabToken).toBe(mockGitLabToken);
+    expect(config.removeOldComment).toBe(false);
 
     validateBuildLog(config.buildLogFile);
   });

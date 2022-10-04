@@ -7,7 +7,6 @@ import { MessageUtil } from '../utils/message.util';
 import { onlyIn, onlySeverity } from '../utils/filter.util';
 import { IGitLabMRService } from './IGitLabMRService';
 import { groupComments } from '../utils/commentUtil';
-import { configs } from '../../Config';
 import { DiffSchema } from '@gitbeaker/core/dist/types/types';
 
 export class GitLab implements VCS {
@@ -16,13 +15,13 @@ export class GitLab implements VCS {
   private comments: Comment[];
   private nWarning: number;
   private nError: number;
-  private readonly removeOldComment: boolean;
 
-  constructor(private readonly mrService: IGitLabMRService) {
-    this.removeOldComment = configs.removeOldComment;
-  }
+  constructor(
+    private readonly mrService: IGitLabMRService,
+    private readonly removeOldComment: boolean,
+  ) {}
 
-  async report(logs: LogType[]): Promise<void> {
+  async report(logs: LogType[]): Promise<boolean> {
     try {
       await this.setup(logs);
 
@@ -35,6 +34,8 @@ export class GitLab implements VCS {
       // Cannot set commit status
 
       Log.info('Report commit status completed');
+
+      return this.nError === 0; // fail the process if there's error
     } catch (err) {
       Log.error('GitLab report failed', err);
       throw err;
