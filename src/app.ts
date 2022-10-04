@@ -41,8 +41,13 @@ class App {
       .then(() => Log.info('Write output completed'))
       .catch((error) => Log.error('Write output failed', { error }));
 
-    await this.vcs.report(logs);
+    const passed = await this.vcs.report(logs);
     Log.info('Report to VCS completed');
+
+    if (!passed) {
+      Log.error('There are some linting error and exit code reporting is enabled');
+      process.exit(1);
+    }
   }
 
   private static getParser(type: ProjectType, cwd: string): Parser {
@@ -86,5 +91,5 @@ new App().start().catch((error) => {
     Log.error('Unexpected error', { stack, message });
   }
   Log.error('Unexpected error', { error });
-  process.exit(1);
+  process.exit(2);
 });

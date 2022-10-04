@@ -22,7 +22,7 @@ export class GitLab implements VCS {
     this.removeOldComment = configs.removeOldComment;
   }
 
-  async report(logs: LogType[]): Promise<void> {
+  async report(logs: LogType[]): Promise<boolean> {
     try {
       await this.setup(logs);
 
@@ -35,6 +35,8 @@ export class GitLab implements VCS {
       // Cannot set commit status
 
       Log.info('Report commit status completed');
+
+      return this.nError === 0; // fail the process if there's error
     } catch (err) {
       Log.error('GitLab report failed', err);
       throw err;

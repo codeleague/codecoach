@@ -21,7 +21,7 @@ export class GitHub implements VCS {
     private readonly removeOldComment: boolean = false,
   ) {}
 
-  async report(logs: LogType[]): Promise<void> {
+  async report(logs: LogType[]): Promise<boolean> {
     try {
       await this.setup(logs);
 
@@ -38,6 +38,8 @@ export class GitHub implements VCS {
       Log.error('GitHub report failed', err);
       throw err;
     }
+
+    return true; // As GitHub has commit status report separately
   }
 
   private async createSummaryComment() {
