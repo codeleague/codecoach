@@ -96,4 +96,14 @@ describe('VCS: GitLab', () => {
 
     expect(service.createNote).toHaveBeenCalledTimes(1);
   });
+
+  it('should not comment if there is no relevant lint issue', async () => {
+    const service = new MrServiceMock();
+    const gitLab = new GitLab(service, true);
+
+    await gitLab.report([untouchedError, untouchedWarning]);
+
+    expect(service.createMRDiscussion).not.toHaveBeenCalled();
+    expect(service.createNote).not.toHaveBeenCalled();
+  });
 });
