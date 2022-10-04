@@ -13,20 +13,16 @@ import { configs } from '../../Config';
 
 export class GitLabMRService implements IGitLabMRService {
   private readonly projectId: number;
-  private readonly token: string;
-  private readonly host: string;
-  private readonly mr: number;
+  private readonly mrIid: number;
   private readonly api: Resource.Gitlab;
 
   constructor() {
-    this.host = configs.gitlabHost;
-    this.token = configs.gitlabToken;
     this.projectId = configs.gitlabProjectId;
-    this.mr = configs.gitlabMrIid;
+    this.mrIid = configs.gitlabMrIid;
 
     this.api = new Gitlab({
-      host: this.host,
-      token: this.token,
+      host: configs.gitlabHost,
+      token: configs.gitlabToken,
     });
   }
 
@@ -47,7 +43,7 @@ export class GitLabMRService implements IGitLabMRService {
       new_line: line,
     };
 
-    await this.api.MergeRequestDiscussions.create(this.projectId, this.mr, body, {
+    await this.api.MergeRequestDiscussions.create(this.projectId, this.mrIid, body, {
       position,
     });
   }
@@ -58,20 +54,20 @@ export class GitLabMRService implements IGitLabMRService {
   }
 
   async listAllNotes(): Promise<MergeRequestNoteSchema[]> {
-    return await this.api.MergeRequestNotes.all(this.projectId, this.mr);
+    return await this.api.MergeRequestNotes.all(this.projectId, this.mrIid);
   }
 
   async deleteNote(noteId: number): Promise<void> {
-    await this.api.MergeRequestNotes.remove(this.projectId, this.mr, noteId);
+    await this.api.MergeRequestNotes.remove(this.projectId, this.mrIid, noteId);
   }
 
   // github can do someone fancy shit here we cant
   async createNote(note: string): Promise<void> {
-    await this.api.MergeRequestNotes.create(this.projectId, this.mr, note);
+    await this.api.MergeRequestNotes.create(this.projectId, this.mrIid, note);
   }
 
   async diff(): Promise<Diff[]> {
-    const changes = (await this.api.MergeRequests.changes(this.projectId, this.mr))
+    const changes = (await this.api.MergeRequests.changes(this.projectId, this.mrIid))
       .changes;
 
     if (!changes) {
@@ -85,7 +81,7 @@ export class GitLabMRService implements IGitLabMRService {
   }
 
   async getLatestVersion(): Promise<DiffSchema> {
-    const versions = await this.api.MergeRequests.versions(this.projectId, this.mr);
+    const versions = await this.api.MergeRequests.versions(this.projectId, this.mrIid);
     const collected = versions.filter((v) => v.state === 'collected');
 
     if (collected.length === 0) throw new Error('No collected version in MR');
