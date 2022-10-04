@@ -30,7 +30,7 @@ class App {
       );
       this.vcs = new GitHub(githubPRService, configs.removeOldComment);
     } else if (configs.vcs === 'gitlab') {
-      this.vcs = new GitLab(new GitLabMRService());
+      this.vcs = new GitLab(new GitLabMRService(), configs.removeOldComment);
     }
 
     const logs = await this.parseBuildData(configs.buildLogFile);

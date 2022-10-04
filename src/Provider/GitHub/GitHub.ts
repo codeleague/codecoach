@@ -4,7 +4,7 @@ import { LogSeverity, LogType } from '../../Parser';
 import { Diff } from '../@types/PatchTypes';
 import { onlyIn, onlySeverity } from '../utils/filter.util';
 import { MessageUtil } from '../utils/message.util';
-import { CommentFileStructure, CommentStructure, Comment } from '../@types/CommentTypes';
+import { Comment } from '../@types/CommentTypes';
 import { CommitStatus } from './CommitStatus';
 import { IGitHubPRService } from './IGitHubPRService';
 import { groupComments } from '../utils/commentUtil';
