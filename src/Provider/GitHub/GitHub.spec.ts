@@ -121,7 +121,7 @@ describe('VCS: GitHub', () => {
 
   it('should set commit status as success when no error', async () => {
     const service = new PrServiceMock();
-    const github = new GitHub(service);
+    const github = new GitHub(service, false, false);
     await github.report([touchFileWarning]);
 
     expect(service.createReviewComment).toHaveBeenCalledTimes(1);
@@ -132,5 +132,67 @@ describe('VCS: GitHub', () => {
       CommitStatus.success,
       expect.any(String),
     );
+  });
+
+  it('should set commit status as failure when there is error', async () => {
+    const service = new PrServiceMock();
+    const github = new GitHub(service);
+    await github.report([touchFileError]);
+
+    expect(service.createReviewComment).toHaveBeenCalledTimes(1);
+    expect(service.createComment).toHaveBeenCalledTimes(1);
+    expect(service.setCommitStatus).toHaveBeenCalledTimes(1);
+    expect(service.setCommitStatus).toHaveBeenCalledWith(
+      mockedSha,
+      CommitStatus.failure,
+      expect.any(String),
+    );
+  });
+
+  describe('when failOnWarnings is true', () => {
+    it('should set commit status as success when no error or warning', async () => {
+      const service = new PrServiceMock();
+      const github = new GitHub(service, false, true);
+      await github.report([]);
+
+      expect(service.createReviewComment).toHaveBeenCalledTimes(0);
+      expect(service.createComment).toHaveBeenCalledTimes(0);
+      expect(service.setCommitStatus).toHaveBeenCalledTimes(1);
+      expect(service.setCommitStatus).toHaveBeenCalledWith(
+        mockedSha,
+        CommitStatus.success,
+        expect.any(String),
+      );
+    });
+
+    it('should set commit status as failure when there is error', async () => {
+      const service = new PrServiceMock();
+      const github = new GitHub(service, false, true);
+      await github.report([touchFileError]);
+
+      expect(service.createReviewComment).toHaveBeenCalledTimes(1);
+      expect(service.createComment).toHaveBeenCalledTimes(1);
+      expect(service.setCommitStatus).toHaveBeenCalledTimes(1);
+      expect(service.setCommitStatus).toHaveBeenCalledWith(
+        mockedSha,
+        CommitStatus.failure,
+        expect.any(String),
+      );
+    });
+
+    it('should set commit status as failure when there is warning', async () => {
+      const service = new PrServiceMock();
+      const github = new GitHub(service, false, true);
+      await github.report([touchFileWarning]);
+
+      expect(service.createReviewComment).toHaveBeenCalledTimes(1);
+      expect(service.createComment).toHaveBeenCalledTimes(1);
+      expect(service.setCommitStatus).toHaveBeenCalledTimes(1);
+      expect(service.setCommitStatus).toHaveBeenCalledWith(
+        mockedSha,
+        CommitStatus.failure,
+        expect.any(String),
+      );
+    });
   });
 });

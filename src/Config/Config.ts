@@ -99,6 +99,11 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
     describe: 'Remove existing CodeCoach comments before putting new one',
     default: false,
   })
+  .option('failOnWarnings', {
+    type: 'boolean',
+    describe: 'Fail the job if warnings are found',
+    default: false,
+  })
   .strict()
   .help()
   .wrap(120)

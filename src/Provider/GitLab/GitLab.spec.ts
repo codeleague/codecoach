@@ -39,13 +39,12 @@ describe('VCS: GitLab', () => {
     const gitLab = new GitLab(service, true);
 
     const result = await gitLab.report([
-      touchFileError,
       touchFileWarning,
       untouchedError,
       untouchedWarning,
     ]);
 
-    expect(result).toBe(false);
+    expect(result).toBe(true);
   });
 
   it('should returns false when there is some error', async () => {
@@ -53,12 +52,13 @@ describe('VCS: GitLab', () => {
     const gitLab = new GitLab(service, true);
 
     const result = await gitLab.report([
+      touchFileError,
       touchFileWarning,
       untouchedError,
       untouchedWarning,
     ]);
 
-    expect(result).toBe(true);
+    expect(result).toBe(false);
   });
 
   it('should remove old self comments and reviews and post new ones', async () => {
@@ -105,5 +105,42 @@ describe('VCS: GitLab', () => {
 
     expect(service.createMRDiscussion).not.toHaveBeenCalled();
     expect(service.createNote).not.toHaveBeenCalled();
+  });
+
+  describe('when failOnWarnings is true', () => {
+    it('should returns true when there is no error or warning', async () => {
+      const service = new MrServiceMock();
+      const gitLab = new GitLab(service, true, true);
+
+      const result = await gitLab.report([untouchedError, untouchedWarning]);
+
+      expect(result).toBe(true);
+    });
+
+    it('should returns false when there is some error', async () => {
+      const service = new MrServiceMock();
+      const gitLab = new GitLab(service, true, true);
+
+      const result = await gitLab.report([
+        touchFileError,
+        untouchedError,
+        untouchedWarning,
+      ]);
+
+      expect(result).toBe(false);
+    });
+
+    it('should returns false when there is some warnings', async () => {
+      const service = new MrServiceMock();
+      const gitLab = new GitLab(service, true, true);
+
+      const result = await gitLab.report([
+        touchFileWarning,
+        untouchedError,
+        untouchedWarning,
+      ]);
+
+      expect(result).toBe(false);
+    });
   });
 });

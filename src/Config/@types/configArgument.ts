@@ -12,4 +12,5 @@ export type ConfigArgument = {
   buildLogFile: BuildLogFile[];
   output: string; // =logFilePath
   removeOldComment: boolean;
+  failOnWarnings: boolean;
 };
