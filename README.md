@@ -96,6 +96,7 @@ Will do the same thing.
 | `buildLogFile` / `-f`     | yes, repeatable        |                              | Read below                                            |
 | `output` / `-o`           | no                     |                              | CodeCoach parsed output for debugging                 |
 | `removeOldComment` / `-r` | no                     | `true` or `false`            | Remove CodeCoach's old comments before adding new one |
+| `failOnWarnings`          | no                     | `true` or `false`            | Fail the job when warnings are found                  |
 
 
 ##### `--buildLogFile` or `-f`

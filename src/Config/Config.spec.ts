@@ -39,6 +39,7 @@ const GITLAB_ENV_ARGS = [
   `--gitlabToken=${mockGitLabToken}`,
   `-f=${mockBuildLogFile}`,
   `-o=${mockOutput}`,
+  '--failOnWarnings',
 ];
 
 const GITLAB_FILE_ARGS = ['node', 'app.ts', '--config=sample/config/gitlab.json'];
@@ -63,6 +64,7 @@ describe('Config parsing Test', () => {
     expect(config.githubPr).toBe(mockGitHubPr);
     expect(config.githubToken).toBe(mockGitHubToken);
     expect(config.removeOldComment).toBe(true);
+    expect(config.failOnWarnings).toBe(false);
 
     validateBuildLog(config.buildLogFile);
   });
@@ -75,6 +77,7 @@ describe('Config parsing Test', () => {
     expect(config.githubPr).toBe(mockGitHubPr);
     expect(config.githubToken).toBe(mockGitHubToken);
     expect(config.removeOldComment).toBe(false);
+    expect(config.failOnWarnings).toBe(false);
 
     validateBuildLog(config.buildLogFile);
   });
@@ -88,6 +91,7 @@ describe('Config parsing Test', () => {
     expect(config.gitlabMrIid).toBe(mockGitLabMrIid);
     expect(config.gitlabToken).toBe(mockGitLabToken);
     expect(config.removeOldComment).toBe(false);
+    expect(config.failOnWarnings).toBe(true);
 
     validateBuildLog(config.buildLogFile);
   });
@@ -101,6 +105,7 @@ describe('Config parsing Test', () => {
     expect(config.gitlabMrIid).toBe(mockGitLabMrIid);
     expect(config.gitlabToken).toBe(mockGitLabToken);
     expect(config.removeOldComment).toBe(true);
+    expect(config.failOnWarnings).toBe(false);
 
     validateBuildLog(config.buildLogFile);
   });

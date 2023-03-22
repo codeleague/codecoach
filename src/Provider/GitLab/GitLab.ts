@@ -19,6 +19,7 @@ export class GitLab implements VCS {
   constructor(
     private readonly mrService: IGitLabMRService,
     private readonly removeOldComment: boolean,
+    private readonly failOnWarnings: boolean = false,
   ) {}
 
   async report(logs: LogType[]): Promise<boolean> {
@@ -35,7 +36,7 @@ export class GitLab implements VCS {
 
       Log.info('Report commit status completed');
 
-      return this.nError === 0; // fail the process if there's error
+      return this.failOnWarnings ? this.nError + this.nWarning === 0 : this.nError === 0; // fail the process if there's error/warnings
     } catch (err) {
       Log.error('GitLab report failed', err);
       throw err;

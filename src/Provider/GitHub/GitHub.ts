@@ -19,6 +19,7 @@ export class GitHub implements VCS {
   constructor(
     private readonly prService: IGitHubPRService,
     private readonly removeOldComment: boolean = false,
+    private readonly failOnWarnings: boolean = false,
   ) {}
 
   async report(logs: LogType[]): Promise<boolean> {
@@ -53,7 +54,10 @@ export class GitHub implements VCS {
   }
 
   private async setCommitStatus() {
-    const commitStatus = this.nError > 0 ? CommitStatus.failure : CommitStatus.success;
+    const passed = this.failOnWarnings
+      ? this.nError + this.nWarning === 0
+      : this.nError === 0;
+    const commitStatus = passed ? CommitStatus.success : CommitStatus.failure;
     const description = MessageUtil.generateCommitDescription(this.nError);
 
     await this.prService.setCommitStatus(this.commitId, commitStatus, description);

@@ -28,9 +28,17 @@ class App {
         configs.githubRepoUrl,
         configs.githubPr,
       );
-      this.vcs = new GitHub(githubPRService, configs.removeOldComment);
+      this.vcs = new GitHub(
+        githubPRService,
+        configs.removeOldComment,
+        configs.failOnWarnings,
+      );
     } else if (configs.vcs === 'gitlab') {
-      this.vcs = new GitLab(new GitLabMRService(), configs.removeOldComment);
+      this.vcs = new GitLab(
+        new GitLabMRService(),
+        configs.removeOldComment,
+        configs.failOnWarnings,
+      );
     }
 
     const logs = await this.parseBuildData(configs.buildLogFile);
