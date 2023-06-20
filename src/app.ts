@@ -15,12 +15,11 @@ import {
 } from './Parser';
 import { DartLintParser } from './Parser/DartLintParser';
 import { GitHub, GitHubPRService, VCS } from './Provider';
-import { EmptyVCS } from './Provider/EmptyVCS/EmptyVCS';
 import { GitLab } from './Provider/GitLab/GitLab';
 import { GitLabMRService } from './Provider/GitLab/GitLabMRService';
 
 class App {
-  private vcs: VCS;
+  private vcs: VCS | null = null;
 
   async start(): Promise<void> {
     if (configs.vcs === 'github') {
@@ -40,8 +39,6 @@ class App {
         configs.removeOldComment,
         configs.failOnWarnings,
       );
-    } else if (configs.vcs === 'none') {
-      this.vcs = new EmptyVCS();
     }
 
     const logs = await this.parseBuildData(configs.buildLogFile);
@@ -54,12 +51,14 @@ class App {
       Log.error('Write output failed', { error });
     }
 
-    const passed = await this.vcs.report(logs);
-    Log.info('Report to VCS completed');
+    if (this.vcs) {
+      const passed = await this.vcs.report(logs);
+      Log.info('Report to VCS completed');
 
-    if (!passed) {
-      Log.error('There are some linting error and exit code reporting is enabled');
-      process.exit(1);
+      if (!passed) {
+        Log.error('There are some linting error and exit code reporting is enabled');
+        process.exit(1);
+      }
     }
   }
 

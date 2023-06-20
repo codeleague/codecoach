@@ -44,17 +44,6 @@ const GITLAB_ENV_ARGS = [
 
 const GITLAB_FILE_ARGS = ['node', 'app.ts', '--config=sample/config/gitlab.json'];
 
-const EMPTYVCS_ENV_ARGS = [
-  'node',
-  'app.ts',
-  '--vcs="none"',
-  `-f=${mockBuildLogFile}`,
-  `-o=${mockOutput}`,
-  '--failOnWarnings',
-];
-
-const EMPTYVCS_FILE_ARGS = ['node', 'app.ts', '--config=sample/config/emptyvcs.json'];
-
 describe('Config parsing Test', () => {
   beforeEach(() => {
     jest.resetModules();
@@ -116,24 +105,6 @@ describe('Config parsing Test', () => {
     expect(config.gitlabMrIid).toBe(mockGitLabMrIid);
     expect(config.gitlabToken).toBe(mockGitLabToken);
     expect(config.removeOldComment).toBe(true);
-    expect(config.failOnWarnings).toBe(false);
-
-    validateBuildLog(config.buildLogFile);
-  });
-
-  it('should be able to parse EmptyVCS config provided by environment variables', async () => {
-    process.argv = EMPTYVCS_ENV_ARGS;
-    const config = (await import('./Config')).configs;
-    expect(config.vcs).toBe('none');
-    expect(config.failOnWarnings).toBe(true);
-
-    validateBuildLog(config.buildLogFile);
-  });
-
-  it('should be able to parse GitLab config provided by file', async () => {
-    process.argv = EMPTYVCS_FILE_ARGS;
-    const config = (await import('./Config')).configs;
-    expect(config.vcs).toBe('none');
     expect(config.failOnWarnings).toBe(false);
 
     validateBuildLog(config.buildLogFile);
