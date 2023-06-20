@@ -12,7 +12,7 @@ const args = yargs
   .option('vcs', {
     alias: 'g',
     describe: 'VCS Type',
-    choices: ['github', 'gitlab'],
+    choices: ['github', 'gitlab', 'none'],
     demandOption: true,
   })
 

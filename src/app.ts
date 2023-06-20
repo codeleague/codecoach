@@ -15,6 +15,7 @@ import {
 } from './Parser';
 import { DartLintParser } from './Parser/DartLintParser';
 import { GitHub, GitHubPRService, VCS } from './Provider';
+import { EmptyVCS } from './Provider/EmptyVCS/EmptyVCS';
 import { GitLab } from './Provider/GitLab/GitLab';
 import { GitLabMRService } from './Provider/GitLab/GitLabMRService';
 
@@ -39,6 +40,8 @@ class App {
         configs.removeOldComment,
         configs.failOnWarnings,
       );
+    } else if (configs.vcs === 'none') {
+      this.vcs = new EmptyVCS();
     }
 
     const logs = await this.parseBuildData(configs.buildLogFile);
