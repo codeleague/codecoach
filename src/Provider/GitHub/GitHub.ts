@@ -1,98 +1,61 @@
 import { VCS } from '..';
 import { Log } from '../../Logger';
-import { LogSeverity, LogType } from '../../Parser';
+import { LogType } from '../../Parser';
 import { Diff } from '../@types/PatchTypes';
-import { onlyIn, onlySeverity } from '../utils/filter.util';
 import { MessageUtil } from '../utils/message.util';
-import { Comment } from '../@types/CommentTypes';
 import { CommitStatus } from './CommitStatus';
 import { IGitHubPRService } from './IGitHubPRService';
-import { groupComments } from '../utils/commentUtil';
+import { VCSEngine } from '../CommonVCS/VCSEngine';
 
-export class GitHub implements VCS {
+export class GitHub extends VCSEngine implements VCS {
   private commitId: string;
-  private touchedDiff: Diff[];
-  private comments: Comment[];
-  private nWarning: number;
-  private nError: number;
 
   constructor(
     private readonly prService: IGitHubPRService,
-    private readonly removeOldComment: boolean = false,
-    private readonly failOnWarnings: boolean = false,
-  ) {}
+    removeOldComment = false,
+    failOnWarnings = false,
+  ) {
+    super(removeOldComment, failOnWarnings);
+  }
 
   async report(logs: LogType[]): Promise<boolean> {
-    try {
-      await this.setup(logs);
-
-      if (this.removeOldComment) {
-        await this.removeExistingComments();
-      }
-
-      await Promise.all(this.comments.map((c) => this.createReviewComment(c)));
-      await this.createSummaryComment();
-      await this.setCommitStatus();
-
-      Log.info('Report commit status completed');
-    } catch (err) {
-      Log.error('GitHub report failed', err);
-      throw err;
-    }
-
-    return true; // As GitHub has commit status report separately
+    await this.prSetup();
+    const result = await super.report(logs);
+    await this.setCommitStatus(result);
+    return true;
   }
 
-  private async createSummaryComment() {
-    if (this.nWarning + this.nError > 0) {
-      const overview = MessageUtil.generateOverviewMessage(this.nError, this.nWarning);
-      await this.prService.createComment(overview);
-      Log.info('Create summary comment completed');
-    } else {
-      Log.info('No summary comment needed');
-    }
-  }
-
-  private async setCommitStatus() {
-    const passed = this.failOnWarnings
-      ? this.nError + this.nWarning === 0
-      : this.nError === 0;
-    const commitStatus = passed ? CommitStatus.success : CommitStatus.failure;
+  private async setCommitStatus(result: boolean) {
+    const commitStatus = result ? CommitStatus.success : CommitStatus.failure;
     const description = MessageUtil.generateCommitDescription(this.nError);
-
     await this.prService.setCommitStatus(this.commitId, commitStatus, description);
   }
 
-  private async setup(logs: LogType[]) {
+  private async prSetup(): Promise<void> {
     this.commitId = await this.prService.getLatestCommitSha();
-    this.touchedDiff = await this.prService.diff();
-
-    const touchedFileLog = logs
-      .filter(onlySeverity(LogSeverity.error, LogSeverity.warning))
-      .filter(onlyIn(this.touchedDiff));
-
-    this.comments = groupComments(touchedFileLog);
-    this.nError = this.comments.reduce((sum, comment) => sum + comment.errors, 0);
-    this.nWarning = this.comments.reduce((sum, comment) => sum + comment.warnings, 0);
-
-    Log.debug(`VCS Setup`, {
-      sha: this.commitId,
-      diff: this.touchedDiff,
-      comments: this.comments,
-      err: this.nError,
-      warning: this.nWarning,
-    });
   }
 
-  private async createReviewComment(comment: Comment): Promise<Comment> {
-    const { text, file, line } = comment;
-
-    await this.prService.createReviewComment(this.commitId, text, file, line);
-    Log.debug('GitHub create review success', { text, file, line });
-    return comment;
+  vcsCreateComment(comment: string): Promise<void> {
+    return this.prService.createComment(comment);
   }
 
-  private async removeExistingComments(): Promise<void> {
+  vcsCreateReviewComment(text: string, file: string, line: number): Promise<void> {
+    return this.prService.createReviewComment(this.commitId, text, file, line);
+  }
+
+  vcsDiff(): Promise<Diff[]> {
+    return this.prService.diff();
+  }
+
+  vcsGetLatestCommitSha(): string {
+    return this.commitId;
+  }
+
+  vcsName(): string {
+    return 'GitHub';
+  }
+
+  async vcsRemoveExistingComments(): Promise<void> {
     const [userId, comments, reviews] = await Promise.all([
       this.prService.getCurrentUserId(),
       this.prService.listAllComments(),
