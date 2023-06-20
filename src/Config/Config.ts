@@ -104,7 +104,7 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
     default: false,
   })
   .option('dryRun', {
-    describe: 'Running codecoach without reporting to VCS',
+    describe: 'Running CodeCoach without reporting to VCS',
     type: 'boolean',
     default: false,
   })
