@@ -47,10 +47,12 @@ class App {
     const logs = await this.parseBuildData(configs.buildLogFile);
     Log.info('Build data parsing completed');
 
-    // Fire and forget, no need to await
-    App.writeLogToFile(logs)
-      .then(() => Log.info('Write output completed'))
-      .catch((error) => Log.error('Write output failed', { error }));
+    try {
+      await App.writeLogToFile(logs);
+      Log.info('Write output completed');
+    } catch (error) {
+      Log.error('Write output failed', { error });
+    }
 
     const passed = await this.vcs.report(logs);
     Log.info('Report to VCS completed');
