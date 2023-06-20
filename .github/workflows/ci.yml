@@ -51,7 +51,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ env.DOCKER_IMAGE_NAME }}
+          images: ${{ vars.DOCKER_IMAGE_NAME }}
           tags: |
             type=ref,event=pr
             type=sha
