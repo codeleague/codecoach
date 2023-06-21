@@ -28,7 +28,7 @@ describe('TSLintParser tests', () => {
     const result = new TSLintParser(cwd).parse(mockedContentString);
     expect(result).toHaveLength(2);
     expect(result[0]).toEqual({
-      problem: 'prefer-const',
+      ruleId: 'prefer-const',
       source: `src/app/mobile/component/Layout/Layout.tsx`,
       severity: LogSeverity.error,
       line: 56,

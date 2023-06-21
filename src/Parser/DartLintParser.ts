@@ -19,7 +19,7 @@ export class DartLintParser extends Parser {
   private static lineMatchToLog(lineMatch: RegExpMatchArray): LogType {
     const [, severityText, message, source, line, offset, log] = lineMatch;
     return {
-      problem: log,
+      ruleId: log,
       log: log,
       line: Number(line),
       lineOffset: Number(offset),
@@ -45,7 +45,7 @@ export class DartLintParser extends Parser {
   }
 
   private static emptyLog: LogType = {
-    problem: '',
+    ruleId: '',
     log: '',
     msg: '',
     severity: LogSeverity.unknown,

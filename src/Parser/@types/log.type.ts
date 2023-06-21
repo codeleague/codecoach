@@ -2,7 +2,7 @@ import { LogSeverity } from '..';
 import { ProjectType } from '../../Config/@enums';
 
 export type LogType = {
-  problem: string;
+  ruleId: string;
   log: string;
   msg: string;
   severity: LogSeverity;

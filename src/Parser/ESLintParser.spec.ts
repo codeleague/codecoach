@@ -54,7 +54,7 @@ describe('ESLintParser', () => {
     expect(result).toHaveLength(2);
 
     expect(result[0]).toEqual({
-      problem: '',
+      ruleId: '',
       source: '',
       severity: LogSeverity.error,
       line: 59,
@@ -62,10 +62,11 @@ describe('ESLintParser', () => {
       msg: `Parsing error: ')' expected.`,
       log: JSON.stringify(mockedContent[0].messages[0]),
       valid: false,
+      type: 'eslint',
     });
 
     expect(result[1]).toEqual({
-      problem: '@typescript-eslint/no-unused-vars',
+      ruleId: '@typescript-eslint/no-unused-vars',
       source: `src/app.ts`,
       severity: LogSeverity.warning,
       line: 24,
@@ -73,6 +74,7 @@ describe('ESLintParser', () => {
       msg: `'content' is defined but never used.`,
       log: JSON.stringify(mockedContent[1].messages[0]),
       valid: true,
+      type: 'eslint',
     });
   });
 

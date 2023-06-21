@@ -16,7 +16,7 @@ describe('DotnetBuildParser tests', () => {
     const result = new DotnetBuildParser(cwdWin).parse(logWithSource);
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
-      problem: 'AG0030',
+      ruleId: 'AG0030',
       source: `Broken.cs`,
       severity: LogSeverity.warning,
       line: 6,
@@ -32,7 +32,7 @@ describe('DotnetBuildParser tests', () => {
     const result = new DotnetBuildParser(cwdWin).parse(logWithNoSource);
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
-      problem: 'CS5001',
+      ruleId: 'CS5001',
       source: `Broken.csproj`,
       severity: LogSeverity.error,
       line: NaN,
@@ -48,7 +48,7 @@ describe('DotnetBuildParser tests', () => {
     const result = new DotnetBuildParser(cwdUnix).parse(logWithUnrelatedSource);
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
-      problem: 'MSB3277',
+      ruleId: 'MSB3277',
       source: `project.csproj`,
       severity: LogSeverity.warning,
       line: 2084,

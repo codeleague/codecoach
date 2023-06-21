@@ -9,7 +9,7 @@ describe('AndroidLintStyleParser', () => {
     expect(result).toHaveLength(3);
 
     expect(result[0]).toEqual({
-      problem: 'GradleDependency',
+      ruleId: 'GradleDependency',
       source: 'app/build.gradle',
       severity: LogSeverity.warning,
       line: 42,
@@ -21,7 +21,7 @@ describe('AndroidLintStyleParser', () => {
     });
 
     expect(result[1]).toEqual({
-      problem: 'MissingTranslation',
+      ruleId: 'MissingTranslation',
       source: `app/src/main/res/values/strings.xml`,
       severity: LogSeverity.error,
       line: 4,
@@ -33,7 +33,7 @@ describe('AndroidLintStyleParser', () => {
     });
 
     expect(result[2]).toEqual({
-      problem: 'SetJavaScriptEnabled',
+      ruleId: 'SetJavaScriptEnabled',
       source: `app/src/main/java/com/example/app/MainActivity.kt`,
       severity: LogSeverity.warning,
       line: 16,

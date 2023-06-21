@@ -32,7 +32,7 @@ export class AndroidLintStyleParser extends Parser {
     cwd: string,
   ): LogType {
     return {
-      problem: issue._attributes.id,
+      ruleId: issue._attributes.id,
       log: issue._attributes.errorLine1?.trim(),
       line: location._attributes.line,
       lineOffset: location._attributes.column,

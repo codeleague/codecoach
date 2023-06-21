@@ -12,7 +12,7 @@ describe('MSBuildParser tests', () => {
 
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
-      problem: 'CS0414',
+      ruleId: 'CS0414',
       source: `Project/Service/Provider.cs`,
       severity: LogSeverity.warning,
       line: 67,

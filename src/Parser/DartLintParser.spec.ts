@@ -27,7 +27,7 @@ describe('DartLintStyleParser', () => {
     expect(result).toHaveLength(4);
 
     expect(result[0]).toEqual({
-      problem: 'unused_import',
+      ruleId: 'unused_import',
       source: 'api/modules/lib/auth/auth.dart',
       severity: LogSeverity.info,
       line: 1,
@@ -39,7 +39,7 @@ describe('DartLintStyleParser', () => {
     });
 
     expect(result[1]).toEqual({
-      problem: 'await_only_futures',
+      ruleId: 'await_only_futures',
       source: `lib/domain/providers/sharable_images_repo.dart`,
       severity: LogSeverity.info,
       line: 114,
@@ -51,7 +51,7 @@ describe('DartLintStyleParser', () => {
     });
 
     expect(result[2]).toEqual({
-      problem: 'sort_child_properties_last',
+      ruleId: 'sort_child_properties_last',
       source: `lib/presentation/widgets/platform_flat_button.dart`,
       severity: LogSeverity.error,
       line: 34,
@@ -63,7 +63,7 @@ describe('DartLintStyleParser', () => {
     });
 
     expect(result[3]).toEqual({
-      problem: 'invalid_annotation_target',
+      ruleId: 'invalid_annotation_target',
       source: `test_driver/tests/offline/offline_test.dart`,
       severity: LogSeverity.error,
       line: 13,

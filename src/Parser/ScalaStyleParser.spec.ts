@@ -30,7 +30,7 @@ describe('ScalaStyleParser', () => {
     expect(result).toHaveLength(4);
 
     expect(result[0]).toEqual({
-      problem: 'Avoid mutable fields',
+      ruleId: 'Avoid mutable fields',
       source: '',
       severity: LogSeverity.error,
       line: 53,
@@ -42,7 +42,7 @@ describe('ScalaStyleParser', () => {
     });
 
     expect(result[1]).toEqual({
-      problem:
+      ruleId:
         'illegal start of definition: Token(VARID,yplTaxWithValue,1704,yplTaxWithValue)',
       source: `src/main/scala/code/dir/subdir/code-a.scala`,
       severity: LogSeverity.error,
@@ -55,7 +55,7 @@ describe('ScalaStyleParser', () => {
     });
 
     expect(result[2]).toEqual({
-      problem: 'Number of methods in class exceeds 30',
+      ruleId: 'Number of methods in class exceeds 30',
       source: `src/main/scala/code/dir/subdir/code-a.scala`,
       severity: LogSeverity.error,
       line: 7,
@@ -67,7 +67,7 @@ describe('ScalaStyleParser', () => {
     });
 
     expect(result[3]).toEqual({
-      problem: 'Avoid mutable local variables',
+      ruleId: 'Avoid mutable local variables',
       source: `src/main/scala/code/code-c.scala`,
       severity: LogSeverity.warning,
       line: 207,

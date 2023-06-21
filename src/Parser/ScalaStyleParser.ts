@@ -47,7 +47,7 @@ export class ScalaStyleParser extends Parser {
     raw: string | null,
   ): LogType {
     return {
-      problem: log._attributes.message,
+      ruleId: log._attributes.message,
       log: raw ?? '',
       line: log._attributes.line ?? undefined,
       lineOffset: log._attributes.column,

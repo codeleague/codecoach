@@ -46,7 +46,7 @@ export class DotnetBuildParser extends Parser {
     }
 
     return {
-      problem: errorCode,
+      ruleId: errorCode,
       log,
       line: Number(_line),
       lineOffset: Number(_lineOffset),

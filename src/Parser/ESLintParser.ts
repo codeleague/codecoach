@@ -1,3 +1,4 @@
+import { ProjectType } from '../Config/@enums';
 import { Log } from '../Logger';
 import { getRelativePath } from '../Provider/utils/path.util';
 import { LogSeverity } from './@enums/log.severity.enum';
@@ -24,7 +25,7 @@ export class ESLintParser extends Parser {
 
   private static toLog(log: ESLintIssue, source: string | null): LogType {
     return {
-      problem: log.ruleId ?? '',
+      ruleId: log.ruleId ?? '',
       log: JSON.stringify(log),
       line: log.line,
       lineOffset: log.column,
@@ -32,6 +33,7 @@ export class ESLintParser extends Parser {
       source: source ?? '',
       severity: ESLintParser.getSeverity(log.severity),
       valid: source !== null,
+      type: ProjectType.eslint,
     };
   }
 

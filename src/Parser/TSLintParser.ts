@@ -20,7 +20,7 @@ export class TSLintParser extends Parser {
 
   private toLog(log: TSLintLog): LogType {
     const parsed: LogType = {
-      problem: log.ruleName,
+      ruleId: log.ruleName,
       log: JSON.stringify(log),
       line: log.startPosition.line + 1,
       lineOffset: log.startPosition.character,

@@ -44,7 +44,7 @@ export class MSBuildParser extends Parser {
     const fileRelativePath = getRelativePath(this.cwd, fileFullPath);
 
     return {
-      problem: code,
+      ruleId: code,
       log,
       line: Number(_line),
       lineOffset: Number(_lineOffset),
