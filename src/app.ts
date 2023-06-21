@@ -45,23 +45,19 @@ class App {
     Log.info('Build data parsing completed');
 
     // report to VCS
-    const reportToVcs = new Promise(async (resolve) => {
-      if (!this.vcs) {
-        Log.info('Dry run enabled, skip reporting');
-        resolve(true);
-        return;
-      }
-
-      resolve(await this.vcs.report(logs));
-      Log.info('Report to VCS completed');
-    });
+    const reportToVcs = this.reportToVcs(this.vcs, logs)
+      .then(() => Log.info('Report to VCS completed'))
+      .catch((error) => {
+        Log.error('Report to VCS failed', { error });
+        throw error;
+      });
 
     // log to file
     const logToFile = App.writeLogToFile(logs)
       .then(() => Log.info('Write output completed'))
       .catch((error) => {
         Log.error('Write output failed', { error });
-        process.exit(1);
+        throw error;
       });
 
     const [passed] = await Promise.all([reportToVcs, logToFile]);
@@ -99,6 +95,16 @@ class App {
     });
 
     return (await Promise.all(logsTasks)).flatMap((x) => x);
+  }
+
+  private async reportToVcs(vcs: VCS | null, logs: LogType[]): Promise<boolean> {
+    if (!this.vcs) {
+      Log.info('Dry run enabled, skip reporting');
+      return true;
+    }
+
+    const passed = await this.vcs.report(logs);
+    return passed;
   }
 
   private static async writeLogToFile(logs: LogType[]): Promise<void> {
