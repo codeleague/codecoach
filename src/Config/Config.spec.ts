@@ -14,6 +14,7 @@ const mockLogFile = './sample/dotnetbuild/build.content';
 const mockLogCwd = '/repo/src';
 const mockBuildLogFile = `${mockLogType};${mockLogFile};${mockLogCwd}`;
 const mockOutput = './tmp/out.json';
+const mockSuppressPattern = '.*suppress-this.*';
 
 const GITHUB_ENV_ARGS = [
   'node',
@@ -40,6 +41,7 @@ const GITLAB_ENV_ARGS = [
   `-f=${mockBuildLogFile}`,
   `-o=${mockOutput}`,
   '--failOnWarnings',
+  `--suppressPattern=${mockSuppressPattern}`,
 ];
 
 const GITLAB_FILE_ARGS = ['node', 'app.ts', '--config=sample/config/gitlab.json'];
@@ -65,6 +67,7 @@ describe('Config parsing Test', () => {
     expect(config.githubToken).toBe(mockGitHubToken);
     expect(config.removeOldComment).toBe(true);
     expect(config.failOnWarnings).toBe(false);
+    expect(config.suppressPattern).toBe('');
 
     validateBuildLog(config.buildLogFile);
   });
@@ -78,6 +81,7 @@ describe('Config parsing Test', () => {
     expect(config.githubToken).toBe(mockGitHubToken);
     expect(config.removeOldComment).toBe(false);
     expect(config.failOnWarnings).toBe(false);
+    expect(config.suppressPattern).toBe('');
 
     validateBuildLog(config.buildLogFile);
   });
@@ -92,6 +96,7 @@ describe('Config parsing Test', () => {
     expect(config.gitlabToken).toBe(mockGitLabToken);
     expect(config.removeOldComment).toBe(false);
     expect(config.failOnWarnings).toBe(true);
+    expect(config.suppressPattern).toBe(mockSuppressPattern);
 
     validateBuildLog(config.buildLogFile);
   });
@@ -106,6 +111,7 @@ describe('Config parsing Test', () => {
     expect(config.gitlabToken).toBe(mockGitLabToken);
     expect(config.removeOldComment).toBe(true);
     expect(config.failOnWarnings).toBe(false);
+    expect(config.suppressPattern).toBe('');
 
     validateBuildLog(config.buildLogFile);
   });

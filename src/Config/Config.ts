@@ -104,6 +104,12 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
     describe: 'Fail the job if warnings are found',
     default: false,
   })
+  .option('suppressPattern', {
+    type: 'string',
+    describe:
+      'Regex pattern to suppress warnings, This will still be in the report but as suppressed',
+    default: '',
+  })
   .strict()
   .help()
   .wrap(120)
