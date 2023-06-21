@@ -1,3 +1,4 @@
+import { ProjectType } from '../Config/@enums';
 import { Log } from '../Logger';
 import { getRelativePath } from '../Provider/utils/path.util';
 import { LogSeverity } from './@enums/log.severity.enum';
@@ -19,6 +20,7 @@ export class TSLintParser extends Parser {
 
   private toLog(log: TSLintLog): LogType {
     const parsed: LogType = {
+      problem: log.ruleName,
       log: JSON.stringify(log),
       line: log.startPosition.line + 1,
       lineOffset: log.startPosition.character,
@@ -27,6 +29,7 @@ export class TSLintParser extends Parser {
       source: '',
       severity: log.ruleSeverity.toLowerCase() as LogSeverity,
       valid: true,
+      type: ProjectType.tslint,
     };
 
     const source = getRelativePath(this.cwd, log.name);

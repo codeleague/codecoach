@@ -9,6 +9,7 @@ describe('AndroidLintStyleParser', () => {
     expect(result).toHaveLength(3);
 
     expect(result[0]).toEqual({
+      problem: 'GradleDependency',
       source: 'app/build.gradle',
       severity: LogSeverity.warning,
       line: 42,
@@ -16,9 +17,11 @@ describe('AndroidLintStyleParser', () => {
       msg: `A newer version of org.jetbrains.kotlin:kotlin-stdlib than 1.3.72 is available: 1.4.20`,
       log: `implementation org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version`,
       valid: true,
+      type: 'androidlint',
     });
 
     expect(result[1]).toEqual({
+      problem: 'MissingTranslation',
       source: `app/src/main/res/values/strings.xml`,
       severity: LogSeverity.error,
       line: 4,
@@ -26,9 +29,11 @@ describe('AndroidLintStyleParser', () => {
       msg: `esp is not translated in (Thai)`,
       log: `<string name=esp>My Application</string>`,
       valid: true,
+      type: 'androidlint',
     });
 
     expect(result[2]).toEqual({
+      problem: 'SetJavaScriptEnabled',
       source: `app/src/main/java/com/example/app/MainActivity.kt`,
       severity: LogSeverity.warning,
       line: 16,
@@ -36,6 +41,7 @@ describe('AndroidLintStyleParser', () => {
       msg: `Using \`setJavaScriptEnabled\` can introduce XSS vulnerabilities into your application, review carefully`,
       log: `webView.settings.javaScriptEnabled = true`,
       valid: true,
+      type: 'androidlint',
     });
   });
 

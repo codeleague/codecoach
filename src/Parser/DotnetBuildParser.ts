@@ -7,6 +7,7 @@ import { Parser } from './@interfaces/parser.interface';
 import { LogType } from './@types';
 import { mapSeverity } from './utils/dotnetSeverityMap';
 import { splitByLine } from './utils/lineBreak.util';
+import { ProjectType } from '../Config/@enums';
 
 export class DotnetBuildParser extends Parser {
   parse(content: string): LogType[] {
@@ -45,6 +46,7 @@ export class DotnetBuildParser extends Parser {
     }
 
     return {
+      problem: errorCode,
       log,
       line: Number(_line),
       lineOffset: Number(_lineOffset),
@@ -52,6 +54,7 @@ export class DotnetBuildParser extends Parser {
       source: relativeSrcPath ?? basename(slash(_csproj)),
       severity: mapSeverity(severityText),
       valid: !!relativeSrcPath,
+      type: ProjectType.dotnetbuild,
     };
   }
 }

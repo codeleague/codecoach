@@ -28,6 +28,7 @@ describe('TSLintParser tests', () => {
     const result = new TSLintParser(cwd).parse(mockedContentString);
     expect(result).toHaveLength(2);
     expect(result[0]).toEqual({
+      problem: 'prefer-const',
       source: `src/app/mobile/component/Layout/Layout.tsx`,
       severity: LogSeverity.error,
       line: 56,
@@ -35,6 +36,7 @@ describe('TSLintParser tests', () => {
       msg: `Identifier 'a' is never reassigned; use 'const' instead of 'let'.`,
       log: JSON.stringify(mockedContent[0]),
       valid: true,
+      type: 'tslint',
     });
   });
 

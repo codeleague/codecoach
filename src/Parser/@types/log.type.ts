@@ -1,6 +1,8 @@
 import { LogSeverity } from '..';
+import { ProjectType } from '../../Config/@enums';
 
 export type LogType = {
+  problem: string;
   log: string;
   msg: string;
   severity: LogSeverity;
@@ -8,4 +10,5 @@ export type LogType = {
   line?: number;
   lineOffset?: number;
   valid: boolean;
+  type: ProjectType;
 };

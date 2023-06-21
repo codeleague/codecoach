@@ -54,6 +54,7 @@ describe('ESLintParser', () => {
     expect(result).toHaveLength(2);
 
     expect(result[0]).toEqual({
+      problem: '',
       source: '',
       severity: LogSeverity.error,
       line: 59,
@@ -64,6 +65,7 @@ describe('ESLintParser', () => {
     });
 
     expect(result[1]).toEqual({
+      problem: '@typescript-eslint/no-unused-vars',
       source: `src/app.ts`,
       severity: LogSeverity.warning,
       line: 24,

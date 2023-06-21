@@ -24,6 +24,7 @@ export class ESLintParser extends Parser {
 
   private static toLog(log: ESLintIssue, source: string | null): LogType {
     return {
+      problem: log.ruleId ?? '',
       log: JSON.stringify(log),
       line: log.line,
       lineOffset: log.column,
