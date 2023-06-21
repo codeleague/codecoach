@@ -14,4 +14,5 @@ export type ConfigArgument = {
   removeOldComment: boolean;
   failOnWarnings: boolean;
   suppressPattern: string;
+  dryRun: boolean;
 };

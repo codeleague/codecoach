@@ -46,6 +46,16 @@ const GITLAB_ENV_ARGS = [
 
 const GITLAB_FILE_ARGS = ['node', 'app.ts', '--config=sample/config/gitlab.json'];
 
+const DRYRUN_ENV_ARGS = [
+  'node',
+  'app.ts',
+  `-f=${mockBuildLogFile}`,
+  `-o=${mockOutput}`,
+  '--dryRun',
+];
+
+const DRYRUN_FILE_ARGS = ['node', 'app.ts', '--config=sample/config/dryrun.json'];
+
 describe('Config parsing Test', () => {
   beforeEach(() => {
     jest.resetModules();
@@ -112,6 +122,22 @@ describe('Config parsing Test', () => {
     expect(config.removeOldComment).toBe(true);
     expect(config.failOnWarnings).toBe(false);
     expect(config.suppressPattern).toBe('');
+
+    validateBuildLog(config.buildLogFile);
+  });
+
+  it('should be able to parse dryRun config provided by environment variables', async () => {
+    process.argv = DRYRUN_ENV_ARGS;
+    const config = (await import('./Config')).configs;
+    expect(config.dryRun).toBe(true);
+
+    validateBuildLog(config.buildLogFile);
+  });
+
+  it('should be able to parse dryRun config provided by file', async () => {
+    process.argv = DRYRUN_FILE_ARGS;
+    const config = (await import('./Config')).configs;
+    expect(config.dryRun).toBe(true);
 
     validateBuildLog(config.buildLogFile);
   });

@@ -14,7 +14,7 @@ export function groupComments(logs: LogType[]): Comment[] {
     const currentText = map?.[file]?.[line]?.text ?? '';
 
     const nextObject: Comment = {
-      text: `${currentText}\n${text}`,
+      text: `${currentText}${text}  \n`,
       errors: currentErrors + (severity === LogSeverity.error ? 1 : 0),
       warnings: currentWarnings + (severity === LogSeverity.warning ? 1 : 0),
       file,

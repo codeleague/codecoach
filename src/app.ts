@@ -22,7 +22,7 @@ import { GitLabAdapter } from './Provider/GitLab/GitLabAdapter';
 import { VCSAdapter } from './Provider/@interfaces/VCSAdapter';
 
 class App {
-  private vcs: VCS;
+  private vcs: VCS | null = null;
 
   async start(): Promise<void> {
     const adapter = App.getAdapter();
@@ -34,14 +34,9 @@ class App {
     const logs = await this.parseBuildData(configs.buildLogFile);
     Log.info('Build data parsing completed');
 
-    // Fire and forget, no need to await
-    App.writeLogToFile(logs)
-      .then(() => Log.info('Write output completed'))
-      .catch((error) => Log.error('Write output failed', { error }));
-
-    const passed = await this.vcs.report(logs);
-    Log.info('Report to VCS completed');
-
+    const reportToVcs = this.reportToVcs(logs);
+    const logToFile = App.writeLogToFile(logs);
+    const [passed] = await Promise.all([reportToVcs, logToFile]);
     if (!passed) {
       Log.error('There are some linting error and exit code reporting is enabled');
       process.exit(1);
@@ -91,8 +86,30 @@ class App {
     return (await Promise.all(logsTasks)).flatMap((x) => x);
   }
 
+  private async reportToVcs(logs: LogType[]): Promise<boolean> {
+    if (!this.vcs) {
+      Log.info('Dry run enabled, skip reporting');
+      return true;
+    }
+
+    try {
+      const passed = await this.vcs.report(logs);
+      Log.info('Report to VCS completed');
+      return passed;
+    } catch (error) {
+      Log.error('Report to VCS failed', { error });
+      throw error;
+    }
+  }
+
   private static async writeLogToFile(logs: LogType[]): Promise<void> {
-    await File.writeFileHelper(configs.output, JSON.stringify(logs, null, 2));
+    try {
+      await File.writeFileHelper(configs.output, JSON.stringify(logs, null, 2));
+      Log.info('Write output completed');
+    } catch (error) {
+      Log.error('Write output failed', { error });
+      throw error;
+    }
   }
 }
 
