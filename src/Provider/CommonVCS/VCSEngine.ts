@@ -2,40 +2,24 @@ import { VCS } from '../@interfaces/VCS';
 import { LogType } from '../../Parser';
 import { Log } from '../../Logger';
 import { Comment } from '../../AnalyzerBot/@types/CommentTypes';
-import { Diff } from '../../Git/@types/PatchTypes';
 import { VCSEngineConfig } from '../@interfaces/VCSEngineConfig';
 import { AnalyzerBot } from '../../AnalyzerBot/AnalyzerBot';
+import { VCSAdapter } from '../@interfaces/VCSAdapter';
 
-export abstract class VCSEngine implements VCS {
+export class VCSEngine implements VCS {
   protected analyzerBot: AnalyzerBot;
-  protected constructor(private readonly config: VCSEngineConfig) {}
-
-  abstract vcsGetLatestCommitSha(): string;
-  abstract vcsDiff(): Promise<Diff[]>;
-  abstract vcsCreateComment(comment: string): Promise<void>;
-  abstract vcsCreateReviewComment(
-    text: string,
-    file: string,
-    line: number,
-  ): Promise<void>;
-
-  abstract vcsRemoveExistingComments(): Promise<void>;
-  abstract vcsName(): string;
-
-  async vcsInit(): Promise<void> {
-    Log.info('Default VCS init, doing nothing');
-  }
-  async vcsWrapUp(result: boolean): Promise<boolean> {
-    return result;
-  }
+  constructor(
+    private readonly config: VCSEngineConfig,
+    private readonly adapter: VCSAdapter,
+  ) {}
 
   async report(logs: LogType[]): Promise<boolean> {
     try {
-      await this.vcsInit();
+      await this.adapter.init();
       await this.setup(logs);
 
       if (this.config.removeOldComment) {
-        await this.vcsRemoveExistingComments();
+        await this.adapter.removeExistingComments();
       }
 
       await Promise.all(
@@ -45,19 +29,18 @@ export abstract class VCSEngine implements VCS {
 
       Log.info('Report commit status completed');
     } catch (err) {
-      Log.error(`${this.vcsName()} report failed`, err);
+      Log.error(`${this.adapter.getName()} report failed`, err);
       throw err;
     }
-    const result = this.analyzerBot.isSuccess();
-    return await this.vcsWrapUp(result);
+    return await this.adapter.wrapUp(this.analyzerBot);
   }
 
   private async setup(logs: LogType[]) {
-    const touchedDiff = await this.vcsDiff();
+    const touchedDiff = await this.adapter.diff();
     this.analyzerBot = new AnalyzerBot(this.config, logs, touchedDiff);
 
     Log.debug(`VCS Setup`, {
-      sha: this.vcsGetLatestCommitSha(),
+      sha: this.adapter.getLatestCommitSha(),
       diff: touchedDiff,
       comments: this.analyzerBot.comments,
       err: this.analyzerBot.nError,
@@ -67,7 +50,7 @@ export abstract class VCSEngine implements VCS {
 
   private async createSummaryComment() {
     if (this.analyzerBot.shouldGenerateOverview()) {
-      await this.vcsCreateComment(this.analyzerBot.getOverviewMessage());
+      await this.adapter.createComment(this.analyzerBot.getOverviewMessage());
       Log.info('Create summary comment completed');
     } else {
       Log.info('No summary comment needed');
@@ -77,8 +60,8 @@ export abstract class VCSEngine implements VCS {
   private async createReviewComment(comment: Comment): Promise<Comment> {
     const { text, file, line } = comment;
 
-    await this.vcsCreateReviewComment(text, file, line);
-    Log.debug(`${this.vcsName()} create review success`, { text, file, line });
+    await this.adapter.createReviewComment(text, file, line);
+    Log.debug(`${this.adapter.getName()} create review success`, { text, file, line });
     return comment;
   }
 }
