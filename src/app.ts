@@ -44,7 +44,7 @@ class App {
     const logs = await this.parseBuildData(configs.buildLogFile);
     Log.info('Build data parsing completed');
 
-    const reportToVcs = this.reportToVcs(this.vcs, logs);
+    const reportToVcs = this.reportToVcs(logs);
     const logToFile = App.writeLogToFile(logs);
     const [passed] = await Promise.all([reportToVcs, logToFile]);
     if (!passed) {
@@ -83,7 +83,7 @@ class App {
     return (await Promise.all(logsTasks)).flatMap((x) => x);
   }
 
-  private async reportToVcs(vcs: VCS | null, logs: LogType[]): Promise<boolean> {
+  private async reportToVcs(logs: LogType[]): Promise<boolean> {
     if (!this.vcs) {
       Log.info('Dry run enabled, skip reporting');
       return true;
