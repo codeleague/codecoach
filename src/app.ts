@@ -44,22 +44,8 @@ class App {
     const logs = await this.parseBuildData(configs.buildLogFile);
     Log.info('Build data parsing completed');
 
-    // report to VCS
-    const reportToVcs = this.reportToVcs(this.vcs, logs)
-      .then(() => Log.info('Report to VCS completed'))
-      .catch((error) => {
-        Log.error('Report to VCS failed', { error });
-        throw error;
-      });
-
-    // log to file
-    const logToFile = App.writeLogToFile(logs)
-      .then(() => Log.info('Write output completed'))
-      .catch((error) => {
-        Log.error('Write output failed', { error });
-        throw error;
-      });
-
+    const reportToVcs = this.reportToVcs(this.vcs, logs);
+    const logToFile = App.writeLogToFile(logs);
     const [passed] = await Promise.all([reportToVcs, logToFile]);
     if (!passed) {
       Log.error('There are some linting error and exit code reporting is enabled');
@@ -103,12 +89,24 @@ class App {
       return true;
     }
 
-    const passed = await this.vcs.report(logs);
-    return passed;
+    try {
+      const passed = await this.vcs.report(logs);
+      Log.info('Report to VCS completed');
+      return passed;
+    } catch (error) {
+      Log.error('Report to VCS failed', { error });
+      throw error;
+    }
   }
 
   private static async writeLogToFile(logs: LogType[]): Promise<void> {
-    await File.writeFileHelper(configs.output, JSON.stringify(logs, null, 2));
+    try {
+      await File.writeFileHelper(configs.output, JSON.stringify(logs, null, 2));
+      Log.info('Write output completed');
+    } catch (error) {
+      Log.error('Write output failed', { error });
+      throw error;
+    }
   }
 }
 
