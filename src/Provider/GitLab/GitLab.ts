@@ -1,5 +1,4 @@
 import { VCS } from '../@interfaces/VCS';
-import { LogType } from '../../Parser';
 import { Diff } from '../../Git/@types/PatchTypes';
 import { Log } from '../../Logger';
 import { IGitLabMRService } from './IGitLabMRService';

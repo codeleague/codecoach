@@ -1,6 +1,5 @@
 import { VCS } from '..';
 import { Log } from '../../Logger';
-import { LogType } from '../../Parser';
 import { Diff } from '../../Git/@types/PatchTypes';
 import { CommitStatus } from './CommitStatus';
 import { IGitHubPRService } from './IGitHubPRService';
