@@ -6,16 +6,14 @@ import { onlyIn, onlySeverity } from '../utils/filter.util';
 import { groupComments } from '../utils/commentUtil';
 import { Comment } from '../@types/CommentTypes';
 import { Diff } from '../@types/PatchTypes';
+import { VCSEngineConfig } from '../@types/VCSEngineConfig';
 
 export abstract class VCSEngine implements VCS {
   private touchedDiff: Diff[];
   private comments: Comment[];
   protected nWarning: number;
   protected nError: number;
-  protected constructor(
-    private readonly removeOldComment: boolean = false,
-    private readonly failOnWarnings: boolean = false,
-  ) {}
+  protected constructor(private readonly config: VCSEngineConfig) {}
 
   abstract vcsGetLatestCommitSha(): string;
   abstract vcsDiff(): Promise<Diff[]>;
@@ -33,7 +31,7 @@ export abstract class VCSEngine implements VCS {
     try {
       await this.setup(logs);
 
-      if (this.removeOldComment) {
+      if (this.config.removeOldComment) {
         await this.vcsRemoveExistingComments();
       }
 
@@ -45,7 +43,9 @@ export abstract class VCSEngine implements VCS {
       Log.error(`${this.vcsName()} report failed`, err);
       throw err;
     }
-    return this.failOnWarnings ? this.nError + this.nWarning === 0 : this.nError === 0;
+    return this.config.failOnWarnings
+      ? this.nError + this.nWarning === 0
+      : this.nError === 0;
   }
 
   private async createSummaryComment() {

@@ -6,13 +6,13 @@ import { MessageUtil } from '../utils/message.util';
 import { CommitStatus } from './CommitStatus';
 import { IGitHubPRService } from './IGitHubPRService';
 import { VCSEngine } from '../CommonVCS/VCSEngine';
-import { ConfigArgument } from '../../Config';
+import { VCSEngineConfig } from '../@types/VCSEngineConfig';
 
 export class GitHub extends VCSEngine implements VCS {
   private commitId: string;
 
-  constructor(private readonly prService: IGitHubPRService, config: ConfigArgument) {
-    super(config.removeOldComment, config.failOnWarnings);
+  constructor(private readonly prService: IGitHubPRService, config: VCSEngineConfig) {
+    super(config);
   }
 
   async report(logs: LogType[]): Promise<boolean> {

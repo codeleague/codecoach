@@ -5,13 +5,13 @@ import { Log } from '../../Logger';
 import { IGitLabMRService } from './IGitLabMRService';
 import { DiffSchema } from '@gitbeaker/core/dist/types/types';
 import { VCSEngine } from '../CommonVCS/VCSEngine';
-import { ConfigArgument } from '../../Config';
+import { VCSEngineConfig } from '../@types/VCSEngineConfig';
 
 export class GitLab extends VCSEngine implements VCS {
   private latestMrVersion: DiffSchema;
 
-  constructor(private readonly mrService: IGitLabMRService, config: ConfigArgument) {
-    super(config.removeOldComment, config.failOnWarnings);
+  constructor(private readonly mrService: IGitLabMRService, config: VCSEngineConfig) {
+    super(config);
   }
 
   async report(logs: LogType[]): Promise<boolean> {
