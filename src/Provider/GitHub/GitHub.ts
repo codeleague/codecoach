@@ -5,7 +5,7 @@ import { Diff } from '../../Git/@types/PatchTypes';
 import { CommitStatus } from './CommitStatus';
 import { IGitHubPRService } from './IGitHubPRService';
 import { VCSEngine } from '../CommonVCS/VCSEngine';
-import { VCSEngineConfig } from '../@types/VCSEngineConfig';
+import { VCSEngineConfig } from '../@interfaces/VCSEngineConfig';
 
 export class GitHub extends VCSEngine implements VCS {
   private commitId: string;
@@ -14,9 +14,11 @@ export class GitHub extends VCSEngine implements VCS {
     super(config);
   }
 
-  async report(logs: LogType[]): Promise<boolean> {
-    await this.prSetup();
-    const result = await super.report(logs);
+  async vcsInit(): Promise<void> {
+    this.commitId = await this.prService.getLatestCommitSha();
+  }
+
+  async vcsWrapUp(result: boolean): Promise<boolean> {
     await this.setCommitStatus(result);
     return true;
   }
@@ -25,10 +27,6 @@ export class GitHub extends VCSEngine implements VCS {
     const commitStatus = result ? CommitStatus.success : CommitStatus.failure;
     const description = this.analyzerBot.getCommitDescription();
     await this.prService.setCommitStatus(this.commitId, commitStatus, description);
-  }
-
-  private async prSetup(): Promise<void> {
-    this.commitId = await this.prService.getLatestCommitSha();
   }
 
   vcsCreateComment(comment: string): Promise<void> {

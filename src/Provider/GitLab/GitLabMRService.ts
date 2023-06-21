@@ -1,5 +1,5 @@
 import { Diff } from '../../Git/@types/PatchTypes';
-import { getPatch } from '../utils/patchProcessor';
+import { getPatch } from '../../Git/utils/patchProcessor';
 import { IGitLabMRService } from './IGitLabMRService';
 import {
   MergeRequestNoteSchema,

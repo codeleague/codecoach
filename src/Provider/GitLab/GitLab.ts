@@ -5,7 +5,7 @@ import { Log } from '../../Logger';
 import { IGitLabMRService } from './IGitLabMRService';
 import { DiffSchema } from '@gitbeaker/core/dist/types/types';
 import { VCSEngine } from '../CommonVCS/VCSEngine';
-import { VCSEngineConfig } from '../@types/VCSEngineConfig';
+import { VCSEngineConfig } from '../@interfaces/VCSEngineConfig';
 
 export class GitLab extends VCSEngine implements VCS {
   private latestMrVersion: DiffSchema;
@@ -14,12 +14,7 @@ export class GitLab extends VCSEngine implements VCS {
     super(config);
   }
 
-  async report(logs: LogType[]): Promise<boolean> {
-    await this.mrSetup();
-    return await super.report(logs);
-  }
-
-  private async mrSetup() {
+  async vcsInit(): Promise<void> {
     this.latestMrVersion = await this.mrService.getLatestVersion();
   }
 

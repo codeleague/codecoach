@@ -3,7 +3,7 @@ import { LogType } from '../../Parser';
 import { Log } from '../../Logger';
 import { Comment } from '../../AnalyzerBot/@types/CommentTypes';
 import { Diff } from '../../Git/@types/PatchTypes';
-import { VCSEngineConfig } from '../@types/VCSEngineConfig';
+import { VCSEngineConfig } from '../@interfaces/VCSEngineConfig';
 import { AnalyzerBot } from '../../AnalyzerBot/AnalyzerBot';
 
 export abstract class VCSEngine implements VCS {
@@ -22,8 +22,16 @@ export abstract class VCSEngine implements VCS {
   abstract vcsRemoveExistingComments(): Promise<void>;
   abstract vcsName(): string;
 
+  async vcsInit(): Promise<void> {
+    Log.info('Default VCS init, doing nothing');
+  }
+  async vcsWrapUp(result: boolean): Promise<boolean> {
+    return result;
+  }
+
   async report(logs: LogType[]): Promise<boolean> {
     try {
+      await this.vcsInit();
       await this.setup(logs);
 
       if (this.config.removeOldComment) {
@@ -40,7 +48,8 @@ export abstract class VCSEngine implements VCS {
       Log.error(`${this.vcsName()} report failed`, err);
       throw err;
     }
-    return this.analyzerBot.isSuccess();
+    const result = this.analyzerBot.isSuccess();
+    return await this.vcsWrapUp(result);
   }
 
   private async setup(logs: LogType[]) {

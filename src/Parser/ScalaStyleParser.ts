@@ -1,5 +1,5 @@
 import { Log } from '../Logger';
-import { getRelativePath } from '../Provider/utils/path.util';
+import { getRelativePath } from './utils/path.util';
 import { LogSeverity } from './@enums/log.severity.enum';
 import { Parser } from './@interfaces/parser.interface';
 import { LogType } from './@types';
