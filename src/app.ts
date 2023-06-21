@@ -44,28 +44,27 @@ class App {
     const logs = await this.parseBuildData(configs.buildLogFile);
     Log.info('Build data parsing completed');
 
-    const [passed] = await Promise.all([
-      // report to VCS
-      new Promise(async (resolve) => {
-        if (!this.vcs) {
-          Log.info('Dry run enabled, skip reporting');
-          resolve(true);
-          return;
-        }
+    // report to VCS
+    const reportToVcs = new Promise(async (resolve) => {
+      if (!this.vcs) {
+        Log.info('Dry run enabled, skip reporting');
+        resolve(true);
+        return;
+      }
 
-        resolve(await this.vcs.report(logs));
-        Log.info('Report to VCS completed');
-      }),
+      resolve(await this.vcs.report(logs));
+      Log.info('Report to VCS completed');
+    });
 
-      // write log to file
-      App.writeLogToFile(logs)
-        .then(() => Log.info('Write output completed'))
-        .catch((error) => {
-          Log.error('Write output failed', { error });
-          process.exit(1);
-        }),
-    ]);
+    // log to file
+    const logToFile = App.writeLogToFile(logs)
+      .then(() => Log.info('Write output completed'))
+      .catch((error) => {
+        Log.error('Write output failed', { error });
+        process.exit(1);
+      });
 
+    const [passed] = await Promise.all([reportToVcs, logToFile]);
     if (!passed) {
       Log.error('There are some linting error and exit code reporting is enabled');
       process.exit(1);
