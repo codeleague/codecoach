@@ -1,4 +1,4 @@
-import { Patch } from '../@types/PatchTypes';
+import { Patch } from '../../Git/@types/PatchTypes';
 
 export function getPatch(patch?: string): Patch[] {
   if (!patch) return [];

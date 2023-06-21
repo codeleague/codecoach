@@ -1,4 +1,4 @@
-import { Diff } from '../@types/PatchTypes';
+import { Diff } from '../../Git/@types/PatchTypes';
 import { getPatch } from '../utils/patchProcessor';
 import { IGitLabMRService } from './IGitLabMRService';
 import {

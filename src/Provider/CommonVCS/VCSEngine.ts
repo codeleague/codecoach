@@ -1,18 +1,13 @@
 import { VCS } from '../@interfaces/VCS';
-import { LogSeverity, LogType } from '../../Parser';
+import { LogType } from '../../Parser';
 import { Log } from '../../Logger';
-import { MessageUtil } from '../utils/message.util';
-import { onlyIn, onlySeverity } from '../utils/filter.util';
-import { groupComments } from '../utils/commentUtil';
-import { Comment } from '../@types/CommentTypes';
-import { Diff } from '../@types/PatchTypes';
+import { Comment } from '../../AnalyzerBot/@types/CommentTypes';
+import { Diff } from '../../Git/@types/PatchTypes';
 import { VCSEngineConfig } from '../@types/VCSEngineConfig';
+import { AnalyzerBot } from '../../AnalyzerBot/AnalyzerBot';
 
 export abstract class VCSEngine implements VCS {
-  private touchedDiff: Diff[];
-  private comments: Comment[];
-  protected nWarning: number;
-  protected nError: number;
+  protected analyzerBot: AnalyzerBot;
   protected constructor(private readonly config: VCSEngineConfig) {}
 
   abstract vcsGetLatestCommitSha(): string;
@@ -35,7 +30,9 @@ export abstract class VCSEngine implements VCS {
         await this.vcsRemoveExistingComments();
       }
 
-      await Promise.all(this.comments.map((c) => this.createReviewComment(c)));
+      await Promise.all(
+        this.analyzerBot.comments.map((c) => this.createReviewComment(c)),
+      );
       await this.createSummaryComment();
 
       Log.info('Report commit status completed');
@@ -43,39 +40,29 @@ export abstract class VCSEngine implements VCS {
       Log.error(`${this.vcsName()} report failed`, err);
       throw err;
     }
-    return this.config.failOnWarnings
-      ? this.nError + this.nWarning === 0
-      : this.nError === 0;
+    return this.analyzerBot.isSuccess();
+  }
+
+  private async setup(logs: LogType[]) {
+    const touchedDiff = await this.vcsDiff();
+    this.analyzerBot = new AnalyzerBot(this.config, logs, touchedDiff);
+
+    Log.debug(`VCS Setup`, {
+      sha: this.vcsGetLatestCommitSha(),
+      diff: touchedDiff,
+      comments: this.analyzerBot.comments,
+      err: this.analyzerBot.nError,
+      warning: this.analyzerBot.nWarning,
+    });
   }
 
   private async createSummaryComment() {
-    if (this.nWarning + this.nError > 0) {
-      const overview = MessageUtil.generateOverviewMessage(this.nError, this.nWarning);
-      await this.vcsCreateComment(overview);
+    if (this.analyzerBot.shouldGenerateOverview()) {
+      await this.vcsCreateComment(this.analyzerBot.getOverviewMessage());
       Log.info('Create summary comment completed');
     } else {
       Log.info('No summary comment needed');
     }
-  }
-
-  private async setup(logs: LogType[]) {
-    this.touchedDiff = await this.vcsDiff();
-
-    const touchedFileLog = logs
-      .filter(onlySeverity(LogSeverity.error, LogSeverity.warning))
-      .filter(onlyIn(this.touchedDiff));
-
-    this.comments = groupComments(touchedFileLog);
-    this.nError = this.comments.reduce((sum, comment) => sum + comment.errors, 0);
-    this.nWarning = this.comments.reduce((sum, comment) => sum + comment.warnings, 0);
-
-    Log.debug(`VCS Setup`, {
-      sha: this.vcsGetLatestCommitSha(),
-      diff: this.touchedDiff,
-      comments: this.comments,
-      err: this.nError,
-      warning: this.nWarning,
-    });
   }
 
   private async createReviewComment(comment: Comment): Promise<Comment> {

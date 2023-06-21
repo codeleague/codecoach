@@ -1,8 +1,7 @@
 import { VCS } from '..';
 import { Log } from '../../Logger';
 import { LogType } from '../../Parser';
-import { Diff } from '../@types/PatchTypes';
-import { MessageUtil } from '../utils/message.util';
+import { Diff } from '../../Git/@types/PatchTypes';
 import { CommitStatus } from './CommitStatus';
 import { IGitHubPRService } from './IGitHubPRService';
 import { VCSEngine } from '../CommonVCS/VCSEngine';
@@ -24,7 +23,7 @@ export class GitHub extends VCSEngine implements VCS {
 
   private async setCommitStatus(result: boolean) {
     const commitStatus = result ? CommitStatus.success : CommitStatus.failure;
-    const description = MessageUtil.generateCommitDescription(this.nError);
+    const description = this.analyzerBot.getCommitDescription();
     await this.prService.setCommitStatus(this.commitId, commitStatus, description);
   }
 

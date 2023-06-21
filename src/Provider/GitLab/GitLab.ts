@@ -1,6 +1,6 @@
 import { VCS } from '../@interfaces/VCS';
 import { LogType } from '../../Parser';
-import { Diff } from '../@types/PatchTypes';
+import { Diff } from '../../Git/@types/PatchTypes';
 import { Log } from '../../Logger';
 import { IGitLabMRService } from './IGitLabMRService';
 import { DiffSchema } from '@gitbeaker/core/dist/types/types';

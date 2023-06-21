@@ -5,7 +5,7 @@ import { URL } from 'url';
 import { GITHUB_COM_API } from '../../app.constants';
 import { TIME_ZONE, USER_AGENT } from '../../Config/constants/defaults';
 import { Log } from '../../Logger';
-import { Diff } from '../@types/PatchTypes';
+import { Diff } from '../../Git/@types/PatchTypes';
 import { API_PAGE_SIZE_LIMIT } from '../constants/github.provider.constant';
 import { getPatch } from '../utils/patchProcessor';
 import { CommitStatus } from './CommitStatus';
