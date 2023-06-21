@@ -60,7 +60,10 @@ class App {
       // write log to file
       App.writeLogToFile(logs)
         .then(() => Log.info('Write output completed'))
-        .catch((error) => Log.error('Write output failed', { error })),
+        .catch((error) => {
+          Log.error('Write output failed', { error });
+          process.exit(1);
+        }),
     ]);
 
     if (!passed) {
