@@ -13,7 +13,6 @@ const args = yargs
     alias: 'g',
     describe: 'VCS Type',
     choices: ['github', 'gitlab'],
-    demandOption: true,
   })
 
   .option('githubRepoUrl', {
@@ -103,6 +102,16 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
     type: 'boolean',
     describe: 'Fail the job if warnings are found',
     default: false,
+  })
+  .option('dryRun', {
+    describe: 'Running CodeCoach without reporting to VCS',
+    type: 'boolean',
+    default: false,
+  })
+  .check((options) => {
+    if (options.dryRun) return true;
+    if (typeof options.vcs === 'undefined') throw 'VCS type is required';
+    return true;
   })
   .strict()
   .help()

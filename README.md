@@ -80,23 +80,24 @@ Will do the same thing.
 
 > Warning: If both config file and options are supplied, options will override config in file.
 
-| Option                    | Required               | Value                        | Description                                           | 
-|---------------------------|------------------------|------------------------------|-------------------------------------------------------|
-| `vcs` / `-g`              | yes                    | `github` or `gitlab`         |                                                       |
-|                           |                        |                              |                                                       |
-| `githubRepoUrl`           | when `vcs` is `github` |                              | Repository's HTTPS URL                                |
-| `githubPr`                | when `vcs` is `github` |                              | Pull request ID                                       |
-| `githubToken`             | when `vcs` is `github` |                              | Personal Access Token                                 |
-|                           |                        |                              |                                                       |
-| `gitlabHost`              | when `vcs` is `gitlab` | `https://gitlab.company.com` | GitLab Server (Could also be `https://gitlab.com`)    |
-| `gitlabProjectId`         | when `vcs` is `gitlab` |                              | Project ID                                            |
-| `gitlabMrIid`             | when `vcs` is `gitlab` |                              | MergeRequest IID (not to be confused with ID)         |
-| `gitlabToken`             | when `vcs` is `gitlab` |                              | Access Token                                          |
-|                           |                        |                              |                                                       |
-| `buildLogFile` / `-f`     | yes, repeatable        |                              | Read below                                            |
-| `output` / `-o`           | no                     |                              | CodeCoach parsed output for debugging                 |
-| `removeOldComment` / `-r` | no                     | `true` or `false`            | Remove CodeCoach's old comments before adding new one |
-| `failOnWarnings`          | no                     | `true` or `false`            | Fail the job when warnings are found                  |
+| Option                    | Required                  | Value                        | Description                                           | 
+|---------------------------|---------------------------|------------------------------|-------------------------------------------------------|
+| `vcs` / `-g`              | when `dryRun` is `false`  | `github` or `gitlab`         |                                                       |
+|                           |                           |                              |                                                       |
+| `githubRepoUrl`           | when `vcs` is `github`    |                              | Repository's HTTPS URL                                |
+| `githubPr`                | when `vcs` is `github`    |                              | Pull request ID                                       |
+| `githubToken`             | when `vcs` is `github`    |                              | Personal Access Token                                 |
+|                           |                           |                              |                                                       |
+| `gitlabHost`              | when `vcs` is `gitlab`    | `https://gitlab.company.com` | GitLab Server (Could also be `https://gitlab.com`)    |
+| `gitlabProjectId`         | when `vcs` is `gitlab`    |                              | Project ID                                            |
+| `gitlabMrIid`             | when `vcs` is `gitlab`    |                              | MergeRequest IID (not to be confused with ID)         |
+| `gitlabToken`             | when `vcs` is `gitlab`    |                              | Access Token                                          |
+|                           |                           |                              |                                                       |
+| `buildLogFile` / `-f`     | yes, repeatable           |                              | Read below                                            |
+| `output` / `-o`           | no                        |                              | CodeCoach parsed output for debugging                 |
+| `removeOldComment` / `-r` | no                        | `true` or `false`            | Remove CodeCoach's old comments before adding new one |
+| `failOnWarnings`          | no                        | `true` or `false`            | Fail the job when warnings are found                  |
+| `dryRun`                  | no                        | `true` or `false`            | Running CodeCoach without reporting to VCS            |
 
 
 ##### `--buildLogFile` or `-f`
