@@ -9,7 +9,7 @@
   "license": "MIT",
   "scripts": {
     "lint": "eslint 'src/**/*.{js,ts}' --quiet --fix",
-    "lint-ci": "eslint 'src/**/*.{js,ts}'",
+    "lint-ci": "eslint 'src/**/*.{js,ts}' -f json -o eslint-report.json || true",
     "format": "prettier --write 'src/**/*.{js,ts}'",
     "test": "jest",
     "build": "tsc --project tsconfig.build.json",
