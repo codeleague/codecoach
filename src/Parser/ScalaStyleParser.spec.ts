@@ -30,6 +30,7 @@ describe('ScalaStyleParser', () => {
     expect(result).toHaveLength(4);
 
     expect(result[0]).toEqual({
+      ruleId: 'some.gibberish.text.that.i.dont.wanna.keep.it',
       source: '',
       severity: LogSeverity.error,
       line: 53,
@@ -37,9 +38,11 @@ describe('ScalaStyleParser', () => {
       msg: `Avoid mutable fields`,
       log: `<error column="4" line="53" source="some.gibberish.text.that.i.dont.wanna.keep.it" severity="error" message="Avoid mutable fields"/>`,
       valid: false,
+      type: 'scalastyle',
     });
 
     expect(result[1]).toEqual({
+      ruleId: '',
       source: `src/main/scala/code/dir/subdir/code-a.scala`,
       severity: LogSeverity.error,
       line: undefined,
@@ -47,9 +50,11 @@ describe('ScalaStyleParser', () => {
       msg: `illegal start of definition: Token(VARID,yplTaxWithValue,1704,yplTaxWithValue)`,
       log: `<error severity="error" message="illegal start of definition: Token(VARID,yplTaxWithValue,1704,yplTaxWithValue)"/>`,
       valid: true,
+      type: 'scalastyle',
     });
 
     expect(result[2]).toEqual({
+      ruleId: 'some.gibberish.text.that.i.dont.wanna.keep.it',
       source: `src/main/scala/code/dir/subdir/code-a.scala`,
       severity: LogSeverity.error,
       line: 7,
@@ -57,9 +62,11 @@ describe('ScalaStyleParser', () => {
       msg: `Number of methods in class exceeds 30`,
       log: `<error column="7" line="7" source="some.gibberish.text.that.i.dont.wanna.keep.it" severity="error" message="Number of methods in class exceeds 30"/>`,
       valid: true,
+      type: 'scalastyle',
     });
 
     expect(result[3]).toEqual({
+      ruleId: 'some.gibberish.text.that.i.dont.wanna.keep.it',
       source: `src/main/scala/code/code-c.scala`,
       severity: LogSeverity.warning,
       line: 207,
@@ -67,6 +74,7 @@ describe('ScalaStyleParser', () => {
       msg: `Avoid mutable local variables`,
       log: `<error column="6" line="207" source="some.gibberish.text.that.i.dont.wanna.keep.it" severity="warning" message="Avoid mutable local variables"/>`,
       valid: true,
+      type: 'scalastyle',
     });
   });
 

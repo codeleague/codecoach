@@ -2,6 +2,7 @@ import { Parser } from './@interfaces/parser.interface';
 import { LogType } from './@types';
 import { LogSeverity } from './@enums/log.severity.enum';
 import { splitByLine } from './utils/lineBreak.util';
+import { ProjectType } from '../Config/@enums';
 
 export class DartLintParser extends Parser {
   parse(content: string): LogType[] {
@@ -18,6 +19,7 @@ export class DartLintParser extends Parser {
   private static lineMatchToLog(lineMatch: RegExpMatchArray): LogType {
     const [, severityText, message, source, line, offset, log] = lineMatch;
     return {
+      ruleId: log,
       log: log,
       line: Number(line),
       lineOffset: Number(offset),
@@ -25,6 +27,7 @@ export class DartLintParser extends Parser {
       source: source,
       severity: DartLintParser.stringToSeverity(severityText),
       valid: true,
+      type: ProjectType.dartlint,
     };
   }
 
@@ -42,10 +45,12 @@ export class DartLintParser extends Parser {
   }
 
   private static emptyLog: LogType = {
+    ruleId: '',
     log: '',
     msg: '',
     severity: LogSeverity.unknown,
     source: '',
     valid: false,
+    type: ProjectType.dartlint,
   };
 }
