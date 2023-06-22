@@ -6,9 +6,9 @@ on:
       - main
 
 jobs:
-  publish-npm:
+  publish-rc-npm:
     env:
-      VERSION: ${{ github.event.release.tag_name }}
+      VERSION: 0.0.0-rc${{ github.run_number }}
 
     runs-on: ubuntu-latest
 
@@ -32,12 +32,11 @@ jobs:
         run: yarn
 
       - name: Publish version ${{ env.VERSION }}
-        run: yarn publish --access public --new-version ${{ env.VERSION }} --no-git-tag-version
+        run: yarn publish --access public --new-version ${{ env.VERSION }} --tag rc --no-git-tag-version
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-  docker-build:
-    name: "docker: Build amd push"
+  publish-rc-docker:
     runs-on: ubuntu-latest
 
     steps:
@@ -54,7 +53,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: ${{ vars.DOCKER_IMAGE_NAME }}
-          tags: type=sha
+          tags: rc${{ github.run_number }}
           labels: ${{ vars.DOCKER_IMAGE_LABELS }}
 
       - name: Build and push prerelease image
@@ -65,5 +64,3 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-
-  
