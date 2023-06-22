@@ -1,6 +1,5 @@
 import { LogSeverity } from './@enums/log.severity.enum';
 import { MSBuildParser } from './MSBuildParser';
-import * as fs from 'fs/promises';
 
 describe('MSBuildParser tests', () => {
   const cwd = 'C:\\source';
@@ -12,6 +11,7 @@ describe('MSBuildParser tests', () => {
 
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
+      ruleId: 'CS0414',
       source: `Project/Service/Provider.cs`,
       severity: LogSeverity.warning,
       line: 67,
@@ -19,6 +19,7 @@ describe('MSBuildParser tests', () => {
       msg: `CS0414: The field 'Data.field' is assigned but its value is never used`,
       log,
       valid: true,
+      type: 'msbuild',
     });
   });
 

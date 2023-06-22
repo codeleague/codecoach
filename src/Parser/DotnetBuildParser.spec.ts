@@ -16,6 +16,7 @@ describe('DotnetBuildParser tests', () => {
     const result = new DotnetBuildParser(cwdWin).parse(logWithSource);
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
+      ruleId: 'AG0030',
       source: `Broken.cs`,
       severity: LogSeverity.warning,
       line: 6,
@@ -23,6 +24,7 @@ describe('DotnetBuildParser tests', () => {
       msg: `AG0030: Prevent use of dynamic`,
       log: logWithSource,
       valid: true,
+      type: 'dotnetbuild',
     } as LogType);
   });
 
@@ -30,6 +32,7 @@ describe('DotnetBuildParser tests', () => {
     const result = new DotnetBuildParser(cwdWin).parse(logWithNoSource);
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
+      ruleId: 'CS5001',
       source: `Broken.csproj`,
       severity: LogSeverity.error,
       line: NaN,
@@ -37,6 +40,7 @@ describe('DotnetBuildParser tests', () => {
       msg: `CS5001: Program does not contain a static 'Main' method suitable for an entry point`,
       log: logWithNoSource,
       valid: false,
+      type: 'dotnetbuild',
     } as LogType);
   });
 
@@ -44,6 +48,7 @@ describe('DotnetBuildParser tests', () => {
     const result = new DotnetBuildParser(cwdUnix).parse(logWithUnrelatedSource);
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
+      ruleId: 'MSB3277',
       source: `project.csproj`,
       severity: LogSeverity.warning,
       line: 2084,
@@ -51,6 +56,7 @@ describe('DotnetBuildParser tests', () => {
       msg: `MSB3277: some message`,
       log: logWithUnrelatedSource,
       valid: false,
+      type: 'dotnetbuild',
     } as LogType);
   });
 

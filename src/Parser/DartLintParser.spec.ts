@@ -27,6 +27,7 @@ describe('DartLintStyleParser', () => {
     expect(result).toHaveLength(4);
 
     expect(result[0]).toEqual({
+      ruleId: 'unused_import',
       source: 'api/modules/lib/auth/auth.dart',
       severity: LogSeverity.info,
       line: 1,
@@ -34,9 +35,11 @@ describe('DartLintStyleParser', () => {
       msg: `Unused import: 'dart:async'`,
       log: `unused_import`,
       valid: true,
+      type: 'dartlint',
     });
 
     expect(result[1]).toEqual({
+      ruleId: 'await_only_futures',
       source: `lib/domain/providers/sharable_images_repo.dart`,
       severity: LogSeverity.info,
       line: 114,
@@ -44,9 +47,11 @@ describe('DartLintStyleParser', () => {
       msg: `'await' applied to 'void', which is not a 'Future'`,
       log: `await_only_futures`,
       valid: true,
+      type: 'dartlint',
     });
 
     expect(result[2]).toEqual({
+      ruleId: 'sort_child_properties_last',
       source: `lib/presentation/widgets/platform_flat_button.dart`,
       severity: LogSeverity.error,
       line: 34,
@@ -54,9 +59,11 @@ describe('DartLintStyleParser', () => {
       msg: `Sort child properties last in widget instance creations`,
       log: `sort_child_properties_last`,
       valid: true,
+      type: 'dartlint',
     });
 
     expect(result[3]).toEqual({
+      ruleId: 'invalid_annotation_target',
       source: `test_driver/tests/offline/offline_test.dart`,
       severity: LogSeverity.error,
       line: 13,
@@ -64,6 +71,7 @@ describe('DartLintStyleParser', () => {
       msg: `The annotation 'Timeout' can only be used on libraries`,
       log: `invalid_annotation_target`,
       valid: true,
+      type: 'dartlint',
     });
   });
 

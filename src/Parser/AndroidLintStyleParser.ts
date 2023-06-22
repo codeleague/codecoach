@@ -6,6 +6,7 @@ import { xml2js } from 'xml-js';
 import { AndroidLintStyleIssue } from './@types/AndroidLintStyleIssue';
 import { AndroidLintStyleLog } from './@types/AndroidLintStyleLog';
 import { AndroidLintStyleLocation } from './@types/AndroidLintStyleLocation';
+import { ProjectType } from '../Config/@enums';
 
 export class AndroidLintStyleParser extends Parser {
   parse(content: string): LogType[] {
@@ -31,6 +32,7 @@ export class AndroidLintStyleParser extends Parser {
     cwd: string,
   ): LogType {
     return {
+      ruleId: issue._attributes.id,
       log: issue._attributes.errorLine1?.trim(),
       line: location._attributes.line,
       lineOffset: location._attributes.column,
@@ -40,6 +42,7 @@ export class AndroidLintStyleParser extends Parser {
         issue._attributes.severity.toLowerCase(),
       ),
       valid: true,
+      type: ProjectType.androidlint,
     };
   }
 

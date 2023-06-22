@@ -6,6 +6,7 @@ import { LogType } from './@types';
 import { xml2js } from 'xml-js';
 import { ScalaStyleLog } from './@types/ScalaStyleLog';
 import { ScalaStyleError } from './@types/ScalaStyleError';
+import { ProjectType } from '../Config/@enums';
 
 export class ScalaStyleParser extends Parser {
   parse(content: string): LogType[] {
@@ -46,6 +47,7 @@ export class ScalaStyleParser extends Parser {
     raw: string | null,
   ): LogType {
     return {
+      ruleId: log._attributes.source ?? '',
       log: raw ?? '',
       line: log._attributes.line ?? undefined,
       lineOffset: log._attributes.column,
@@ -53,6 +55,7 @@ export class ScalaStyleParser extends Parser {
       source: source ?? '',
       severity: ScalaStyleParser.getSeverity(log._attributes.severity),
       valid: source !== null,
+      type: ProjectType.scalastyle,
     };
   }
 
