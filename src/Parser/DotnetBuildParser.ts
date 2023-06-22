@@ -2,7 +2,7 @@ import { basename } from 'path';
 import slash from 'slash';
 
 import { Log } from '../Logger';
-import { getRelativePath } from '../Provider/utils/path.util';
+import { getRelativePath } from './utils/path.util';
 import { Parser } from './@interfaces/parser.interface';
 import { LogType } from './@types';
 import { mapSeverity } from './utils/dotnetSeverityMap';

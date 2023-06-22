@@ -1,5 +1,5 @@
 import { MergeRequestNoteSchema, DiffSchema } from '@gitbeaker/core/dist/types/types';
-import { Diff } from '../@types/PatchTypes';
+import { Diff } from '../../Git/@types/PatchTypes';
 
 export interface IGitLabMRService {
   createNote(note: string): Promise<void>;

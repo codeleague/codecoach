@@ -14,33 +14,23 @@ import {
   TSLintParser,
 } from './Parser';
 import { DartLintParser } from './Parser/DartLintParser';
-import { GitHub, GitHubPRService, VCS } from './Provider';
-import { GitLab } from './Provider/GitLab/GitLab';
+import { GitHubPRService, VCS } from './Provider';
 import { GitLabMRService } from './Provider/GitLab/GitLabMRService';
+import { GitHubAdapter } from './Provider/GitHub/GitHubAdapter';
+import { VCSEngine } from './Provider/CommonVCS/VCSEngine';
+import { GitLabAdapter } from './Provider/GitLab/GitLabAdapter';
+import { VCSAdapter } from './Provider/@interfaces/VCSAdapter';
 
 class App {
   private vcs: VCS | null = null;
 
   async start(): Promise<void> {
-    if (configs.vcs === 'github') {
-      const githubPRService = new GitHubPRService(
-        configs.githubToken,
-        configs.githubRepoUrl,
-        configs.githubPr,
-      );
-      this.vcs = new GitHub(
-        githubPRService,
-        configs.removeOldComment,
-        configs.failOnWarnings,
-      );
-    } else if (configs.vcs === 'gitlab') {
-      this.vcs = new GitLab(
-        new GitLabMRService(),
-        configs.removeOldComment,
-        configs.failOnWarnings,
-      );
+    const adapter = App.getAdapter();
+    if (!adapter) {
+      Log.error('VCS adapter is not found');
+      process.exit(1);
     }
-
+    this.vcs = new VCSEngine(configs, adapter);
     const logs = await this.parseBuildData(configs.buildLogFile);
     Log.info('Build data parsing completed');
 
@@ -50,6 +40,19 @@ class App {
     if (!passed) {
       Log.error('There are some linting error and exit code reporting is enabled');
       process.exit(1);
+    }
+  }
+
+  private static getAdapter(): VCSAdapter | undefined {
+    if (configs.vcs === 'github') {
+      const githubPRService = new GitHubPRService(
+        configs.githubToken,
+        configs.githubRepoUrl,
+        configs.githubPr,
+      );
+      return new GitHubAdapter(githubPRService);
+    } else if (configs.vcs === 'gitlab') {
+      return new GitLabAdapter(new GitLabMRService());
     }
   }
 

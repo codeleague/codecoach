@@ -1,4 +1,3 @@
-import { GitLab } from './GitLab';
 import { IGitLabMRService } from './IGitLabMRService';
 import {
   mockTouchDiff,
@@ -8,6 +7,9 @@ import {
   untouchedWarning,
 } from '../mockData';
 import { DiffSchema, MergeRequestNoteSchema } from '@gitbeaker/core/dist/types/types';
+import { ConfigArgument } from '../../Config';
+import { VCSEngine } from '../CommonVCS/VCSEngine';
+import { GitLabAdapter } from './GitLabAdapter';
 
 const mockCurrentUserId = 123456;
 const mockNoteIdToBeDeleted = 6544321;
@@ -33,10 +35,19 @@ class MrServiceMock implements IGitLabMRService {
   listAllNotes = jest.fn().mockResolvedValue(mockNotes);
 }
 
+const configs = {
+  removeOldComment: false,
+  failOnWarnings: false,
+} as ConfigArgument;
+
+function createGitLab(service: IGitLabMRService, configs: ConfigArgument) {
+  return new VCSEngine(configs, new GitLabAdapter(service));
+}
+
 describe('VCS: GitLab', () => {
   it('should returns true when there is no error', async () => {
     const service = new MrServiceMock();
-    const gitLab = new GitLab(service, true);
+    const gitLab = createGitLab(service, configs);
 
     const result = await gitLab.report([
       touchFileWarning,
@@ -49,7 +60,7 @@ describe('VCS: GitLab', () => {
 
   it('should returns false when there is some error', async () => {
     const service = new MrServiceMock();
-    const gitLab = new GitLab(service, true);
+    const gitLab = createGitLab(service, configs);
 
     const result = await gitLab.report([
       touchFileError,
@@ -63,7 +74,7 @@ describe('VCS: GitLab', () => {
 
   it('should remove old self comments and reviews and post new ones', async () => {
     const service = new MrServiceMock();
-    const gitLab = new GitLab(service, true);
+    const gitLab = createGitLab(service, { ...configs, removeOldComment: true });
 
     await gitLab.report([
       touchFileError,
@@ -99,7 +110,7 @@ describe('VCS: GitLab', () => {
 
   it('should not comment if there is no relevant lint issue', async () => {
     const service = new MrServiceMock();
-    const gitLab = new GitLab(service, true);
+    const gitLab = createGitLab(service, configs);
 
     await gitLab.report([untouchedError, untouchedWarning]);
 
@@ -110,7 +121,7 @@ describe('VCS: GitLab', () => {
   describe('when failOnWarnings is true', () => {
     it('should returns true when there is no error or warning', async () => {
       const service = new MrServiceMock();
-      const gitLab = new GitLab(service, true, true);
+      const gitLab = createGitLab(service, { ...configs, failOnWarnings: true });
 
       const result = await gitLab.report([untouchedError, untouchedWarning]);
 
@@ -119,7 +130,7 @@ describe('VCS: GitLab', () => {
 
     it('should returns false when there is some error', async () => {
       const service = new MrServiceMock();
-      const gitLab = new GitLab(service, true, true);
+      const gitLab = createGitLab(service, { ...configs, failOnWarnings: true });
 
       const result = await gitLab.report([
         touchFileError,
@@ -132,7 +143,7 @@ describe('VCS: GitLab', () => {
 
     it('should returns false when there is some warnings', async () => {
       const service = new MrServiceMock();
-      const gitLab = new GitLab(service, true, true);
+      const gitLab = createGitLab(service, { ...configs, failOnWarnings: true });
 
       const result = await gitLab.report([
         touchFileWarning,
