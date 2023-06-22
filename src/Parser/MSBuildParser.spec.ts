@@ -1,6 +1,5 @@
 import { LogSeverity } from './@enums/log.severity.enum';
 import { MSBuildParser } from './MSBuildParser';
-import * as fs from 'fs/promises';
 
 describe('MSBuildParser tests', () => {
   const cwd = 'C:\\source';

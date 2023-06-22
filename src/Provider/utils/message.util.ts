@@ -1,4 +1,4 @@
-import { LogSeverity, LogType } from '../../Parser';
+import { LogSeverity } from '../../Parser';
 
 const EMOJI_ERROR = ':rotating_light:';
 const EMOJI_WARNING = ':warning:';
