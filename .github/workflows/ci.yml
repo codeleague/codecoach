@@ -30,9 +30,60 @@ jobs:
 
       - run: yarn lint-ci
 
+      - name: Save linting context for CodeCoach
+        run: echo "ESLINT_CONTEXT=$(pwd)" >> $GITHUB_ENV
+
+      - name: Save eslint-report.json
+        uses: actions/upload-artifact@v3
+        with:
+          name: eslint-report
+          path: eslint-report.json
+          retention-days: 1
+
       - run: yarn test --ci
 
       - run: yarn build
+
+  codecoach:
+    needs: npm-build
+    runs-on: ubuntu-latest
+    container: encx/codecoach-cli
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Restore eslint-report.json
+        uses: actions/download-artifact@v3
+        with:
+          name: eslint-report
+          path: .
+
+      - name: CodeCoach
+        run: |
+          cat << EOF > codecoach.json
+          {
+            "vcs": "github",
+            "githubRepoUrl": "${{ github.server_url }}/${{ github.repository }}",
+            "githubPr": "${{ github.event.pull_request.number }}",
+            "githubToken": "${{ github.token }}",
+            "buildLogFile": [
+              "eslint;eslint-report.json;${ESLINT_CONTEXT}"
+            ],
+            "removeOldComment": true,
+            "output": "output.json"
+          }
+          EOF
+
+          codecoach --config="codecoach.json"
+
+      - name: Save CodeCoach debug info
+        uses: actions/upload-artifact@v3
+        with:
+          name: codecoach-debug
+          path: |
+            eslint-report.json
+            output.json
+            debug.log
 
   docker-build:
     name: "docker: Build"
