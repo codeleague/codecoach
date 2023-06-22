@@ -1,5 +1,5 @@
 import { LogSeverity, LogType } from '../../Parser';
-import { Diff } from '../@types/PatchTypes';
+import { Diff } from '../../Git/@types/PatchTypes';
 
 export const onlyIn = (diffs: Diff[]) => (log: LogType): boolean =>
   diffs.some(

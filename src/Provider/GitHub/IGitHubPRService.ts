@@ -1,4 +1,4 @@
-import { Diff } from '../@types/PatchTypes';
+import { Diff } from '../../Git/@types/PatchTypes';
 import { CommitStatus } from './CommitStatus';
 import {
   IssuesListCommentsResponseData,
