@@ -9,6 +9,5 @@ export interface VCSAdapter {
   diff(): Promise<Diff[]>;
   createComment(comment: string): Promise<void>;
   createReviewComment(text: string, file: string, line: number): Promise<void>;
-
   removeExistingComments(): Promise<void>;
 }

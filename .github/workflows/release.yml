@@ -81,10 +81,7 @@ jobs:
             type=semver,pattern={{major}}.{{minor}},value=${{ env.VERSION }}
             type=semver,pattern={{major}},value=${{ env.VERSION }}
             type=ref,event=pr
-          labels: |
-            org.opencontainers.image.title=CodeCoach
-            org.opencontainers.image.description=Automated code review tool
-            org.opencontainers.image.licenses=MIT
+          labels: ${{ vars.DOCKER_IMAGE_LABELS }}
 
       - name: Build and push
         uses: docker/build-push-action@v4
