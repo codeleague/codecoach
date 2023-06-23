@@ -5,18 +5,17 @@ import { groupComments } from './utils/commentUtil';
 import { MessageUtil } from './utils/message.util';
 import { AnalyzerBotConfig } from './@interfaces/AnalyzerBotConfig';
 import { Comment } from './@types/CommentTypes';
+import { IAnalyzerBot } from './@interfaces/IAnalyzerBot';
 
-export class AnalyzerBot {
-  readonly touchedFileLog: LogType[];
-  readonly comments: Comment[];
-  readonly nError: number;
-  readonly nWarning: number;
+export class AnalyzerBot implements IAnalyzerBot {
+  touchedFileLog: LogType[];
+  comments: Comment[];
+  nError: number;
+  nWarning: number;
 
-  constructor(
-    private readonly config: AnalyzerBotConfig,
-    private readonly logs: LogType[],
-    private readonly touchedDiff: Diff[],
-  ) {
+  constructor(private readonly config: AnalyzerBotConfig) {}
+
+  analyze(logs: LogType[], touchedDiff: Diff[]) {
     this.touchedFileLog = logs
       .filter(onlySeverity(LogSeverity.error, LogSeverity.warning))
       .filter(onlyIn(touchedDiff));

@@ -14,6 +14,7 @@ import {
 import { ConfigArgument } from '../../Config';
 import { VCSEngine } from '../CommonVCS/VCSEngine';
 import { GitHubAdapter } from './GitHubAdapter';
+import { AnalyzerBot } from '../../AnalyzerBot/AnalyzerBot';
 
 const mockedCommentId = 45346;
 const mockedReviewId = 324145;
@@ -47,7 +48,7 @@ const configs = {
 } as ConfigArgument;
 
 function createGitHub(service: IGitHubPRService, configs: ConfigArgument) {
-  return new VCSEngine(configs, new GitHubAdapter(service));
+  return new VCSEngine(configs, new AnalyzerBot(configs), new GitHubAdapter(service));
 }
 
 describe('VCS: GitHub', () => {

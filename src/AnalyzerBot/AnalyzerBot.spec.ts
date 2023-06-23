@@ -18,17 +18,18 @@ const config: AnalyzerBotConfig = {
 describe('AnalyzerBot', () => {
   const logs = [touchFileError, touchFileWarning, untouchedError, untouchedWarning];
   const diff = [mockTouchDiff];
+  const analyzer = new AnalyzerBot(config);
 
   describe('.touchedFileLog', () => {
     it('should return only logs that are in touchedDiff', () => {
-      const analyzer = new AnalyzerBot(config, logs, diff);
+      analyzer.analyze(logs, diff);
       expect(analyzer.touchedFileLog).toEqual([touchFileError, touchFileWarning]);
     });
   });
 
   describe('.comments', () => {
     it('should returns comments for each touched file', () => {
-      const analyzer = new AnalyzerBot(config, logs, diff);
+      analyzer.analyze(logs, diff);
       expect(analyzer.comments).toEqual([
         {
           file: mockTouchFile,
@@ -56,40 +57,40 @@ describe('AnalyzerBot', () => {
     });
 
     it('should be empty when there is no relevant lint errors', () => {
-      const analyzer = new AnalyzerBot(config, [untouchedError, untouchedWarning], diff);
+      analyzer.analyze([untouchedError, untouchedWarning], diff);
       expect(analyzer.comments).toEqual([]);
     });
   });
 
   describe('.nError', () => {
     it('should return the number of related lint errors', () => {
-      const analyzer = new AnalyzerBot(config, logs, diff);
+      analyzer.analyze(logs, diff);
       expect(analyzer.nError).toEqual(1);
     });
   });
 
   describe('.nWarning', () => {
     it('should return the number of related lint warnings', () => {
-      const analyzer = new AnalyzerBot(config, logs, diff);
+      analyzer.analyze(logs, diff);
       expect(analyzer.nWarning).toEqual(1);
     });
   });
 
   describe('.shouldGenerateOverview', () => {
     it('should return true when there is at least one lint error or warning', () => {
-      const analyzer = new AnalyzerBot(config, logs, diff);
+      analyzer.analyze(logs, diff);
       expect(analyzer.shouldGenerateOverview()).toEqual(true);
     });
 
     it('should return false when there is no lint error or warning', () => {
-      const analyzer = new AnalyzerBot(config, [untouchedError, untouchedWarning], diff);
+      analyzer.analyze([untouchedError, untouchedWarning], diff);
       expect(analyzer.shouldGenerateOverview()).toEqual(false);
     });
   });
 
   describe('.getOverviewMessage', () => {
     it('should return a proxy result from MessageUtil.generateOverviewMessage based on the number of errors and warnings', () => {
-      const analyzer = new AnalyzerBot(config, logs, diff);
+      analyzer.analyze(logs, diff);
       expect(analyzer.getOverviewMessage()).toEqual(
         MessageUtil.generateOverviewMessage(analyzer.nError, analyzer.nWarning),
       );
@@ -98,7 +99,7 @@ describe('AnalyzerBot', () => {
 
   describe('.getCommitDescription', () => {
     it('should return a proxy result from MessageUtil.generateCommitDescription based on the number of errors', () => {
-      const analyzer = new AnalyzerBot(config, logs, diff);
+      analyzer.analyze(logs, diff);
       expect(analyzer.getCommitDescription()).toEqual(
         MessageUtil.generateCommitDescription(analyzer.nError),
       );
@@ -108,53 +109,36 @@ describe('AnalyzerBot', () => {
   describe('.isSuccess', () => {
     describe('when failOnWarnings is false', () => {
       it('should return true when there is no lint error or warning', () => {
-        const analyzer = new AnalyzerBot(
-          config,
-          [untouchedError, untouchedWarning],
-          diff,
-        );
+        analyzer.analyze([untouchedError, untouchedWarning], diff);
         expect(analyzer.isSuccess()).toEqual(true);
       });
 
       it('should return true when there is only lint warnings', () => {
-        const analyzer = new AnalyzerBot(
-          config,
-          [touchFileWarning, untouchedError, untouchedWarning],
-          diff,
-        );
+        analyzer.analyze([touchFileWarning, untouchedError, untouchedWarning], diff);
         expect(analyzer.isSuccess()).toEqual(true);
       });
 
       it('should return false when there is at least one lint error', () => {
-        const analyzer = new AnalyzerBot(config, logs, diff);
+        analyzer.analyze(logs, diff);
         expect(analyzer.isSuccess()).toEqual(false);
       });
     });
 
     describe('when failOnWarnings is true', () => {
-      const config: AnalyzerBotConfig = {
-        failOnWarnings: true,
-      };
+      const analyzer = new AnalyzerBot({ ...config, failOnWarnings: true });
+
       it('should return true when there is no lint error or warning', () => {
-        const analyzer = new AnalyzerBot(
-          config,
-          [untouchedError, untouchedWarning],
-          diff,
-        );
+        analyzer.analyze([untouchedError, untouchedWarning], diff);
         expect(analyzer.isSuccess()).toEqual(true);
       });
 
       it('should return false when there is a lint warning', () => {
-        const analyzer = new AnalyzerBot(
-          config,
-          [touchFileWarning, untouchedError, untouchedWarning],
-          diff,
-        );
+        analyzer.analyze([touchFileWarning, untouchedError, untouchedWarning], diff);
         expect(analyzer.isSuccess()).toEqual(false);
       });
 
       it('should return false when there is a lint error', () => {
-        const analyzer = new AnalyzerBot(config, logs, diff);
+        analyzer.analyze(logs, diff);
         expect(analyzer.isSuccess()).toEqual(false);
       });
     });

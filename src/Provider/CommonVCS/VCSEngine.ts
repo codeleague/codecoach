@@ -3,13 +3,13 @@ import { LogType } from '../../Parser';
 import { Log } from '../../Logger';
 import { Comment } from '../../AnalyzerBot/@types/CommentTypes';
 import { VCSEngineConfig } from '../@interfaces/VCSEngineConfig';
-import { AnalyzerBot } from '../../AnalyzerBot/AnalyzerBot';
 import { VCSAdapter } from '../@interfaces/VCSAdapter';
+import { IAnalyzerBot } from '../../AnalyzerBot/@interfaces/IAnalyzerBot';
 
 export class VCSEngine implements VCS {
-  protected analyzerBot: AnalyzerBot;
   constructor(
     private readonly config: VCSEngineConfig,
+    private readonly analyzerBot: IAnalyzerBot,
     private readonly adapter: VCSAdapter,
   ) {}
 
@@ -37,7 +37,7 @@ export class VCSEngine implements VCS {
 
   private async setup(logs: LogType[]) {
     const touchedDiff = await this.adapter.diff();
-    this.analyzerBot = new AnalyzerBot(this.config, logs, touchedDiff);
+    this.analyzerBot.analyze(logs, touchedDiff);
 
     Log.debug(`VCS Setup`, {
       sha: this.adapter.getLatestCommitSha(),

@@ -20,6 +20,7 @@ import { GitHubAdapter } from './Provider/GitHub/GitHubAdapter';
 import { VCSEngine } from './Provider/CommonVCS/VCSEngine';
 import { GitLabAdapter } from './Provider/GitLab/GitLabAdapter';
 import { VCSAdapter } from './Provider/@interfaces/VCSAdapter';
+import { AnalyzerBot } from './AnalyzerBot/AnalyzerBot';
 
 class App {
   private vcs: VCS | null = null;
@@ -30,7 +31,8 @@ class App {
       Log.error('VCS adapter is not found');
       process.exit(1);
     }
-    this.vcs = new VCSEngine(configs, adapter);
+    const analyzer = new AnalyzerBot(configs);
+    this.vcs = new VCSEngine(configs, analyzer, adapter);
     const logs = await this.parseBuildData(configs.buildLogFile);
     Log.info('Build data parsing completed');
 
