@@ -10,6 +10,7 @@ import { DiffSchema, MergeRequestNoteSchema } from '@gitbeaker/core/dist/types/t
 import { ConfigArgument } from '../../Config';
 import { VCSEngine } from '../CommonVCS/VCSEngine';
 import { GitLabAdapter } from './GitLabAdapter';
+import { AnalyzerBot } from '../../AnalyzerBot/AnalyzerBot';
 
 const mockCurrentUserId = 123456;
 const mockNoteIdToBeDeleted = 6544321;
@@ -41,7 +42,7 @@ const configs = {
 } as ConfigArgument;
 
 function createGitLab(service: IGitLabMRService, configs: ConfigArgument) {
-  return new VCSEngine(configs, new GitLabAdapter(service));
+  return new VCSEngine(configs, new AnalyzerBot(configs), new GitLabAdapter(service));
 }
 
 describe('VCS: GitLab', () => {

@@ -1,9 +1,9 @@
 import { VCSAdapter } from '../@interfaces/VCSAdapter';
 import { Diff } from '../../Git/@types/PatchTypes';
-import { AnalyzerBot } from '../../AnalyzerBot/AnalyzerBot';
 import { Log } from '../../Logger';
 import { IGitLabMRService } from './IGitLabMRService';
 import { DiffSchema } from '@gitbeaker/core/dist/types/types';
+import { IAnalyzerBot } from '../../AnalyzerBot/@interfaces/IAnalyzerBot';
 
 export class GitLabAdapter implements VCSAdapter {
   private latestMrVersion: DiffSchema;
@@ -13,7 +13,7 @@ export class GitLabAdapter implements VCSAdapter {
     this.latestMrVersion = await this.mrService.getLatestVersion();
   }
 
-  async wrapUp(analyzer: AnalyzerBot): Promise<boolean> {
+  async wrapUp(analyzer: IAnalyzerBot): Promise<boolean> {
     return analyzer.isSuccess();
   }
 

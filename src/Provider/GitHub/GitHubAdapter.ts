@@ -2,8 +2,8 @@ import { VCSAdapter } from '../@interfaces/VCSAdapter';
 import { IGitHubPRService } from './IGitHubPRService';
 import { Diff } from '../../Git/@types/PatchTypes';
 import { CommitStatus } from './CommitStatus';
-import { AnalyzerBot } from '../../AnalyzerBot/AnalyzerBot';
 import { Log } from '../../Logger';
+import { IAnalyzerBot } from '../../AnalyzerBot/@interfaces/IAnalyzerBot';
 
 export class GitHubAdapter implements VCSAdapter {
   private commitId: string;
@@ -13,7 +13,7 @@ export class GitHubAdapter implements VCSAdapter {
     this.commitId = await this.prService.getLatestCommitSha();
   }
 
-  async wrapUp(analyzer: AnalyzerBot): Promise<boolean> {
+  async wrapUp(analyzer: IAnalyzerBot): Promise<boolean> {
     await this.setCommitStatus(analyzer);
     return true;
   }
@@ -57,7 +57,7 @@ export class GitHubAdapter implements VCSAdapter {
     Log.debug('Delete CodeCoach comments completed');
   }
 
-  private async setCommitStatus(analyzer: AnalyzerBot) {
+  private async setCommitStatus(analyzer: IAnalyzerBot) {
     const result = analyzer.isSuccess();
     const commitStatus = result ? CommitStatus.success : CommitStatus.failure;
     const description = analyzer.getCommitDescription();
