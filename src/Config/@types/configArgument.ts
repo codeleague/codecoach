@@ -1,17 +1,4 @@
-import { BuildLogFile } from './buildLogFile';
+import { z } from 'zod';
+import { configSchema } from '../Config';
 
-export type ConfigArgument = {
-  vcs: 'gitlab' | 'github';
-  githubRepoUrl: string;
-  githubPr: number;
-  githubToken: string;
-  gitlabHost: string;
-  gitlabProjectId: number;
-  gitlabMrIid: number;
-  gitlabToken: string;
-  buildLogFile: BuildLogFile[];
-  output: string; // =logFilePath
-  removeOldComment: boolean;
-  failOnWarnings: boolean;
-  dryRun: boolean;
-};
+export type ConfigArgument = z.infer<typeof configSchema>;
