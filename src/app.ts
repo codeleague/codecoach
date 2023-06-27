@@ -43,40 +43,50 @@ class App {
     }
   }
 
+  private static getGitHubAdapter(): GitHubAdapter | undefined {
+    if (!configs.githubToken || !configs.githubRepoUrl || !configs.githubPr) {
+      Log.error('GitHub requires githubToken, githubRepoUrl and githubPr to be set');
+      return undefined;
+    }
+
+    const githubPRService = new GitHubPRService(
+      configs.githubToken,
+      configs.githubRepoUrl,
+      configs.githubPr,
+    );
+    return new GitHubAdapter(githubPRService);
+  }
+
+  private static getGitLabAdapter(): GitLabAdapter | undefined {
+    if (
+      !configs.gitlabToken ||
+      !configs.gitlabHost ||
+      !configs.gitlabProjectId ||
+      !configs.gitlabMrIid
+    ) {
+      Log.error(
+        'GitLab requires gitlabToken, gitlabHost, gitlabProjectId and gitlabMrIid to be set',
+      );
+      return undefined;
+    }
+
+    const gitlabMRService = new GitLabMRService(
+      configs.gitlabToken,
+      configs.gitlabHost,
+      configs.gitlabProjectId,
+      configs.gitlabMrIid,
+    );
+    return new GitLabAdapter(gitlabMRService);
+  }
+
   private static getAdapter(): VCSAdapter | undefined {
     if (configs.vcs === 'github') {
-      if (!configs.githubToken || !configs.githubRepoUrl || !configs.githubPr) {
-        Log.error('GitHub requires githubToken, githubRepoUrl and githubPr to be set');
-        return undefined;
-      }
-
-      const githubPRService = new GitHubPRService(
-        configs.githubToken,
-        configs.githubRepoUrl,
-        configs.githubPr,
-      );
-      return new GitHubAdapter(githubPRService);
+      return this.getGitHubAdapter();
     } else if (configs.vcs === 'gitlab') {
-      if (
-        !configs.gitlabToken ||
-        !configs.gitlabHost ||
-        !configs.gitlabProjectId ||
-        !configs.gitlabMrIid
-      ) {
-        Log.error(
-          'GitLab requires gitlabToken, gitlabHost, gitlabProjectId and gitlabMrIid to be set',
-        );
-        return undefined;
-      }
-
-      const gitlabMRService = new GitLabMRService(
-        configs.gitlabToken,
-        configs.gitlabHost,
-        configs.gitlabProjectId,
-        configs.gitlabMrIid,
-      );
-      return new GitLabAdapter(gitlabMRService);
+      return this.getGitLabAdapter();
     }
+
+    return undefined;
   }
 
   private static getParser(type: ProjectType, cwd: string): Parser {
