@@ -45,6 +45,11 @@ class App {
 
   private static getAdapter(): VCSAdapter | undefined {
     if (configs.vcs === 'github') {
+      if (!configs.githubToken || !configs.githubRepoUrl || !configs.githubPr) {
+        Log.error('GitHub requires githubToken, githubRepoUrl and githubPr to be set');
+        return undefined;
+      }
+
       const githubPRService = new GitHubPRService(
         configs.githubToken,
         configs.githubRepoUrl,
@@ -52,7 +57,25 @@ class App {
       );
       return new GitHubAdapter(githubPRService);
     } else if (configs.vcs === 'gitlab') {
-      return new GitLabAdapter(new GitLabMRService());
+      if (
+        !configs.gitlabToken ||
+        !configs.gitlabHost ||
+        !configs.gitlabProjectId ||
+        !configs.gitlabMrIid
+      ) {
+        Log.error(
+          'GitLab requires gitlabToken, gitlabHost, gitlabProjectId and gitlabMrIid to be set',
+        );
+        return undefined;
+      }
+
+      const gitlabMRService = new GitLabMRService(
+        configs.gitlabToken,
+        configs.gitlabHost,
+        configs.gitlabProjectId,
+        configs.gitlabMrIid,
+      );
+      return new GitLabAdapter(gitlabMRService);
     }
   }
 

@@ -9,20 +9,17 @@ import {
 import * as Resource from '@gitbeaker/core/dist/types/resources';
 import { Gitlab } from '@gitbeaker/node';
 
-import { configs } from '../../Config';
-
 export class GitLabMRService implements IGitLabMRService {
   private readonly projectId: number;
   private readonly mrIid: number;
   private readonly api: Resource.Gitlab;
 
-  constructor() {
-    this.projectId = configs.gitlabProjectId;
-    this.mrIid = configs.gitlabMrIid;
-
+  constructor(token: string, host: string, projectId: number, mrIid: number) {
+    this.projectId = projectId;
+    this.mrIid = mrIid;
     this.api = new Gitlab({
-      host: configs.gitlabHost,
-      token: configs.gitlabToken,
+      host: host,
+      token: token,
     });
   }
 

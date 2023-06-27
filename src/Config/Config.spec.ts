@@ -12,47 +12,47 @@ const mockGitLabToken = 'mockGitLabToken';
 const mockLogType = 'dotnetbuild';
 const mockLogFile = './sample/dotnetbuild/build.content';
 const mockLogCwd = '/repo/src';
-// const mockBuildLogFile = `${mockLogType};${mockLogFile};${mockLogCwd}`;
-// const mockOutput = './tmp/out.json';
+const mockBuildLogFile = `${mockLogType};${mockLogFile};${mockLogCwd}`;
+const mockOutput = './tmp/out.json';
 
-// const GITHUB_ENV_ARGS = [
-//   'node',
-//   'app.ts',
-//   '--vcs="github"',
-//   `--githubRepoUrl=${mockGitHubRepo}`,
-//   `--githubPr=${mockGitHubPr}`,
-//   `--githubToken=${mockGitHubToken}`,
-//   '--removeOldComment',
-//   `-f=${mockBuildLogFile}`,
-//   `-o=${mockOutput}`,
-// ];
+const GITHUB_ENV_ARGS = [
+  'node',
+  'app.ts',
+  '--vcs="github"',
+  `--githubRepoUrl=${mockGitHubRepo}`,
+  `--githubPr=${mockGitHubPr}`,
+  `--githubToken=${mockGitHubToken}`,
+  '--removeOldComment',
+  `-f=${mockBuildLogFile}`,
+  `-o=${mockOutput}`,
+];
 
-const GITHUB_FILE_ARGS = ['node', 'app.ts', '--file=sample/config/github.js'];
+const GITHUB_FILE_ARGS = ['node', 'app.ts', '--config=sample/config/github.js'];
 
-// const GITLAB_ENV_ARGS = [
-//   'node',
-//   'app.ts',
-//   '--vcs="gitlab"',
-//   `--gitlabHost=${mockGitLabHost}`,
-//   `--gitlabProjectId=${mockGitLabProjectId}`,
-//   `--gitlabMrIid=${mockGitLabMrIid}`,
-//   `--gitlabToken=${mockGitLabToken}`,
-//   `-f=${mockBuildLogFile}`,
-//   `-o=${mockOutput}`,
-//   '--failOnWarnings',
-// ];
+const GITLAB_ENV_ARGS = [
+  'node',
+  'app.ts',
+  '--vcs="gitlab"',
+  `--gitlabHost=${mockGitLabHost}`,
+  `--gitlabProjectId=${mockGitLabProjectId}`,
+  `--gitlabMrIid=${mockGitLabMrIid}`,
+  `--gitlabToken=${mockGitLabToken}`,
+  `-f=${mockBuildLogFile}`,
+  `-o=${mockOutput}`,
+  '--failOnWarnings',
+];
 
-const GITLAB_FILE_ARGS = ['node', 'app.ts', '--file=sample/config/gitlab.js'];
+const GITLAB_FILE_ARGS = ['node', 'app.ts', '--config=sample/config/gitlab.js'];
 
-// const DRYRUN_ENV_ARGS = [
-//   'node',
-//   'app.ts',
-//   `-f=${mockBuildLogFile}`,
-//   `-o=${mockOutput}`,
-//   '--dryRun',
-// ];
+const DRYRUN_ENV_ARGS = [
+  'node',
+  'app.ts',
+  `-f=${mockBuildLogFile}`,
+  `-o=${mockOutput}`,
+  '--dryRun',
+];
 
-const DRYRUN_FILE_ARGS = ['node', 'app.ts', '--file=sample/config/dryrun.js'];
+const DRYRUN_FILE_ARGS = ['node', 'app.ts', '--config=sample/config/dryrun.js'];
 
 describe('Config parsing Test', () => {
   beforeEach(() => {
@@ -66,18 +66,18 @@ describe('Config parsing Test', () => {
     expect(buildLog[0].cwd).toBe(mockLogCwd);
   };
 
-  // it.skip('should be able to parse GitHub config provided by environment variables', async () => {
-  //   process.argv = GITHUB_ENV_ARGS;
-  //   const config = (await import('./Config')).configs.file as ConfigArgument;
-  //   expect(config.vcs).toBe('github');
-  //   expect(config.githubRepoUrl).toBe(mockGitHubRepo);
-  //   expect(config.githubPr).toBe(mockGitHubPr);
-  //   expect(config.githubToken).toBe(mockGitHubToken);
-  //   expect(config.removeOldComment).toBe(true);
-  //   expect(config.failOnWarnings).toBe(false);
+  it('should be able to parse GitHub config provided by environment variables', async () => {
+    process.argv = GITHUB_ENV_ARGS;
+    const config = (await import('./Config')).configs as ConfigArgument;
+    expect(config.vcs).toBe('github');
+    expect(config.githubRepoUrl).toBe(mockGitHubRepo);
+    expect(config.githubPr).toBe(mockGitHubPr);
+    expect(config.githubToken).toBe(mockGitHubToken);
+    expect(config.removeOldComment).toBe(true);
+    expect(config.failOnWarnings).toBe(false);
 
-  //   validateBuildLog(config.buildLogFile);
-  // });
+    validateBuildLog(config.buildLogFile);
+  });
 
   it('should be able to parse GitHub config provided by file', async () => {
     process.argv = GITHUB_FILE_ARGS;
@@ -92,19 +92,19 @@ describe('Config parsing Test', () => {
     validateBuildLog(config.buildLogFile);
   });
 
-  // it.skip('should be able to parse GitLab config provided by environment variables', async () => {
-  //   process.argv = GITLAB_ENV_ARGS;
-  //   const config = (await import('./Config')).args.parse(process.argv);
-  //   expect(config.vcs).toBe('gitlab');
-  //   expect(config.gitlabHost).toBe(mockGitLabHost);
-  //   expect(config.gitlabProjectId).toBe(mockGitLabProjectId);
-  //   expect(config.gitlabMrIid).toBe(mockGitLabMrIid);
-  //   expect(config.gitlabToken).toBe(mockGitLabToken);
-  //   expect(config.removeOldComment).toBe(false);
-  //   expect(config.failOnWarnings).toBe(true);
+  it('should be able to parse GitLab config provided by environment variables', async () => {
+    process.argv = GITLAB_ENV_ARGS;
+    const config = (await import('./Config')).configs as ConfigArgument;
+    expect(config.vcs).toBe('gitlab');
+    expect(config.gitlabHost).toBe(mockGitLabHost);
+    expect(config.gitlabProjectId).toBe(mockGitLabProjectId);
+    expect(config.gitlabMrIid).toBe(mockGitLabMrIid);
+    expect(config.gitlabToken).toBe(mockGitLabToken);
+    expect(config.removeOldComment).toBe(false);
+    expect(config.failOnWarnings).toBe(true);
 
-  //   validateBuildLog(config.buildLogFile);
-  // });
+    validateBuildLog(config.buildLogFile);
+  });
 
   it('should be able to parse GitLab config provided by file', async () => {
     process.argv = GITLAB_FILE_ARGS;
@@ -120,13 +120,13 @@ describe('Config parsing Test', () => {
     validateBuildLog(config.buildLogFile);
   });
 
-  // it.skip('should be able to parse dryRun config provided by environment variables', async () => {
-  //   process.argv = DRYRUN_ENV_ARGS;
-  //   const config = (await import('./Config')).args.parse(process.argv);
-  //   expect(config.dryRun).toBe(true);
+  it('should be able to parse dryRun config provided by environment variables', async () => {
+    process.argv = DRYRUN_ENV_ARGS;
+    const config = (await import('./Config')).configs as ConfigArgument;
+    expect(config.dryRun).toBe(true);
 
-  //   validateBuildLog(config.buildLogFile);
-  // });
+    validateBuildLog(config.buildLogFile);
+  });
 
   it('should be able to parse dryRun config provided by file', async () => {
     process.argv = DRYRUN_FILE_ARGS;
