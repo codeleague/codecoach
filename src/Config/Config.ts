@@ -103,6 +103,14 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
     describe: 'Fail the job if warnings are found',
     default: false,
   })
+  .option('suppressRules', {
+    type: 'array',
+    string: true,
+    number: false,
+    describe:
+      'List of rules to suppress, bot will still make comment but mark it as suppressed and not failing the job',
+    default: [],
+  })
   .option('dryRun', {
     describe: 'Running CodeCoach without reporting to VCS',
     type: 'boolean',
