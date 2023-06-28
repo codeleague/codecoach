@@ -1,4 +1,4 @@
-import { BuildLogFile } from './@types';
+import { BuildLogFile, ConfigArgument } from './@types';
 
 const mockGitHubRepo = 'https://github.com/codeleague/codecoach.git';
 const mockGitHubPr = 42;
@@ -27,7 +27,7 @@ const GITHUB_ENV_ARGS = [
   `-o=${mockOutput}`,
 ];
 
-const GITHUB_FILE_ARGS = ['node', 'app.ts', '--config=sample/config/github.json'];
+const GITHUB_FILE_ARGS = ['node', 'app.ts', '--config=sample/config/github.js'];
 
 const GITLAB_ENV_ARGS = [
   'node',
@@ -42,7 +42,7 @@ const GITLAB_ENV_ARGS = [
   '--failOnWarnings',
 ];
 
-const GITLAB_FILE_ARGS = ['node', 'app.ts', '--config=sample/config/gitlab.json'];
+const GITLAB_FILE_ARGS = ['node', 'app.ts', '--config=sample/config/gitlab.js'];
 
 const DRYRUN_ENV_ARGS = [
   'node',
@@ -52,7 +52,7 @@ const DRYRUN_ENV_ARGS = [
   '--dryRun',
 ];
 
-const DRYRUN_FILE_ARGS = ['node', 'app.ts', '--config=sample/config/dryrun.json'];
+const DRYRUN_FILE_ARGS = ['node', 'app.ts', '--config=sample/config/dryrun.js'];
 
 describe('Config parsing Test', () => {
   beforeEach(() => {
@@ -68,7 +68,7 @@ describe('Config parsing Test', () => {
 
   it('should be able to parse GitHub config provided by environment variables', async () => {
     process.argv = GITHUB_ENV_ARGS;
-    const config = (await import('./Config')).configs;
+    const config = (await import('./Config')).configs as ConfigArgument;
     expect(config.vcs).toBe('github');
     expect(config.githubRepoUrl).toBe(mockGitHubRepo);
     expect(config.githubPr).toBe(mockGitHubPr);
@@ -81,7 +81,7 @@ describe('Config parsing Test', () => {
 
   it('should be able to parse GitHub config provided by file', async () => {
     process.argv = GITHUB_FILE_ARGS;
-    const config = (await import('./Config')).configs;
+    const config = (await import('./Config')).configs as ConfigArgument;
     expect(config.vcs).toBe('github');
     expect(config.githubRepoUrl).toBe(mockGitHubRepo);
     expect(config.githubPr).toBe(mockGitHubPr);
@@ -94,7 +94,7 @@ describe('Config parsing Test', () => {
 
   it('should be able to parse GitLab config provided by environment variables', async () => {
     process.argv = GITLAB_ENV_ARGS;
-    const config = (await import('./Config')).configs;
+    const config = (await import('./Config')).configs as ConfigArgument;
     expect(config.vcs).toBe('gitlab');
     expect(config.gitlabHost).toBe(mockGitLabHost);
     expect(config.gitlabProjectId).toBe(mockGitLabProjectId);
@@ -108,7 +108,7 @@ describe('Config parsing Test', () => {
 
   it('should be able to parse GitLab config provided by file', async () => {
     process.argv = GITLAB_FILE_ARGS;
-    const config = (await import('./Config')).configs;
+    const config = (await import('./Config')).configs as ConfigArgument;
     expect(config.vcs).toBe('gitlab');
     expect(config.gitlabHost).toBe(mockGitLabHost);
     expect(config.gitlabProjectId).toBe(mockGitLabProjectId);
@@ -122,7 +122,7 @@ describe('Config parsing Test', () => {
 
   it('should be able to parse dryRun config provided by environment variables', async () => {
     process.argv = DRYRUN_ENV_ARGS;
-    const config = (await import('./Config')).configs;
+    const config = (await import('./Config')).configs as ConfigArgument;
     expect(config.dryRun).toBe(true);
 
     validateBuildLog(config.buildLogFile);
@@ -130,7 +130,7 @@ describe('Config parsing Test', () => {
 
   it('should be able to parse dryRun config provided by file', async () => {
     process.argv = DRYRUN_FILE_ARGS;
-    const config = (await import('./Config')).configs;
+    const config = (await import('./Config')).configs as ConfigArgument;
     expect(config.dryRun).toBe(true);
 
     validateBuildLog(config.buildLogFile);

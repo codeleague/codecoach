@@ -1,14 +1,74 @@
 import yargs from 'yargs';
 import { ProjectType } from './@enums';
-import { BuildLogFile, ConfigArgument } from './@types';
+import { BuildLogFile } from './@types';
 import { DEFAULT_OUTPUT_FILE } from './constants/defaults';
 import { GITHUB_ARGS, GITLAB_ARGS } from './constants/required';
-import fs from 'fs';
+import { z } from 'zod';
 
 const projectTypes = Object.keys(ProjectType);
 
-const args = yargs
-  .config('config', (configPath) => JSON.parse(fs.readFileSync(configPath, 'utf-8')))
+export const configSchema = z
+  .object({
+    vcs: z.enum(['github', 'gitlab']).optional().describe('VCS Type'),
+
+    githubRepoUrl: z.string().optional(),
+    githubPr: z.number().optional(),
+    githubToken: z.string().optional(),
+
+    gitlabHost: z.string().optional(),
+    gitlabProjectId: z.number().optional(),
+    gitlabMrIid: z.number().optional(),
+    gitlabToken: z.string().optional(),
+
+    buildLogFile: z.array(z.string()).transform((files) => {
+      return files
+        .map((opt) => {
+          const [type, path, cwd] = opt.split(';');
+          if (!projectTypes.includes(type) || !path) return null;
+          return { type, path, cwd: cwd ?? process.cwd() } as BuildLogFile;
+        })
+        .filter((file) => file !== null) as BuildLogFile[];
+    }),
+    output: z.string().default(DEFAULT_OUTPUT_FILE),
+    removeOldComment: z.boolean().default(false),
+    failOnWarnings: z.boolean().default(false),
+    dryRun: z.boolean().default(false),
+  })
+  .superRefine((options, ctx) => {
+    if (!options.vcs && !options.dryRun) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'VCS type is required',
+      });
+    }
+  })
+  .superRefine((options, ctx) => {
+    if (options.vcs === 'github' && GITHUB_ARGS.some((arg) => !options[arg])) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `GitHub requires [${GITHUB_ARGS.map((a) => `--${a}`).join(
+          ', ',
+        )}] to be set`,
+      });
+    }
+
+    if (options.vcs === 'gitlab' && GITLAB_ARGS.some((arg) => !options[arg])) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `GitLab requires [${GITLAB_ARGS.map((a) => `--${a}`).join(
+          ', ',
+        )}] to be set`,
+      });
+    }
+  });
+
+export const args = yargs
+  .config('config', (file) => {
+    console.log(`Loading config from ${file}`);
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const config = require(file);
+    return config;
+  })
   .option('vcs', {
     alias: 'g',
     describe: 'VCS Type',
@@ -44,19 +104,6 @@ const args = yargs
     describe: 'GitLab token',
     type: 'string',
   })
-  .group(['vcs', 'buildLogFile', 'output', 'removeOldComment'], 'Parsing options:')
-  .group(GITLAB_ARGS, 'GitLab options:')
-  .group(GITHUB_ARGS, 'GitHub options:')
-  .check((options) => {
-    // validate VCS configs
-    if (options.vcs === 'github' && GITHUB_ARGS.some((arg) => !options[arg]))
-      throw `GitHub requires [${GITHUB_ARGS.map((a) => `--${a}`).join(', ')}] to be set`;
-
-    if (options.vcs === 'gitlab' && GITLAB_ARGS.some((arg) => !options[arg]))
-      throw `GitLab requires [${GITLAB_ARGS.map((a) => `--${a}`).join(', ')}] to be set`;
-
-    return true;
-  })
   .option('buildLogFile', {
     alias: 'f',
     describe: `Build log content files formatted in '<type>;<path>[;<cwd>]'
@@ -67,24 +114,6 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
     type: 'array',
     string: true,
     number: false,
-  })
-  .coerce('buildLogFile', (files: string[]) => {
-    return files.map((opt) => {
-      const [type, path, cwd] = opt.split(';');
-      if (!projectTypes.includes(type) || !path) return null;
-      return { type, path, cwd: cwd ?? process.cwd() } as BuildLogFile;
-    });
-  })
-  .check((options) => {
-    // check arguments parsing
-    const useConfigArgs = options.config !== undefined;
-    if (useConfigArgs) return true;
-
-    // if (!options.pr || Array.isArray(options.pr))
-    //   throw '--pr config should be a single number';
-    if (!options.buildLogFile || options.buildLogFile.some((file) => file === null))
-      throw 'all of `--buildLogFile` options should have correct format';
-    return true;
   })
   .option('output', {
     alias: 'o',
@@ -108,14 +137,19 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
     type: 'boolean',
     default: false,
   })
-  .check((options) => {
-    if (options.dryRun) return true;
-    if (typeof options.vcs === 'undefined') throw 'VCS type is required';
-    return true;
-  })
   .strict()
   .help()
   .wrap(120)
-  .parse(process.argv.slice(1)) as ConfigArgument;
+  .parse(process.argv.slice(1));
 
-export const configs = args;
+const getConfigs = () => {
+  const result = configSchema.safeParse(args);
+  if (!result.success) {
+    const firstIssue = result.error.issues[0];
+    console.log(`${firstIssue.message} ${firstIssue.path.join('.')}`);
+    process.exit(1);
+  }
+  return result.data;
+};
+
+export const configs = getConfigs();

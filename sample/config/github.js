@@ -1,0 +1,8 @@
+module.exports = {
+  vcs: 'github',
+  githubRepoUrl: 'https://github.com/codeleague/codecoach.git',
+  githubPr: 42,
+  githubToken: 'mockGitHubToken',
+  buildLogFile: ['dotnetbuild;./sample/dotnetbuild/build.content;/repo/src'],
+  output: './tmp/out.json',
+};
