@@ -64,7 +64,10 @@ export const configSchema = z
 
 export const args = yargs
   .config('config', (file) => {
-    return require(file);
+    console.log(`Loading config from ${file}`);
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const config = require(file);
+    return config;
   })
   .option('vcs', {
     alias: 'g',
@@ -139,4 +142,14 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
   .wrap(120)
   .parse(process.argv.slice(1));
 
-export const configs = configSchema.parse(args);
+const getConfigs = () => {
+  const result = configSchema.safeParse(args);
+  if (!result.success) {
+    const firstIssue = result.error.issues[0];
+    console.log(`${firstIssue.message} ${firstIssue.path.join('.')}`);
+    process.exit(1);
+  }
+  return result.data;
+};
+
+export const configs = getConfigs();
