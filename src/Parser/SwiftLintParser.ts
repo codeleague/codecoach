@@ -1,0 +1,40 @@
+import { ProjectType } from '../Config/@enums';
+import { Log } from '../Logger';
+import { getRelativePath } from './utils/path.util';
+import { LogSeverity } from './@enums/log.severity.enum';
+import { Parser } from './@interfaces/parser.interface';
+import { LogType, TSLintLog } from './@types';
+
+export class SwiftLintParser extends Parser {
+  parse(content: string): LogType[] {
+    try {
+      if (!content) return [];
+
+      const logsJson = JSON.parse(content) as TSLintLog[];
+      return logsJson.map((el) => this.toLog(el));
+    } catch (err) {
+      Log.warn('TSLint Parser: parse with content via JSON error', content);
+      throw err;
+    }
+  }
+
+  private toLog(log: TSLintLog): LogType {
+    const parsed: LogType = {
+      ruleId: log.ruleName,
+      log: JSON.stringify(log),
+      line: log.startPosition.line + 1,
+      lineOffset: log.startPosition.character,
+      // there are no code portion present in tslint output
+      msg: log.failure,
+      source: '',
+      severity: log.ruleSeverity.toLowerCase() as LogSeverity,
+      valid: true,
+      type: ProjectType.tslint,
+    };
+
+    const source = getRelativePath(this.cwd, log.name);
+    if (!source) return { ...parsed, valid: false };
+
+    return { ...parsed, source };
+  }
+}

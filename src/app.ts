@@ -21,6 +21,7 @@ import { VCSEngine } from './Provider/CommonVCS/VCSEngine';
 import { GitLabAdapter } from './Provider/GitLab/GitLabAdapter';
 import { VCSAdapter } from './Provider/@interfaces/VCSAdapter';
 import { AnalyzerBot } from './AnalyzerBot/AnalyzerBot';
+import { SwiftLintParser } from './Parser/SwiftLintParser';
 
 class App {
   private vcs: VCS | null = null;
@@ -58,7 +59,7 @@ class App {
     }
   }
 
-  private static getParser(type: ProjectType, cwd: string): Parser {
+  private static getParser(type: ProjectType, cwd: string): Parser | undefined {
     switch (type) {
       case ProjectType.dotnetbuild:
         return new DotnetBuildParser(cwd);
@@ -74,6 +75,10 @@ class App {
         return new AndroidLintStyleParser(cwd);
       case ProjectType.dartlint:
         return new DartLintParser(cwd);
+      case ProjectType.swiftlint:
+        return new SwiftLintParser(cwd);
+      default:
+        return undefined;
     }
   }
 
@@ -82,6 +87,10 @@ class App {
       Log.debug('Parsing', { type, path, cwd });
       const content = await File.readFileHelper(path);
       const parser = App.getParser(type, cwd);
+      if (!parser) {
+        Log.error('Parser not found', { type });
+        return [];
+      }
       return parser.parse(content);
     });
 
