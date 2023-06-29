@@ -41,6 +41,7 @@ describe('AnalyzerBot', () => {
             ) + '  \n',
           errors: 1,
           warnings: 0,
+          suppresses: 0,
         },
         {
           file: mockTouchFile,
@@ -52,6 +53,7 @@ describe('AnalyzerBot', () => {
             ) + '  \n',
           errors: 0,
           warnings: 1,
+          suppresses: 0,
         },
       ]);
     });

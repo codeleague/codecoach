@@ -43,6 +43,7 @@ const comment1: Comment = {
   text: 'text1',
   errors: 1,
   warnings: 0,
+  suppresses: 0,
 };
 
 const comment2: Comment = {
@@ -51,6 +52,7 @@ const comment2: Comment = {
   text: 'text2',
   errors: 0,
   warnings: 1,
+  suppresses: 0,
 };
 
 function setup(vcsConfig: VCSEngineConfig = config) {
