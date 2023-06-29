@@ -14,6 +14,7 @@ import { MessageUtil } from './utils/message.util';
 
 const config: AnalyzerBotConfig = {
   failOnWarnings: false,
+  suppressRules: [],
 };
 describe('AnalyzerBot', () => {
   const logs = [touchFileError, touchFileWarning, untouchedError, untouchedWarning];

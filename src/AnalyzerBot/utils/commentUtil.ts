@@ -2,10 +2,7 @@ import { LogSeverity, LogType } from '../../Parser';
 import { Comment, CommentStructure } from '../@types/CommentTypes';
 import { MessageUtil } from './message.util';
 
-export function groupComments(
-  logs: LogType[],
-  suppressRules: Set<string> = new Set(),
-): Comment[] {
+export function groupComments(logs: LogType[], suppressRules: Set<string>): Comment[] {
   const commentMap = logs.reduce((state: CommentStructure, log) => {
     const { source: file, line } = log;
 

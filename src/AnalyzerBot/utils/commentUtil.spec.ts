@@ -12,7 +12,7 @@ describe('groupComments', () => {
   const logs: LogType[] = [touchFileError, touchFileWarning];
 
   it('returns comments based on lint logs', () => {
-    const comments = groupComments(logs);
+    const comments = groupComments(logs, new Set<string>());
     expect(comments).toEqual([
       {
         file: mockTouchFile,
@@ -34,15 +34,18 @@ describe('groupComments', () => {
   });
 
   it('group multiple logs on the same line to the same comment', () => {
-    const comments = groupComments([
-      ...logs,
-      {
-        ...touchFileError,
-        msg: 'additional warning',
-        severity: LogSeverity.warning,
-        lineOffset: 33,
-      },
-    ]);
+    const comments = groupComments(
+      [
+        ...logs,
+        {
+          ...touchFileError,
+          msg: 'additional warning',
+          severity: LogSeverity.warning,
+          lineOffset: 33,
+        },
+      ],
+      new Set<string>(),
+    );
 
     expect(comments).toEqual([
       {
