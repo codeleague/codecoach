@@ -4,6 +4,7 @@ export interface Comment {
   text: string;
   errors: number;
   warnings: number;
+  suppresses: number;
 }
 
 export interface CommentStructure {
