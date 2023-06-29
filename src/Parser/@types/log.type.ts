@@ -1,5 +1,5 @@
 import { LogSeverity } from '..';
-import { ProjectType } from '../../Config/@enums';
+import { ProjectType } from '../../Config';
 
 export type LogType = {
   ruleId: string;
