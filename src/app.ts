@@ -12,8 +12,9 @@ import {
   Parser,
   ScalaStyleParser,
   TSLintParser,
+  DartLintParser,
+  SwiftLintParser,
 } from './Parser';
-import { DartLintParser } from './Parser/DartLintParser';
 import { GitHubPRService, VCS } from './Provider';
 import { GitLabMRService } from './Provider/GitLab/GitLabMRService';
 import { GitHubAdapter } from './Provider/GitHub/GitHubAdapter';
@@ -21,7 +22,6 @@ import { VCSEngine } from './Provider/CommonVCS/VCSEngine';
 import { GitLabAdapter } from './Provider/GitLab/GitLabAdapter';
 import { VCSAdapter } from './Provider/@interfaces/VCSAdapter';
 import { AnalyzerBot } from './AnalyzerBot/AnalyzerBot';
-import { SwiftLintParser } from './Parser/SwiftLintParser';
 
 class App {
   private vcs: VCS | null = null;

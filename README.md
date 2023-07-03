@@ -21,6 +21,7 @@ So it can be integrated with any CI with ease.
 - ScalaStyle
 - AndroidLint
 - DartLint
+- SwiftLint (0.49.1 or later)
 
 #### Supported source controls
 - GitHub
@@ -143,6 +144,10 @@ Use `-o <filename>` to output lint result to file
 #### DartLint
 Use `-o <filename>` on output lint result created by command `dart analyze > <filename>` in dart project
 (_[ref.](https://dart-lang.github.io/linter/lints/)_)
+
+#### SwiftLint
+Use `--output <filename>` to output lint result to file and `--reporter json` to format logs as JSON.
+(_[ref.](https://github.com/realm/SwiftLint#command-line)_)
 
 ### Contribute
 For contribution guidelines and project dev setup. Please see [CONTRIBUTING.md](CONTRIBUTING.md)

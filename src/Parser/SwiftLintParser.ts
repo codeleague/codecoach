@@ -1,40 +1,42 @@
-import { ProjectType } from '../Config/@enums';
 import { Log } from '../Logger';
 import { getRelativePath } from './utils/path.util';
-import { LogSeverity } from './@enums/log.severity.enum';
 import { Parser } from './@interfaces/parser.interface';
-import { LogType, TSLintLog } from './@types';
+import { LogType } from './@types';
+import { mapSeverity } from './utils/dotnetSeverityMap';
+import { splitByLine } from './utils/lineBreak.util';
+import { ProjectType } from '../Config/@enums';
 
 export class SwiftLintParser extends Parser {
   parse(content: string): LogType[] {
-    try {
-      if (!content) return [];
-
-      const logsJson = JSON.parse(content) as TSLintLog[];
-      return logsJson.map((el) => this.toLog(el));
-    } catch (err) {
-      Log.warn('TSLint Parser: parse with content via JSON error', content);
-      throw err;
-    }
+    return splitByLine(content)
+      .map((log) => this.toLog(log))
+      .filter((log) => log);
   }
 
-  private toLog(log: TSLintLog): LogType {
-    const parsed: LogType = {
-      ruleId: log.ruleName,
-      log: JSON.stringify(log),
-      line: log.startPosition.line + 1,
-      lineOffset: log.startPosition.character,
-      // there are no code portion present in tslint output
-      msg: log.failure,
-      source: '',
-      severity: log.ruleSeverity.toLowerCase() as LogSeverity,
+  private toLog(log: string): LogType {
+    const structureMatch = log.match(
+      /^([\\\/\w\d.:_ ()-]+)(?::(\d+):(\d+)): (\w+): ([^\(]+)(?:\((.+)\))?$/,
+    );
+    if (!structureMatch) {
+      const message = "SwiftLintParser Error: log structure doesn't match";
+      Log.error(message, { log });
+      throw new Error(message);
+    }
+
+    const [, _filepath, _line, _lineOffset, severityText, content, code] = structureMatch;
+
+    const fileRelativePath = getRelativePath(this.cwd, _filepath);
+
+    return {
+      ruleId: code,
+      log,
+      line: Number(_line),
+      lineOffset: Number(_lineOffset),
+      msg: content.trim(),
+      source: fileRelativePath ?? _filepath,
+      severity: mapSeverity(severityText),
       valid: true,
-      type: ProjectType.tslint,
+      type: ProjectType.swiftlint,
     };
-
-    const source = getRelativePath(this.cwd, log.name);
-    if (!source) return { ...parsed, valid: false };
-
-    return { ...parsed, source };
   }
 }
