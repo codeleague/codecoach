@@ -15,7 +15,7 @@ export class AnalyzerBot implements IAnalyzerBot {
 
   constructor(private readonly config: AnalyzerBotConfig) {}
 
-  analyze(logs: LogType[], touchedDiff: Diff[]) {
+  analyze(logs: LogType[], touchedDiff: Diff[]): void {
     this.touchedFileLog = logs
       .filter(onlySeverity(LogSeverity.error, LogSeverity.warning))
       .filter(onlyIn(touchedDiff));
