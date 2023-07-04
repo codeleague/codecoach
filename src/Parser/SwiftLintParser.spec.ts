@@ -2,32 +2,73 @@ import { LogSeverity } from './@enums/log.severity.enum';
 import { SwiftLintParser } from './SwiftLintParser';
 
 describe('SwiftLintParser tests', () => {
-  it('should parse log correctly', () => {
-    const log = `/Users/codecoach/myswiftproject/TestSwiftFile1.swift:4:18: warning: Sorted Imports Violation: Imports should be sorted (sorted_imports)`;
+  const cwd = '/Users/master/builds/DxeaNTET/0/myswiftproject';
+  const mockedContent = [
+    {
+      character: null,
+      file:
+        '/Users/master/builds/DxeaNTET/0/myswiftproject/Folder1/SubFolder1/File5.swift',
+      line: 130,
+      reason: 'Line should be 120 characters or less; currently it has 125 characters',
+      rule_id: 'line_length',
+      severity: 'Warning',
+      type: 'Line Length',
+    },
+    {
+      character: 7,
+      file: '',
+      line: 9,
+      reason:
+        'Type body should span 400 lines or less excluding comments and whitespace: currently spans 448 lines',
+      rule_id: 'type_body_length',
+      severity: 'Error',
+      type: 'Type Body Length',
+    },
+  ];
 
-    const result = new SwiftLintParser(Cwd.projectAbsolutePath).parse(log);
+  const mockedContentString = JSON.stringify(mockedContent);
 
-    expect(result).toHaveLength(1);
+  it('Should parse correctly', () => {
+    const result = new SwiftLintParser(cwd).parse(mockedContentString);
+    expect(result).toHaveLength(2);
     expect(result[0]).toEqual({
-      ruleId: 'sorted_imports',
-      source: `TestSwiftFile1.swift`,
+      ruleId: 'line_length',
+      source: `Folder1/SubFolder1/File5.swift`,
       severity: LogSeverity.warning,
-      line: 4,
-      lineOffset: 18,
-      msg: `Sorted Imports Violation: Imports should be sorted`,
-      log,
+      line: 130,
+      lineOffset: 0,
+      msg: `Line should be 120 characters or less; currently it has 125 characters`,
+      log: JSON.stringify(mockedContent[0]),
       valid: true,
+      type: 'swiftlint',
+    });
+    expect(result[1]).toEqual({
+      ruleId: 'type_body_length',
+      source: ``,
+      severity: LogSeverity.error,
+      line: 9,
+      lineOffset: 7,
+      msg: `Type body should span 400 lines or less excluding comments and whitespace: currently spans 448 lines`,
+      log: JSON.stringify(mockedContent[1]),
+      valid: false,
       type: 'swiftlint',
     });
   });
 
-  // it('should handle path with special characters', () => {
-  //   const log = `C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Professional\\MSBuild\\Current\\bin\\Microsoft.Common.CurrentVersion.targets(2084,5): warning MSB3276: Found conflicts between different versions of the same dependent assembly. Please set the "AutoGenerateBindingRedirects" property to true in the project file. For more information, see http://go.microsoft.com/fwlink/?LinkId=294190. [C:\\source\\Project\\Project.csproj]`;
-  //   expect(() => new MSBuildParser(cwd).parse(log)).not.toThrow();
-  // });
+  it('Should do nothing if put empty string', () => {
+    const result = new SwiftLintParser(cwd).parse('');
+    expect(result).toHaveLength(0);
+  });
 
-  enum Cwd {
-    projectAbsolutePath = '/Users/codecoach/myswiftproject',
-    differentThanProjectAbsolutePath = '/different-absolute-path',
-  }
+  it('Should parse with valid/invalid correctly', () => {
+    const result = new SwiftLintParser(cwd).parse(mockedContentString);
+    const valid = result.filter((el) => el.valid);
+    const invalid = result.filter((el) => !el.valid);
+    expect(valid).toHaveLength(1);
+    expect(invalid).toHaveLength(1);
+  });
+
+  it('Should throw error if the line not match the rule', () => {
+    expect(() => new SwiftLintParser(cwd).parse(':')).toThrow();
+  });
 });
