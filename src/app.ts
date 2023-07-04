@@ -23,17 +23,20 @@ import { GitLabAdapter } from './Provider/GitLab/GitLabAdapter';
 import { VCSAdapter } from './Provider/@interfaces/VCSAdapter';
 import { AnalyzerBot } from './AnalyzerBot/AnalyzerBot';
 
-class App {
+export class App {
   private vcs: VCS | null = null;
 
   async start(): Promise<void> {
-    const adapter = App.getAdapter();
-    if (!adapter) {
-      Log.error('VCS adapter is not found');
-      process.exit(1);
+    if (!configs.dryRun) {
+      const adapter = App.getAdapter();
+      if (!adapter) {
+        Log.error('VCS adapter is not found');
+        process.exit(1);
+      }
+      const analyzer = new AnalyzerBot(configs);
+      this.vcs = new VCSEngine(configs, analyzer, adapter);
     }
-    const analyzer = new AnalyzerBot(configs);
-    this.vcs = new VCSEngine(configs, analyzer, adapter);
+
     const logs = await this.parseBuildData(configs.buildLogFile);
     Log.info('Build data parsing completed');
 
