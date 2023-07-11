@@ -23,7 +23,7 @@ import { GitLabAdapter } from './Provider/GitLab/GitLabAdapter';
 import { VCSAdapter } from './Provider/@interfaces/VCSAdapter';
 import { AnalyzerBot } from './AnalyzerBot/AnalyzerBot';
 
-export class App {
+class App {
   private vcs: VCS | null = null;
 
   async start(): Promise<void> {
