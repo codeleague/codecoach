@@ -12,8 +12,9 @@ import {
   Parser,
   ScalaStyleParser,
   TSLintParser,
+  DartLintParser,
+  SwiftLintParser,
 } from './Parser';
-import { DartLintParser } from './Parser/DartLintParser';
 import { GitHubPRService, VCS } from './Provider';
 import { GitLabMRService } from './Provider/GitLab/GitLabMRService';
 import { GitHubAdapter } from './Provider/GitHub/GitHubAdapter';
@@ -26,13 +27,16 @@ class App {
   private vcs: VCS | null = null;
 
   async start(): Promise<void> {
-    const adapter = App.getAdapter();
-    if (!adapter) {
-      Log.error('VCS adapter is not found');
-      process.exit(1);
+    if (!configs.dryRun) {
+      const adapter = App.getAdapter();
+      if (!adapter) {
+        Log.error('VCS adapter is not found');
+        process.exit(1);
+      }
+      const analyzer = new AnalyzerBot(configs);
+      this.vcs = new VCSEngine(configs, analyzer, adapter);
     }
-    const analyzer = new AnalyzerBot(configs);
-    this.vcs = new VCSEngine(configs, analyzer, adapter);
+
     const logs = await this.parseBuildData(configs.buildLogFile);
     Log.info('Build data parsing completed');
 
@@ -74,6 +78,8 @@ class App {
         return new AndroidLintStyleParser(cwd);
       case ProjectType.dartlint:
         return new DartLintParser(cwd);
+      case ProjectType.swiftlint:
+        return new SwiftLintParser(cwd);
     }
   }
 

@@ -1,0 +1,65 @@
+[
+  {
+    "character" : null,
+    "file" : "\/Users\/master\/builds\/DxeaNTET\/0\/myswiftproject\/Folder1\/SubFolder1\/File1.swift",
+    "line" : 61,
+    "reason" : "Lines should not have trailing whitespace",
+    "rule_id" : "trailing_whitespace",
+    "severity" : "Warning",
+    "type" : "Trailing Whitespace"
+  },
+  {
+    "character" : 18,
+    "file" : "\/Users\/master\/builds\/DxeaNTET\/0\/myswiftproject\/Folder2\/SubFolder2\/File2.swift",
+    "line" : 4,
+    "reason" : "Imports should be sorted",
+    "rule_id" : "sorted_imports",
+    "severity" : "Warning",
+    "type" : "Sorted Imports"
+  },
+  {
+    "character" : null,
+    "file" : "\/Users\/master\/builds\/DxeaNTET\/0\/myswiftproject\/Folder1\/SubFolder1\/File3.swift",
+    "line" : 22,
+    "reason" : "Lines should not have trailing whitespace",
+    "rule_id" : "trailing_whitespace",
+    "severity" : "Warning",
+    "type" : "Trailing Whitespace"
+  },
+  {
+    "character" : null,
+    "file" : "\/Users\/master\/builds\/DxeaNTET\/0\/myswiftproject\/Folder1\/SubFolder1\/File4.swift",
+    "line" : 140,
+    "reason" : "Lines should not have trailing whitespace",
+    "rule_id" : "trailing_whitespace",
+    "severity" : "Warning",
+    "type" : "Trailing Whitespace"
+  },
+  {
+    "character" : null,
+    "file" : "\/Users\/master\/builds\/DxeaNTET\/0\/myswiftproject\/Folder1\/SubFolder1\/File5.swift",
+    "line" : 130,
+    "reason" : "Line should be 120 characters or less; currently it has 125 characters",
+    "rule_id" : "line_length",
+    "severity" : "Warning",
+    "type" : "Line Length"
+  },
+  {
+    "character" : 7,
+    "file" : "\/Users\/master\/builds\/DxeaNTET\/0\/myswiftproject\/Folder3\/File6.swift",
+    "line" : 9,
+    "reason" : "Type body should span 400 lines or less excluding comments and whitespace: currently spans 448 lines",
+    "rule_id" : "type_body_length",
+    "severity" : "Error",
+    "type" : "Type Body Length"
+  },
+  {
+    "character" : 5,
+    "file" : "\/Users\/master\/builds\/DxeaNTET\/0\/myswiftproject\/Folder4\/File7.swift",
+    "line" : 10,
+    "reason" : "All test functions should be throwable.",
+    "rule_id" : "throwable_tests",
+    "severity" : "Error",
+    "type" : "Throwable testcases"
+  }
+]
