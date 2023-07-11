@@ -15,11 +15,14 @@ export class AnalyzerBot implements IAnalyzerBot {
 
   constructor(private readonly config: AnalyzerBotConfig) {}
 
-  analyze(logs: LogType[], touchedDiff: Diff[]) {
+  analyze(logs: LogType[], touchedDiff: Diff[]): void {
     this.touchedFileLog = logs
       .filter(onlySeverity(LogSeverity.error, LogSeverity.warning))
       .filter(onlyIn(touchedDiff));
-    this.comments = groupComments(this.touchedFileLog);
+    this.comments = groupComments(
+      this.touchedFileLog,
+      new Set(this.config.suppressRules),
+    );
     this.nError = this.comments.reduce((sum, comment) => sum + comment.errors, 0);
     this.nWarning = this.comments.reduce((sum, comment) => sum + comment.warnings, 0);
   }

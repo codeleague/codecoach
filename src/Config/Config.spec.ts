@@ -40,6 +40,9 @@ const GITLAB_ENV_ARGS = [
   `-f=${mockBuildLogFile}`,
   `-o=${mockOutput}`,
   '--failOnWarnings',
+  '--suppressRules',
+  'RULE1',
+  'RULE2',
 ];
 
 const GITLAB_FILE_ARGS = ['node', 'app.ts', '--config=sample/config/gitlab.json'];
@@ -75,6 +78,7 @@ describe('Config parsing Test', () => {
     expect(config.githubToken).toBe(mockGitHubToken);
     expect(config.removeOldComment).toBe(true);
     expect(config.failOnWarnings).toBe(false);
+    expect(config.suppressRules).toEqual([]);
 
     validateBuildLog(config.buildLogFile);
   });
@@ -88,6 +92,7 @@ describe('Config parsing Test', () => {
     expect(config.githubToken).toBe(mockGitHubToken);
     expect(config.removeOldComment).toBe(false);
     expect(config.failOnWarnings).toBe(false);
+    expect(config.suppressRules).toEqual([]);
 
     validateBuildLog(config.buildLogFile);
   });
@@ -102,6 +107,7 @@ describe('Config parsing Test', () => {
     expect(config.gitlabToken).toBe(mockGitLabToken);
     expect(config.removeOldComment).toBe(false);
     expect(config.failOnWarnings).toBe(true);
+    expect(config.suppressRules).toEqual(['RULE1', 'RULE2']);
 
     validateBuildLog(config.buildLogFile);
   });
@@ -116,6 +122,7 @@ describe('Config parsing Test', () => {
     expect(config.gitlabToken).toBe(mockGitLabToken);
     expect(config.removeOldComment).toBe(true);
     expect(config.failOnWarnings).toBe(false);
+    expect(config.suppressRules).toEqual(['RULE1', 'RULE2']);
 
     validateBuildLog(config.buildLogFile);
   });

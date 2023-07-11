@@ -13,5 +13,6 @@ export type ConfigArgument = {
   output: string; // =logFilePath
   removeOldComment: boolean;
   failOnWarnings: boolean;
+  suppressRules: string[];
   dryRun: boolean;
 };
