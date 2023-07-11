@@ -6,5 +6,6 @@
   "gitlabToken": "mockGitLabToken",
   "buildLogFile": "dotnetbuild;./sample/dotnetbuild/build.content;/repo/src",
   "output": "./tmp/out.json",
-  "removeOldComment": true
+  "removeOldComment": true,
+  "suppressRules": ["RULE1", "RULE2"]
 }
