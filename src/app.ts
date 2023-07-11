@@ -62,7 +62,7 @@ class App {
     }
   }
 
-  private static getParser(type: ProjectType, cwd: string): Parser | undefined {
+  private static getParser(type: ProjectType, cwd: string): Parser {
     switch (type) {
       case ProjectType.dotnetbuild:
         return new DotnetBuildParser(cwd);
@@ -80,8 +80,6 @@ class App {
         return new DartLintParser(cwd);
       case ProjectType.swiftlint:
         return new SwiftLintParser(cwd);
-      default:
-        return undefined;
     }
   }
 
