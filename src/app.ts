@@ -88,10 +88,6 @@ class App {
       Log.debug('Parsing', { type, path, cwd });
       const content = await File.readFileHelper(path);
       const parser = App.getParser(type, cwd);
-      if (!parser) {
-        Log.error('Parser not found', { type });
-        return [];
-      }
       return parser.parse(content);
     });
 
