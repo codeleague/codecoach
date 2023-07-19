@@ -1,3 +1,3 @@
-export { configs } from './Config';
+export { ConfigParser } from './Config';
 export * from './@types';
 export * from './@enums';
