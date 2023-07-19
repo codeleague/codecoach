@@ -17,7 +17,7 @@
     "prepublishOnly": "yarn build"
   },
   "bin": {
-    "codecoach": "dist/app.js"
+    "codecoach": "dist/index.js"
   },
   "files": [
     "dist/**/*"
