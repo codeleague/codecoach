@@ -13,4 +13,4 @@ RUN yarn install --production
 COPY --from=build /app/dist ./dist
 RUN npm link
 
-ENTRYPOINT ["/app/dist/app.js"]
+ENTRYPOINT ["/app/dist/index.js"]
