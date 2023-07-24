@@ -1,0 +1,71 @@
+# getCurrentUserId
+- request:
+    path: /user
+    method: GET
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |-
+      {
+        "id": 1,
+        "name": "John Smith",
+        "username": "john_smith",
+        "state": "active",
+        "avatar_url": "http://localhost:3000/uploads/user/avatar/1/index.jpg",
+        "web_url": "http://localhost:3000/john_smith",
+        "created_at": "2012-05-23T08:00:58Z"
+      }
+
+# listAllNotes
+- request:
+    path:
+      matcher: ShouldMatch
+      value: \/projects\/[^\/]+\/merge_requests\/[^\/]+\/notes
+    method: GET
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |-
+      [
+        {
+          "id": 301,
+          "body": "Comment for MR",
+          "author": {
+            "id": 1,
+            "username": "pipin",
+            "email": "admin@example.com",
+            "name": "Pip",
+            "state": "active",
+            "created_at": "2013-09-30T13:46:01Z"
+          },
+          "created_at": "2013-10-02T08:57:14Z",
+          "updated_at": "2013-10-02T08:57:14Z",
+          "confidential": false,
+        },
+        {
+          "id": 302,
+          "body": "LGTM",
+          "author": {
+            "id": 1,
+            "username": "pipin",
+            "email": "admin@example.com",
+            "name": "Pip",
+            "state": "active",
+            "created_at": "2013-09-30T13:46:01Z"
+          },
+          "created_at": "2013-10-02T09:22:45Z",
+          "updated_at": "2013-10-02T10:22:45Z",
+          "confidential": false
+        }
+      ]
+
+# deleteNote
+- request:
+    path:
+      matcher: ShouldMatch
+      value: \/projects\/[^\/]+\/merge_requests\/[^\/]+\/notes\/[^\/]+
+    method: DELETE
+  response:
+    status: 200
