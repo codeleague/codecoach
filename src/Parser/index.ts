@@ -6,6 +6,7 @@ export { ScalaStyleParser } from './ScalaStyleParser';
 export { AndroidLintStyleParser } from './AndroidLintStyleParser';
 export { DartLintParser } from './DartLintParser';
 export { SwiftLintParser } from './SwiftLintParser';
+export { JscpdParser } from './JscpdParser';
 export { Parser } from './@interfaces/parser.interface';
 export { LogType } from './@types';
 export { LogSeverity } from './@enums/log.severity.enum';

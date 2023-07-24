@@ -14,6 +14,7 @@ import {
   TSLintParser,
   DartLintParser,
   SwiftLintParser,
+  JscpdParser,
 } from './Parser';
 import { GitHubPRService, VCS } from './Provider';
 import { GitLabMRService } from './Provider/GitLab/GitLabMRService';
@@ -80,6 +81,8 @@ class App {
         return new DartLintParser(cwd);
       case ProjectType.swiftlint:
         return new SwiftLintParser(cwd);
+      case ProjectType.jscpd:
+        return new JscpdParser(cwd);
     }
   }
 

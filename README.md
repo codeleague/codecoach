@@ -23,6 +23,9 @@ So it can be integrated with any CI with ease.
 - DartLint
 - SwiftLint (0.49.1 or later)
 
+#### Supported code duplication detectors.
+- jscpd
+
 #### Supported source controls
 - GitHub
 - GitHub Enterprise

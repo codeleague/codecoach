@@ -1,0 +1,337 @@
+{
+  "statistics": {
+    "detectionDate": "2023-07-21T10:00:47.817Z",
+    "formats": {
+      "csharp": {
+        "sources": {
+          "/Users/codecoach/myproject/src/WebApi/Startuping/ALoader.cs": {
+            "lines": 10,
+            "tokens": 68,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "/Users/codecoach/myproject/src/WebApi/Services/BService.cs": {
+            "lines": 58,
+            "tokens": 450,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "/Users/codecoach/myproject/src/WebApi/Services/CService.cs": {
+            "lines": 27,
+            "tokens": 252,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "/Users/codecoach/myproject/src/WebApi/Services/DService.cs": {
+            "lines": 35,
+            "tokens": 342,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "/Users/codecoach/myproject/src/WebApi/Services/EService.cs": {
+            "lines": 84,
+            "tokens": 742,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "/Users/codecoach/myproject/src/WebApi/Services/FService.cs": {
+            "lines": 35,
+            "tokens": 342,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "/Users/codecoach/myproject/src/WebApi/Controllers/GController.cs": {
+            "lines": 46,
+            "tokens": 391,
+            "sources": 1,
+            "clones": 2,
+            "duplicatedLines": 20,
+            "duplicatedTokens": 187,
+            "percentage": 43.48,
+            "percentageTokens": 47.83,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "/Users/codecoach/myproject/src/WebApi/Controllers/HController.cs": {
+            "lines": 40,
+            "tokens": 342,
+            "sources": 1,
+            "clones": 1,
+            "duplicatedLines": 10,
+            "duplicatedTokens": 92,
+            "percentage": 25,
+            "percentageTokens": 26.9,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "/Users/codecoach/myproject/src/WebApi/Controllers/IController.cs": {
+            "lines": 77,
+            "tokens": 730,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "/Users/codecoach/myproject/src/WebApi/Controllers/JController.cs": {
+            "lines": 26,
+            "tokens": 217,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "/Users/codecoach/myproject/src/WebApi/Controllers/KController.cs": {
+            "lines": 34,
+            "tokens": 288,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "/Users/codecoach/myproject/src/WebApi/Controllers/LController.cs": {
+            "lines": 38,
+            "tokens": 294,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "/Users/codecoach/myproject/src/WebApi/Controllers/MController.cs": {
+            "lines": 44,
+            "tokens": 394,
+            "sources": 1,
+            "clones": 2,
+            "duplicatedLines": 17,
+            "duplicatedTokens": 166,
+            "percentage": 38.64,
+            "percentageTokens": 42.13,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "/Users/codecoach/myproject/src/WebApi/Controllers/NController.cs": {
+            "lines": 51,
+            "tokens": 445,
+            "sources": 1,
+            "clones": 1,
+            "duplicatedLines": 7,
+            "duplicatedTokens": 71,
+            "percentage": 13.73,
+            "percentageTokens": 15.96,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "/Users/codecoach/myproject/src/WebApi/Controllers/OController.cs": {
+            "lines": 26,
+            "tokens": 230,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "/Users/codecoach/myproject/src/WebApi/Program.cs": {
+            "lines": 144,
+            "tokens": 1338,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          }
+        },
+        "total": {
+          "lines": 775,
+          "tokens": 6865,
+          "sources": 16,
+          "clones": 3,
+          "duplicatedLines": 27,
+          "duplicatedTokens": 258,
+          "percentage": 3.48,
+          "percentageTokens": 3.76,
+          "newDuplicatedLines": 0,
+          "newClones": 0
+        }
+      }
+    },
+    "total": {
+      "lines": 775,
+      "tokens": 6865,
+      "sources": 16,
+      "clones": 3,
+      "duplicatedLines": 27,
+      "duplicatedTokens": 258,
+      "percentage": 3.48,
+      "percentageTokens": 3.76,
+      "newDuplicatedLines": 0,
+      "newClones": 0
+    }
+  },
+  "duplicates": [
+    {
+      "format": "csharp",
+      "lines": 11,
+      "fragment": "using System.Threading.Tasks;\r\nusing Core.Models;\r\nusing Core.Services;\r\nusing Microsoft.AspNetCore.Mvc;\r\nusing Nelibur.ObjectMapper;\r\nusing Swashbuckle.AspNetCore.Annotations;\r\n\r\nnamespace WebApi.Controllers;\r\n\r\n[",
+      "tokens": 0,
+      "firstFile": {
+        "name": "src/WebApi/Controllers/HController.cs",
+        "start": 1,
+        "end": 11,
+        "startLoc": {
+          "line": 1,
+          "column": 2,
+          "position": 1
+        },
+        "endLoc": {
+          "line": 11,
+          "column": 2,
+          "position": 93
+        }
+      },
+      "secondFile": {
+        "name": "src/WebApi/Controllers/GController.cs",
+        "start": 1,
+        "end": 11,
+        "startLoc": {
+          "line": 1,
+          "column": 1,
+          "position": 0
+        },
+        "endLoc": {
+          "line": 11,
+          "column": 14,
+          "position": 92
+        }
+      }
+    },
+    {
+      "format": "csharp",
+      "lines": 11,
+      "fragment": "using System.Threading.Tasks;\r\nusing Core.Models;\r\nusing Core.Services;\r\nusing Microsoft.AspNetCore.Mvc;\r\nusing Nelibur.ObjectMapper;\r\nusing Swashbuckle.AspNetCore.Annotations;\r\n\r\nnamespace WebApi.Controllers;\r\n\r\n[Route(\"gradletalaiot\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "src/WebApi/Controllers/MController.cs",
+        "start": 2,
+        "end": 12,
+        "startLoc": {
+          "line": 2,
+          "column": 1,
+          "position": 6
+        },
+        "endLoc": {
+          "line": 12,
+          "column": 16,
+          "position": 101
+        }
+      },
+      "secondFile": {
+        "name": "src/WebApi/Controllers/GController.cs",
+        "start": 1,
+        "end": 11,
+        "startLoc": {
+          "line": 1,
+          "column": 1,
+          "position": 0
+        },
+        "endLoc": {
+          "line": 11,
+          "column": 7,
+          "position": 96
+        }
+      }
+    },
+    {
+      "format": "csharp",
+      "lines": 8,
+      "fragment": ";\r\nusing System.Threading.Tasks;\r\nusing Core.Models;\r\nusing Core.Services;\r\nusing Microsoft.AspNetCore.Mvc;\r\nusing Nelibur.ObjectMapper;\r\nusing Serilog",
+      "tokens": 0,
+      "firstFile": {
+        "name": "src/WebApi/Controllers/NController.cs",
+        "start": 2,
+        "end": 9,
+        "startLoc": {
+          "line": 2,
+          "column": 5,
+          "position": 15
+        },
+        "endLoc": {
+          "line": 9,
+          "column": 8,
+          "position": 86
+        }
+      },
+      "secondFile": {
+        "name": "src/WebApi/Controllers/MController.cs",
+        "start": 1,
+        "end": 8,
+        "startLoc": {
+          "line": 1,
+          "column": 7,
+          "position": 3
+        },
+        "endLoc": {
+          "line": 8,
+          "column": 12,
+          "position": 74
+        }
+      }
+    }
+  ]
+}
