@@ -22,7 +22,7 @@ export const startHttpMockServer = async (): Promise<StartedTestContainer> => {
   return await new GenericContainer('thiht/smocker').withExposedPorts(8080, 8081).start();
 };
 
-export const configHttpMockServerWithYaml = async (
+export const configureHttpMockServerWithYaml = async (
   mock: StartedTestContainer,
   yml: string,
 ): Promise<void> => {

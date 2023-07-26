@@ -1,22 +1,22 @@
-import { StartedTestContainer } from 'testcontainers';
+import type { StartedTestContainer } from 'testcontainers';
 import { ConfigParser } from '../src/Config';
 import { App } from '../src/app';
 import {
-  configHttpMockServerWithYaml,
+  configureHttpMockServerWithYaml,
   getHttpMockServerHistory,
   startHttpMockServer,
   stopHttpMockServer,
 } from './utils';
 import CodeCoachError from '../src/CodeCoachError';
 
-jest.setTimeout(60000);
+jest.setTimeout(15000);
 
 describe('GitLab', () => {
   let gitlab: StartedTestContainer;
 
   beforeEach(async () => {
     gitlab = await startHttpMockServer();
-    await configHttpMockServerWithYaml(gitlab, './tests/gitlabmock.yml');
+    await configureHttpMockServerWithYaml(gitlab, './tests/gitlabmock.yml');
   });
 
   afterEach(async () => {
@@ -38,15 +38,14 @@ describe('GitLab', () => {
     ]);
     const app = new App(configs);
     const undertest = () => app.start();
+
     await expect(undertest).rejects.toThrow(
       new CodeCoachError(
         'There are some linting error and exit code reporting is enabled',
       ),
     );
 
-    // assertions
     const history = await getHttpMockServerHistory(gitlab);
-
     expect(history).toHaveLength(4);
     expect(history[0].request).toMatchObject({
       path: '/api/v4/projects/1/merge_requests/1/versions',
@@ -63,6 +62,10 @@ describe('GitLab', () => {
     expect(history[3].request).toMatchObject({
       path: '/api/v4/projects/1/merge_requests/1/notes',
       method: 'POST',
+      body: {
+        body:
+          '## CodeCoach reports 1 issue\n:rotating_light: 1 error\n:warning: 0 warning',
+      },
     });
   });
 });
