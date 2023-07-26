@@ -1,28 +1,43 @@
+# createMRDiscussion
+- request:
+    path:
+      matcher: ShouldMatch
+      value: \/projects\/[^\/]+\/merge_requests\/[^\/]+\/discussions\/?$
+    method: POST
+    headers:
+      Private-Token: privatetoken
+  response:
+    status: 200
+
 # getCurrentUserId
 - request:
     path: /user
     method: GET
+    headers:
+      Private-Token: privatetoken
   response:
     status: 200
     headers:
       Content-Type: application/json
     body: |-
       {
-        "id": 1,
+        "id": 99,
         "name": "John Smith",
         "username": "john_smith",
         "state": "active",
         "avatar_url": "http://localhost:3000/uploads/user/avatar/1/index.jpg",
         "web_url": "http://localhost:3000/john_smith",
-        "created_at": "2012-05-23T08:00:58Z"
+        "created_at": "2022-05-23T08:00:58Z"
       }
 
 # listAllNotes
 - request:
     path:
       matcher: ShouldMatch
-      value: \/projects\/[^\/]+\/merge_requests\/[^\/]+\/notes
+      value: \/projects\/[^\/]+\/merge_requests\/[^\/]+\/notes\/?$
     method: GET
+    headers:
+      Private-Token: privatetoken
   response:
     status: 200
     headers:
@@ -30,34 +45,29 @@
     body: |-
       [
         {
-          "id": 301,
-          "body": "Comment for MR",
-          "author": {
-            "id": 1,
-            "username": "pipin",
-            "email": "admin@example.com",
-            "name": "Pip",
-            "state": "active",
-            "created_at": "2013-09-30T13:46:01Z"
-          },
-          "created_at": "2013-10-02T08:57:14Z",
-          "updated_at": "2013-10-02T08:57:14Z",
-          "confidential": false,
-        },
-        {
-          "id": 302,
-          "body": "LGTM",
-          "author": {
-            "id": 1,
-            "username": "pipin",
-            "email": "admin@example.com",
-            "name": "Pip",
-            "state": "active",
-            "created_at": "2013-09-30T13:46:01Z"
-          },
-          "created_at": "2013-10-02T09:22:45Z",
-          "updated_at": "2013-10-02T10:22:45Z",
-          "confidential": false
+            "id": 6273413,
+            "type": null,
+            "body": "added 1 commit\n\n<ul><li>3b1c0654 - fix CI</li></ul>\n\n[Compare with previous version](/full-stack/tooling/codecoach-game-poc/-/merge_requests/20/diffs?diff_id=3712228&start_sha=3a01be0ebd483c7fa5d1fa166d27956cd5becc9b)",
+            "attachment": null,
+            "author": {
+                "id": 99,
+                "username": "john_smith",
+                "name": "John Smith",
+                "state": "active",
+                "avatar_url": "http://localhost:3000/uploads/user/avatar/1/index.jpg",
+                "web_url": "http://localhost:3000/john_smith"
+            },
+            "created_at": "2023-07-25T08:34:51.384Z",
+            "updated_at": "2023-07-25T08:34:51.385Z",
+            "system": true,
+            "noteable_id": 859214,
+            "noteable_type": "MergeRequest",
+            "project_id": 37985,
+            "resolvable": false,
+            "confidential": false,
+            "internal": false,
+            "noteable_iid": 20,
+            "commands_changes": {}
         }
       ]
 
@@ -67,5 +77,72 @@
       matcher: ShouldMatch
       value: \/projects\/[^\/]+\/merge_requests\/[^\/]+\/notes\/[^\/]+
     method: DELETE
+    headers:
+      Private-Token: privatetoken
   response:
     status: 200
+
+# createNote
+- request:
+    path:
+      matcher: ShouldMatch
+      value: \/projects\/[^\/]+\/merge_requests\/[^\/]+\/notes\/?$
+    method: POST
+    headers:
+      Private-Token: privatetoken
+  response:
+    status: 200
+
+# diff
+- request:
+    path:
+      matcher: ShouldMatch
+      value: \/projects\/[^\/]+\/merge_requests\/[^\/]+\/changes\/?$
+    method: GET
+    headers:
+      Private-Token: privatetoken
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |-
+      {
+        "changes": [
+          {
+            "diff": "@@ -4,12 +4,14 @@ import viteLogo from \"/vite.svg\";\n import \"./App.css\";\n \n function App() {\n-  const [count, setCount] = useState(0);\n-  const name = '';\n-  useEffect(function persistForm() {\n-    localStorage.setItem('formData',name);\n-  });\n+  const [count, setCount] = useState(0)\n \n+  const name = '';\n+  if (name !== '') {\n+    useEffect(function persistForm() {\n+      localStorage.setItem('formData',name);\n+    });\n+  }\n \n   return (\n     <>\n",
+            "new_path": "src/App.tsx",
+            "old_path": "src/App.tsx",
+            "a_mode": "100644",
+            "b_mode": "100644",
+            "new_file": false,
+            "renamed_file": false,
+            "deleted_file": false
+          }
+        ]
+      }
+
+# getLatestVersion
+- request:
+    path:
+      matcher: ShouldMatch
+      value: \/projects\/[^\/]+\/merge_requests\/[^\/]+\/versions\/?$
+    method: GET
+    headers:
+      Private-Token: privatetoken
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |-
+      [
+        {
+          "id": 3712211,
+          "head_commit_sha": "3a01be0ebd483c7fa5d1fa166d27956cd5becc9b",
+          "base_commit_sha": "28ab14718546dc00d20b8f56b2732ac4281fc1ab",
+          "start_commit_sha": "28ab14718546dc00d20b8f56b2732ac4281fc1ab",
+          "created_at": "2023-07-25T08:33:48.665Z",
+          "merge_request_id": 859214,
+          "state": "collected",
+          "real_size": "1"
+        }
+      ]

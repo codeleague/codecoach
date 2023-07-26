@@ -1,7 +1,11 @@
 module.exports = {
-  roots: ['<rootDir>/src'],
+  testEnvironment: 'node',
+  roots: ['<rootDir>/src', '<rootDir>/tests'],
   testMatch: ['**/__tests__/**/*.+(ts|tsx|js)', '**/?(*.)+(spec|test).+(ts|tsx|js)'],
   transform: {
     '^.+\\.(ts|tsx)$': 'ts-jest',
+  },
+  moduleNameMapper: {
+    axios: 'axios/dist/node/axios.cjs',
   },
 };
