@@ -45,6 +45,7 @@ class PrServiceMock implements IGitHubPRService {
 const configs = {
   removeOldComment: false,
   failOnWarnings: false,
+  suppressRules: [] as Array<string>,
 } as ConfigArgument;
 
 function createGitHub(service: IGitHubPRService, configs: ConfigArgument) {

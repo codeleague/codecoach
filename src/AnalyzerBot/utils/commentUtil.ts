@@ -2,14 +2,14 @@ import { LogSeverity, LogType } from '../../Parser';
 import { Comment, CommentStructure } from '../@types/CommentTypes';
 import { MessageUtil } from './message.util';
 
-export function groupComments(logs: LogType[], suppressRules?: Array<string>): Comment[] {
+export function groupComments(logs: LogType[], suppressRules: Array<string>): Comment[] {
   const commentMap = logs.reduce((state: CommentStructure, log) => {
     const { source: file, line } = log;
 
     if (!line) return state;
 
     const currentComment = getOrInitComment(state, file, line);
-    const updatedComment = updateComment(currentComment, log, suppressRules ?? []);
+    const updatedComment = updateComment(currentComment, log, suppressRules);
     return updateCommentStructure(state, updatedComment);
   }, {});
 
