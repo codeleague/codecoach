@@ -11,7 +11,9 @@
 
 # getCurrentUserId
 - request:
-    path: /user
+    path:
+      matcher: ShouldMatch
+      value: /user
     method: GET
     headers:
       Private-Token: privatetoken
@@ -22,11 +24,11 @@
     body: |-
       {
         "id": 99,
-        "name": "John Smith",
-        "username": "john_smith",
+        "username": "codecoach-bro",
+        "name": "codecoach-bro",
         "state": "active",
-        "avatar_url": "http://localhost:3000/uploads/user/avatar/1/index.jpg",
-        "web_url": "http://localhost:3000/john_smith",
+        "avatar_url": "http://localhost:3000/uploads/user/avatar/2656/avatar.png",
+        "web_url": "https://gitlab.agodadev.io/codecoach-bro",
         "created_at": "2022-05-23T08:00:58Z"
       }
 
@@ -45,29 +47,43 @@
     body: |-
       [
         {
-            "id": 6273413,
-            "type": null,
-            "body": "added 1 commit\n\n<ul><li>3b1c0654 - fix CI</li></ul>\n\n[Compare with previous version](/full-stack/tooling/codecoach-game-poc/-/merge_requests/20/diffs?diff_id=3712228&start_sha=3a01be0ebd483c7fa5d1fa166d27956cd5becc9b)",
-            "attachment": null,
-            "author": {
-                "id": 99,
-                "username": "john_smith",
-                "name": "John Smith",
-                "state": "active",
-                "avatar_url": "http://localhost:3000/uploads/user/avatar/1/index.jpg",
-                "web_url": "http://localhost:3000/john_smith"
-            },
-            "created_at": "2023-07-25T08:34:51.384Z",
-            "updated_at": "2023-07-25T08:34:51.385Z",
-            "system": true,
-            "noteable_id": 859214,
-            "noteable_type": "MergeRequest",
-            "project_id": 37985,
-            "resolvable": false,
-            "confidential": false,
-            "internal": false,
-            "noteable_iid": 20,
-            "commands_changes": {}
+          "id": 987655,
+          "body": "## CodeCoach reports 1 issue\n:rotating_light: 1 error\n:warning: 0 warning",
+          "attachment": null,
+          "author": {
+            "id": 99,
+            "username": "codecoach-bro",
+            "name": "codecoach-bro",
+            "state": "active",
+            "avatar_url": "http://localhost:3000/uploads/user/avatar/2656/avatar.png",
+            "web_url": "https://gitlab.agodadev.io/codecoach-bro"
+          },
+          "created_at": "2023-07-25T08:35:38.675Z",
+          "updated_at": "2023-07-25T08:35:38.675Z",
+          "system": false,
+          "noteable_id": 859214,
+          "noteable_type": "MergeRequest",
+          "project_id": 37985,
+          "resolvable": false
+        },
+        {
+          "id": 987654,
+          "body": ":rotating_light: React Hook \"useEffect\" is called conditionally. React Hooks must be called in the exact same order in every component render.",
+          "attachment": null,
+          "author": {
+            "id": 99,
+            "username": "codecoach-bro",
+            "name": "codecoach-bro",
+            "state": "active",
+            "avatar_url": "http://localhost:3000/uploads/user/avatar/2656/avatar.png",
+            "web_url": "https://gitlab.agodadev.io/codecoach-bro"
+          },
+          "created_at": "2023-07-25T08:35:38.418Z",
+          "updated_at": "2023-07-25T08:35:38.418Z",
+          "system": false,
+          "noteable_id": 859214,
+          "noteable_type": "MergeRequest",
+          "resolvable": true
         }
       ]
 

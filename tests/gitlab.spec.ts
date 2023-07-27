@@ -29,11 +29,13 @@ describe('GitLab', () => {
       'app.ts',
       '--vcs="gitlab"',
       `--gitlabHost=http://${gitlab.getHost()}:${gitlab.getMappedPort(8080)}`,
+      // `--gitlabHost=http://localhost:8080`,
       `--gitlabProjectId=1`,
       `--gitlabMrIid=1`,
       `--gitlabToken=privatetoken`,
       `-f=eslint;./tests/eslint-report.json;/Users/codeleague/example`,
       `-o=output.log`,
+      '--removeOldComment',
       '--failOnWarnings',
     ]);
     const app = new App(configs);
@@ -45,27 +47,61 @@ describe('GitLab', () => {
       ),
     );
 
-    const history = await getHttpMockServerHistory(gitlab);
-    expect(history).toHaveLength(4);
-    expect(history[0].request).toMatchObject({
-      path: '/api/v4/projects/1/merge_requests/1/versions',
-      method: 'GET',
-    });
-    expect(history[1].request).toMatchObject({
-      path: '/api/v4/projects/1/merge_requests/1/changes',
-      method: 'GET',
-    });
-    expect(history[2].request).toMatchObject({
-      path: '/api/v4/projects/1/merge_requests/1/discussions',
-      method: 'POST',
-    });
-    expect(history[3].request).toMatchObject({
-      path: '/api/v4/projects/1/merge_requests/1/notes',
-      method: 'POST',
-      body: {
-        body:
-          '## CodeCoach reports 1 issue\n:rotating_light: 1 error\n:warning: 0 warning',
+    const history = await getHttpMockServerHistory(gitlab as StartedTestContainer);
+    expect(history).toHaveLength(8);
+    expect(history).toMatchObject([
+      {
+        request: {
+          path: '/api/v4/projects/1/merge_requests/1/versions',
+          method: 'GET',
+        },
       },
-    });
+      {
+        request: {
+          path: '/api/v4/projects/1/merge_requests/1/changes',
+          method: 'GET',
+        },
+      },
+      {
+        request: {
+          path: '/api/v4/user',
+          method: 'GET',
+        },
+      },
+      {
+        request: {
+          path: '/api/v4/projects/1/merge_requests/1/notes',
+          method: 'GET',
+        },
+      },
+      {
+        request: {
+          path: '/api/v4/projects/1/merge_requests/1/notes/987654',
+          method: 'DELETE',
+        },
+      },
+      {
+        request: {
+          path: '/api/v4/projects/1/merge_requests/1/notes/987655',
+          method: 'DELETE',
+        },
+      },
+      {
+        request: {
+          path: '/api/v4/projects/1/merge_requests/1/discussions',
+          method: 'POST',
+        },
+      },
+      {
+        request: {
+          path: '/api/v4/projects/1/merge_requests/1/notes',
+          method: 'POST',
+          body: {
+            body:
+              '## CodeCoach reports 1 issue\n:rotating_light: 1 error\n:warning: 0 warning',
+          },
+        },
+      },
+    ]);
   });
 });
