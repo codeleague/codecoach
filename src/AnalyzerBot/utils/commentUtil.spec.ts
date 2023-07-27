@@ -118,7 +118,7 @@ describe('groupComments', () => {
           ruleId: 'UNIMPORTANT_RULE/RULE2',
         },
       ],
-      ['UNIMPORTANT_RULE/*'],
+      ['UNIMPORTANT_RULE/.*'],
     );
 
     expect(comments).toEqual([
