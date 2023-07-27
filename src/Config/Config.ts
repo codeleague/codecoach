@@ -108,7 +108,7 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
     string: true,
     number: false,
     describe:
-      'List of rules to suppress, bot will still make comment but mark it as suppressed and not failing the job',
+      'List of rules to suppress (in RegExp format), bot will still make comment but mark it as suppressed and not failing the job',
     default: [],
   })
   .option('dryRun', {
