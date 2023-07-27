@@ -2,14 +2,14 @@ import { LogSeverity, LogType } from '../../Parser';
 import { Comment, CommentStructure } from '../@types/CommentTypes';
 import { MessageUtil } from './message.util';
 
-export function groupComments(logs: LogType[], suppressRules: Set<string>): Comment[] {
+export function groupComments(logs: LogType[], suppressRules?: Array<string>): Comment[] {
   const commentMap = logs.reduce((state: CommentStructure, log) => {
     const { source: file, line } = log;
 
     if (!line) return state;
 
     const currentComment = getOrInitComment(state, file, line);
-    const updatedComment = updateComment(currentComment, log, suppressRules);
+    const updatedComment = updateComment(currentComment, log, suppressRules ?? []);
     return updateCommentStructure(state, updatedComment);
   }, {});
 
@@ -61,12 +61,17 @@ function calculateSuppresses(currentComment: Comment, isSuppressed: boolean): nu
   return currentComment.suppresses + (isSuppressed ? 1 : 0);
 }
 
+function shouldBeSuppressed(log: LogType, suppressRules: Array<string>): boolean {
+  const suppressRegexps: Array<RegExp> = suppressRules.map((rule) => new RegExp(rule));
+  return suppressRegexps.some((regexp) => regexp.test(log.ruleId));
+}
+
 function updateComment(
   currentComment: Comment,
   log: LogType,
-  suppressRules: Set<string>,
+  suppressRules: Array<string>,
 ): Comment {
-  const isSuppressed = suppressRules.has(log.ruleId);
+  const isSuppressed = shouldBeSuppressed(log, suppressRules);
   return {
     text: buildText(currentComment, log, isSuppressed),
     errors: calculateErrors(currentComment, log, isSuppressed),

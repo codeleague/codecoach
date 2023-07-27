@@ -12,7 +12,7 @@ describe('groupComments', () => {
   const logs: LogType[] = [touchFileError, touchFileWarning];
 
   it('returns comments based on lint logs', () => {
-    const comments = groupComments(logs, new Set<string>());
+    const comments = groupComments(logs, []);
     expect(comments).toEqual([
       {
         file: mockTouchFile,
@@ -44,7 +44,7 @@ describe('groupComments', () => {
           lineOffset: 33,
         },
       ],
-      new Set<string>(),
+      [],
     );
 
     expect(comments).toEqual([
@@ -79,7 +79,46 @@ describe('groupComments', () => {
           ruleId: 'UNIMPORTANT_RULE2',
         },
       ],
-      new Set(['UNIMPORTANT_RULE1', 'UNIMPORTANT_RULE2']),
+      ['UNIMPORTANT_RULE1', 'UNIMPORTANT_RULE2'],
+    );
+
+    expect(comments).toEqual([
+      {
+        file: mockTouchFile,
+        line: file1TouchLine,
+        errors: 1,
+        warnings: 0,
+        suppresses: 1,
+        text:
+          ':rotating_light: msg1' +
+          '  \n' +
+          ':warning: (SUPPRESSED) additional warning' +
+          '  \n',
+      },
+      {
+        file: mockTouchFile,
+        line: file2TouchLine,
+        errors: 0,
+        warnings: 1,
+        suppresses: 0,
+        text: ':warning: msg3' + '  \n',
+      },
+    ]);
+  });
+
+  it('support regexp in suppressRules', () => {
+    const comments = groupComments(
+      [
+        ...logs,
+        {
+          ...touchFileError,
+          msg: 'additional warning',
+          severity: LogSeverity.warning,
+          lineOffset: 33,
+          ruleId: 'UNIMPORTANT_RULE/RULE2',
+        },
+      ],
+      ['UNIMPORTANT_RULE/*'],
     );
 
     expect(comments).toEqual([
