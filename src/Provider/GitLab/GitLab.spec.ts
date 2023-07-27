@@ -39,6 +39,7 @@ class MrServiceMock implements IGitLabMRService {
 const configs = {
   removeOldComment: false,
   failOnWarnings: false,
+  suppressRules: [] as Array<string>,
 } as ConfigArgument;
 
 function createGitLab(service: IGitLabMRService, configs: ConfigArgument) {
