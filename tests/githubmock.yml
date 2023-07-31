@@ -13,7 +13,7 @@
     body: |-
       {
         "head": {
-          "sha": "92e39f6e1ebb55485234a5531402bb14ad4fbf2c"
+          "sha": "403926033d001b5279df37cbbe5287b7c7c267fa"
         }
       }
 
@@ -51,7 +51,7 @@
       Content-Type: application/json
     body: |-
       {
-        "id": 1765881
+        "id": 12123
       }
 
 # listAllReviewComments
@@ -69,9 +69,9 @@
     body: |-
       [
         {
-          "id": 1276113835,
+          "id": 99881235,
           "user": {
-            "id": 1765881
+            "id": 12123
           }
         }
       ]
@@ -113,9 +113,9 @@
     body: |-
       [
         {
-          "id": 1653381079,
+          "id": 3848497,
           "user": {
-            "id": 1765881
+            "id": 12123
           }
         }
       ]

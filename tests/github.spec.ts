@@ -78,13 +78,13 @@ describe('GitHub', () => {
         },
         {
           request: {
-            path: '/api/v3/repos/codecoach-bro/testproject/issues/comments/1653381079',
+            path: '/api/v3/repos/codecoach-bro/testproject/issues/comments/3848497',
             method: 'DELETE',
           },
         },
         {
           request: {
-            path: '/api/v3/repos/codecoach-bro/testproject/pulls/comments/1276113835',
+            path: '/api/v3/repos/codecoach-bro/testproject/pulls/comments/99881235',
             method: 'DELETE',
           },
         },
