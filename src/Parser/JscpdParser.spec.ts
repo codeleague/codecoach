@@ -49,14 +49,25 @@ describe('JscpdParser tests', () => {
 
   it('Should parse correctly', () => {
     const result = new JscpdParser(cwd).parse(mockedContentString);
-    expect(result).toHaveLength(1);
+    expect(result).toHaveLength(2);
     expect(result[0]).toEqual({
       ruleId: 'jscpd',
       source: `src/WebApi/Controllers/GController.cs`,
-      severity: LogSeverity.info,
+      severity: LogSeverity.warning,
       line: 1,
       lineOffset: 1,
-      msg: `Found code duplication from "src/WebApi/Controllers/HController.cs"`,
+      msg: `Found code duplication from src/WebApi/Controllers/HController.cs:1`,
+      log: JSON.stringify(mockedContent.duplicates[0]),
+      valid: true,
+      type: 'jscpd',
+    });
+    expect(result[1]).toEqual({
+      ruleId: 'jscpd',
+      source: `src/WebApi/Controllers/HController.cs`,
+      severity: LogSeverity.warning,
+      line: 1,
+      lineOffset: 2,
+      msg: `Found code duplication from src/WebApi/Controllers/GController.cs:1`,
       log: JSON.stringify(mockedContent.duplicates[0]),
       valid: true,
       type: 'jscpd',
