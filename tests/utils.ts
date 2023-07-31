@@ -47,3 +47,9 @@ export const getHttpMockServerHistory = async (
 export const stopHttpMockServer = async (mock: StartedTestContainer): Promise<void> => {
   await mock.stop();
 };
+
+// for matching unordered array
+export const sortByRequestPath = (
+  a: { request: { path: string } },
+  b: { request: { path: string } },
+): number => a.request?.path.localeCompare(b.request.path);

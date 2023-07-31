@@ -1,0 +1,154 @@
+# getLatestCommitSha
+- request:
+    path:
+      matcher: ShouldMatch
+      value: \/repos\/[^\/]+\/[^\/]+\/pulls\/[^\/]+\/?$
+    method: GET
+    headers:
+      Authorization: token privatetoken
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |-
+      {
+        "head": {
+          "sha": "92e39f6e1ebb55485234a5531402bb14ad4fbf2c"
+        }
+      }
+
+# diff
+- request:
+    path:
+      matcher: ShouldMatch
+      value: \/repos\/[^\/]+\/[^\/]+\/pulls/[^\/]+\/files\/?$
+    method: GET
+    headers:
+      Authorization: token privatetoken
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |-
+      [
+        {
+          "filename": "src/App.tsx",
+          "patch": "@@ -7,11 +7,10 @@ function App() {\n   const [count, setCount] = useState(0)\n \n   const name = '';\n-  if (name !== '') {\n-    useEffect(function persistForm() {\n-      localStorage.setItem('formData',name);\n-    });\n-  }\n+  useEffect(function persistForm() {\n+    localStorage.setItem('formData',name);\n+  });\n+\n \n   return (\n     <>"
+        }
+      ]
+
+# getCurrentUserId
+- request:
+    path:
+      matcher: ShouldMatch
+      value: \/user\/?$
+    method: GET
+    headers:
+      Authorization: token privatetoken
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |-
+      {
+        "id": 1765881
+      }
+
+# listAllReviewComments
+- request:
+    path:
+      matcher: ShouldMatch
+      value: \/repos\/[^\/]+\/[^\/]+\/pulls/[^\/]+\/comments\/?$
+    method: GET
+    headers:
+      Authorization: token privatetoken
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |-
+      [
+        {
+          "id": 1276113835,
+          "user": {
+            "id": 1765881
+          }
+        }
+      ]
+
+# createReviewComment
+- request:
+    path:
+      matcher: ShouldMatch
+      value: \/repos\/[^\/]+\/[^\/]+\/pulls/[^\/]+\/comments\/?$
+    method: POST
+    headers:
+      Authorization: token privatetoken
+  response:
+    status: 201
+
+# deleteReviewComment
+- request:
+    path:
+      matcher: ShouldMatch
+      value: \/repos\/[^\/]+\/[^\/]+\/pulls\/comments\/[^\/]+
+    method: DELETE
+    headers:
+      Authorization: token privatetoken
+  response:
+    status: 204
+
+# listAllComments
+- request:
+    path:
+      matcher: ShouldMatch
+      value: \/repos\/[^\/]+\/[^\/]+\/issues/[^\/]+\/comments\/?$
+    method: GET
+    headers:
+      Authorization: token privatetoken
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |-
+      [
+        {
+          "id": 1653381079,
+          "user": {
+            "id": 1765881
+          }
+        }
+      ]
+
+# createComment
+- request:
+    path:
+      matcher: ShouldMatch
+      value: \/repos\/[^\/]+\/[^\/]+\/issues/[^\/]+\/comments\/?$
+    method: POST
+    headers:
+      Authorization: token privatetoken
+  response:
+    status: 201
+
+# deleteComment
+- request:
+    path:
+      matcher: ShouldMatch
+      value: \/repos\/[^\/]+\/[^\/]+\/issues\/comments\/[^\/]+
+    method: DELETE
+    headers:
+      Authorization: token privatetoken
+  response:
+    status: 204
+
+# setCommitStatus
+- request:
+    path:
+      matcher: ShouldMatch
+      value: \/repos\/[^\/]+\/[^\/]+\/statuses\/[^\/]+
+    method: POST
+    headers:
+      Authorization: token privatetoken
+  response:
+    status: 201

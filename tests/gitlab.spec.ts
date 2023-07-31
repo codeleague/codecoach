@@ -4,6 +4,7 @@ import { App } from '../src/app';
 import {
   configureHttpMockServerWithYaml,
   getHttpMockServerHistory,
+  sortByRequestPath,
   startHttpMockServer,
   stopHttpMockServer,
 } from './utils';
@@ -47,12 +48,6 @@ describe('GitLab', () => {
     );
 
     const history = await getHttpMockServerHistory(gitlab as StartedTestContainer);
-
-    // for matching unordered array
-    const sortByRequestPath = (
-      a: { request: { path: string } },
-      b: { request: { path: string } },
-    ) => a.request?.path.localeCompare(b.request.path);
 
     expect(history).toHaveLength(8);
     expect(history.sort(sortByRequestPath)).toMatchObject(
