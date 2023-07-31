@@ -107,7 +107,7 @@ describe('GitHub', () => {
         {
           request: {
             path:
-              '/api/v3/repos/codecoach-bro/testproject/statuses/92e39f6e1ebb55485234a5531402bb14ad4fbf2c',
+              '/api/v3/repos/codecoach-bro/testproject/statuses/403926033d001b5279df37cbbe5287b7c7c267fa',
             method: 'POST',
           },
         },
