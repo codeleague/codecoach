@@ -1,4 +1,4 @@
-import { MergeRequestNoteSchema, DiffSchema } from '@gitbeaker/core/dist/types/types';
+import { MergeRequestNoteSchema, MergeRequestDiffVersionsSchema } from '@gitbeaker/core';
 import { Diff } from '../../Git/@types/PatchTypes';
 
 export interface IGitLabMRService {
@@ -8,11 +8,12 @@ export interface IGitLabMRService {
   getCurrentUserId(): Promise<number>;
   diff(): Promise<Diff[]>;
 
-  getLatestVersion(): Promise<DiffSchema>;
+  getLatestVersion(): Promise<MergeRequestDiffVersionsSchema>;
   createMRDiscussion(
-    latestVersion: DiffSchema,
+    latestVersion: MergeRequestDiffVersionsSchema,
     file: string,
     line: number,
     body: string,
+    nLines?: number,
   ): Promise<void>;
 }

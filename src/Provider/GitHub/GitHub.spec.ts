@@ -97,6 +97,7 @@ describe('VCS: GitHub', () => {
       expect.any(String),
       touchFileError.source,
       touchFileError.line,
+      touchFileError.nLines ?? 1,
     );
     expect(service.createReviewComment).toHaveBeenNthCalledWith(
       2,
@@ -104,6 +105,7 @@ describe('VCS: GitHub', () => {
       expect.any(String),
       touchFileWarning.source,
       touchFileWarning.line,
+      touchFileWarning.nLines ?? 1,
     );
 
     expect(service.setCommitStatus).toHaveBeenCalledTimes(1);
@@ -129,6 +131,7 @@ describe('VCS: GitHub', () => {
       expect.any(String),
       touchFileError.source,
       touchFileError.line,
+      touchFileError.nLines ?? 1,
     );
   });
 

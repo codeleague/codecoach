@@ -31,6 +31,12 @@ export class GitHubPRService implements IGitHubPRService {
       userAgent: USER_AGENT,
       timeZone: TIME_ZONE,
       baseUrl: GitHubPRService.getApiBase(repoUrlObj),
+      log: {
+        debug: (message: string) => console.log('debug', message),
+        error: (message: string) => console.log('error', message),
+        info: (message: string) => console.log('info', message),
+        warn: (message: string) => console.log('warn', message),
+      },
     });
 
     const [, owner, repo] = repoUrlObj.pathname.replace(/\.git$/gi, '').split('/');
@@ -102,6 +108,7 @@ export class GitHubPRService implements IGitHubPRService {
     body: string,
     path: string,
     line?: number,
+    nLines?: number,
   ): Promise<void> {
     const commonParams = {
       mediaType: {
@@ -114,8 +121,14 @@ export class GitHubPRService implements IGitHubPRService {
       path,
     };
 
+    const endLine = line && nLines && nLines > 1 ? line + nLines - 1 : undefined;
+
     await this.adapter.pulls.createReviewComment(
-      line ? { ...commonParams, line, side: 'RIGHT' } : { ...commonParams, position: 1 },
+      endLine
+        ? { ...commonParams, start_line: line, line: endLine, side: 'RIGHT' }
+        : line
+        ? { ...commonParams, line, side: 'RIGHT' }
+        : { ...commonParams, position: 1 },
     );
   }
 

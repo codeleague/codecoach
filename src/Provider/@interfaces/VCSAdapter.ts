@@ -8,6 +8,11 @@ export interface VCSAdapter {
   getLatestCommitSha(): string;
   diff(): Promise<Diff[]>;
   createComment(comment: string): Promise<void>;
-  createReviewComment(text: string, file: string, line: number): Promise<void>;
+  createReviewComment(
+    text: string,
+    file: string,
+    line: number,
+    nLines?: number,
+  ): Promise<void>;
   removeExistingComments(): Promise<void>;
 }

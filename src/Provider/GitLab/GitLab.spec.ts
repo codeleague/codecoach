@@ -6,7 +6,7 @@ import {
   untouchedError,
   untouchedWarning,
 } from '../mockData';
-import { DiffSchema, MergeRequestNoteSchema } from '@gitbeaker/core/dist/types/types';
+import { MergeRequestDiffVersionsSchema, MergeRequestNoteSchema } from '@gitbeaker/core';
 import { ConfigArgument } from '../../Config';
 import { VCSEngine } from '../CommonVCS/VCSEngine';
 import { GitLabAdapter } from './GitLabAdapter';
@@ -24,7 +24,7 @@ const mockNotes = [
 const mockVersionId = 3425234;
 const mockVersion = {
   id: mockVersionId,
-} as DiffSchema;
+} as MergeRequestDiffVersionsSchema;
 
 class MrServiceMock implements IGitLabMRService {
   createMRDiscussion = jest.fn().mockResolvedValue(undefined);
@@ -97,6 +97,7 @@ describe('VCS: GitLab', () => {
       touchFileError.source,
       touchFileError.line,
       expect.any(String),
+      touchFileError.nLines ?? 1,
     );
 
     expect(service.createMRDiscussion).toHaveBeenNthCalledWith(
@@ -105,6 +106,7 @@ describe('VCS: GitLab', () => {
       touchFileWarning.source,
       touchFileWarning.line,
       expect.any(String),
+      touchFileWarning.nLines ?? 1,
     );
 
     expect(service.createNote).toHaveBeenCalledTimes(1);
