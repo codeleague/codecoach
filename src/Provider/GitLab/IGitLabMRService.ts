@@ -14,6 +14,5 @@ export interface IGitLabMRService {
     file: string,
     line: number,
     body: string,
-    nLines?: number,
   ): Promise<void>;
 }

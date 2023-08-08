@@ -102,7 +102,7 @@ export class GitHubPRService implements IGitHubPRService {
     body: string,
     path: string,
     line?: number,
-    nLines?: number,
+    nLines = 1,
   ): Promise<void> {
     const commonParams = {
       mediaType: {
@@ -115,7 +115,8 @@ export class GitHubPRService implements IGitHubPRService {
       path,
     };
 
-    const endLine = line && nLines && nLines > 1 ? line + nLines - 1 : undefined;
+    // newLine will be the last line of the comment if it's a multi-line comment
+    const endLine = line && nLines > 1 ? line + nLines - 1 : undefined;
 
     await this.adapter.pulls.createReviewComment(
       endLine

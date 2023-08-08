@@ -27,7 +27,18 @@ export class JscpdParser extends Parser {
         log: JSON.stringify(log),
         line: log.secondFile.startLoc.line,
         lineOffset: log.secondFile.startLoc.column ?? 0,
-        msg: `Found code duplication from \`${log.firstFile.name}:${log.firstFile.startLoc.line}\``,
+        nLines: log.lines,
+        msg: `
+Found code duplication from \`${log.firstFile.name}:${log.firstFile.startLoc.line}\`
+
+<details>
+  <summary>Click to see duplicated code</summary>
+
+  \`\`\`
+  ${log.fragment}
+  \`\`\`
+</details>
+        `,
         source: log.secondFile.name,
         severity: LogSeverity.warning,
         valid: true,
@@ -38,7 +49,18 @@ export class JscpdParser extends Parser {
         log: JSON.stringify(log),
         line: log.firstFile.startLoc.line,
         lineOffset: log.firstFile.startLoc.column ?? 0,
-        msg: `Found code duplication from \`${log.secondFile.name}:${log.secondFile.startLoc.line}\``,
+        nLines: log.lines,
+        msg: `
+Found code duplication from \`${log.secondFile.name}:${log.secondFile.startLoc.line}\`
+
+<details>
+  <summary>Click to see duplicated code</summary>
+
+  \`\`\`
+  ${log.fragment}
+  \`\`\`
+</details>
+        `,
         source: log.firstFile.name,
         severity: LogSeverity.warning,
         valid: true,

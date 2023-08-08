@@ -4,7 +4,7 @@ import { IGitLabMRService } from './IGitLabMRService';
 import {
   MergeRequestNoteSchema,
   MergeRequestDiffVersionsSchema,
-  MergeRequestDiscussionNotePositionOptions,
+  DiscussionNotePositionOptions,
 } from '@gitbeaker/core';
 import * as Resources from '@gitbeaker/core';
 import { Gitlab } from '@gitbeaker/rest';
@@ -32,9 +32,8 @@ export class GitLabMRService implements IGitLabMRService {
     file: string,
     line: number,
     body: string,
-    nLines = 1,
   ): Promise<void> {
-    const position: MergeRequestDiscussionNotePositionOptions = {
+    const position: DiscussionNotePositionOptions = {
       positionType: 'text',
       baseSha: latestVersion.base_commit_sha,
       startSha: latestVersion.start_commit_sha,
@@ -73,7 +72,7 @@ export class GitLabMRService implements IGitLabMRService {
     if (!changes) {
       return [];
     } else {
-      return changes?.map((d) => ({
+      return changes.map((d) => ({
         file: d.new_path,
         patch: getPatch(d.diff),
       }));

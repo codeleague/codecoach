@@ -32,19 +32,8 @@ export class GitLabAdapter implements VCSAdapter {
     return this.mrService.createNote(comment);
   }
 
-  createReviewComment(
-    text: string,
-    file: string,
-    line: number,
-    nLines?: number,
-  ): Promise<void> {
-    return this.mrService.createMRDiscussion(
-      this.latestMrVersion,
-      file,
-      line,
-      text,
-      nLines,
-    );
+  createReviewComment(text: string, file: string, line: number): Promise<void> {
+    return this.mrService.createMRDiscussion(this.latestMrVersion, file, line, text);
   }
 
   async removeExistingComments(): Promise<void> {
