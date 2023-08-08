@@ -3,18 +3,18 @@ import { getPatch } from '../../Git/utils/patchProcessor';
 import { IGitLabMRService } from './IGitLabMRService';
 import {
   MergeRequestNoteSchema,
-  DiffSchema,
-  DiscussionNotePosition,
-} from '@gitbeaker/core/dist/types/types';
-import * as Resource from '@gitbeaker/core/dist/types/resources';
-import { Gitlab } from '@gitbeaker/node';
+  MergeRequestDiffVersionsSchema,
+  DiscussionNotePositionOptions,
+} from '@gitbeaker/core';
+import * as Resources from '@gitbeaker/core';
+import { Gitlab } from '@gitbeaker/rest';
 
 import { configs } from '../../Config';
 
 export class GitLabMRService implements IGitLabMRService {
   private readonly projectId: number;
   private readonly mrIid: number;
-  private readonly api: Resource.Gitlab;
+  private readonly api: Resources.Gitlab;
 
   constructor() {
     this.projectId = configs.gitlabProjectId;
@@ -28,19 +28,19 @@ export class GitLabMRService implements IGitLabMRService {
 
   // https://docs.gitlab.com/ee/api/discussions.html#create-new-merge-request-thread
   async createMRDiscussion(
-    latestVersion: DiffSchema,
+    latestVersion: MergeRequestDiffVersionsSchema,
     file: string,
     line: number,
     body: string,
   ): Promise<void> {
-    const position: Partial<DiscussionNotePosition> = {
-      position_type: 'text',
-      base_sha: latestVersion.base_commit_sha,
-      start_sha: latestVersion.start_commit_sha,
-      head_sha: latestVersion.head_commit_sha,
-      old_path: file,
-      new_path: file,
-      new_line: line,
+    const position: DiscussionNotePositionOptions = {
+      positionType: 'text',
+      baseSha: latestVersion.base_commit_sha,
+      startSha: latestVersion.start_commit_sha,
+      headSha: latestVersion.head_commit_sha,
+      oldPath: file,
+      newPath: file,
+      newLine: line.toString(),
     };
 
     await this.api.MergeRequestDiscussions.create(this.projectId, this.mrIid, body, {
@@ -49,7 +49,7 @@ export class GitLabMRService implements IGitLabMRService {
   }
 
   async getCurrentUserId(): Promise<number> {
-    const user = await this.api.Users.current();
+    const user = await this.api.Users.showCurrentUser();
     return user.id;
   }
 
@@ -67,21 +67,23 @@ export class GitLabMRService implements IGitLabMRService {
   }
 
   async diff(): Promise<Diff[]> {
-    const changes = (await this.api.MergeRequests.changes(this.projectId, this.mrIid))
-      .changes;
+    const changes = await this.api.MergeRequests.allDiffs(this.projectId, this.mrIid);
 
     if (!changes) {
       return [];
     } else {
-      return changes?.map((d) => ({
+      return changes.map((d) => ({
         file: d.new_path,
         patch: getPatch(d.diff),
       }));
     }
   }
 
-  async getLatestVersion(): Promise<DiffSchema> {
-    const versions = await this.api.MergeRequests.versions(this.projectId, this.mrIid);
+  async getLatestVersion(): Promise<MergeRequestDiffVersionsSchema> {
+    const versions = await this.api.MergeRequests.allDiffVersions(
+      this.projectId,
+      this.mrIid,
+    );
     const collected = versions.filter((v) => v.state === 'collected');
 
     if (collected.length === 0) throw new Error('No collected version in MR');

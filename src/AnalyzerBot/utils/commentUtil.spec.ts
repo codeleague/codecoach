@@ -17,6 +17,7 @@ describe('groupComments', () => {
       {
         file: mockTouchFile,
         line: file1TouchLine,
+        nLines: 1,
         errors: 1,
         warnings: 0,
         suppresses: 0,
@@ -25,6 +26,7 @@ describe('groupComments', () => {
       {
         file: mockTouchFile,
         line: file2TouchLine,
+        nLines: 2,
         errors: 0,
         warnings: 1,
         suppresses: 0,
@@ -51,6 +53,7 @@ describe('groupComments', () => {
       {
         file: mockTouchFile,
         line: file1TouchLine,
+        nLines: 1,
         errors: 1,
         warnings: 1,
         suppresses: 0,
@@ -59,6 +62,7 @@ describe('groupComments', () => {
       {
         file: mockTouchFile,
         line: file2TouchLine,
+        nLines: 2,
         errors: 0,
         warnings: 1,
         suppresses: 0,
@@ -86,6 +90,7 @@ describe('groupComments', () => {
       {
         file: mockTouchFile,
         line: file1TouchLine,
+        nLines: 1,
         errors: 1,
         warnings: 0,
         suppresses: 1,
@@ -98,6 +103,7 @@ describe('groupComments', () => {
       {
         file: mockTouchFile,
         line: file2TouchLine,
+        nLines: 2,
         errors: 0,
         warnings: 1,
         suppresses: 0,
@@ -125,6 +131,7 @@ describe('groupComments', () => {
       {
         file: mockTouchFile,
         line: file1TouchLine,
+        nLines: 1,
         errors: 1,
         warnings: 0,
         suppresses: 1,
@@ -137,6 +144,7 @@ describe('groupComments', () => {
       {
         file: mockTouchFile,
         line: file2TouchLine,
+        nLines: 2,
         errors: 0,
         warnings: 1,
         suppresses: 0,

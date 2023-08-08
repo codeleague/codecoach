@@ -2,11 +2,11 @@ import { VCSAdapter } from '../@interfaces/VCSAdapter';
 import { Diff } from '../../Git/@types/PatchTypes';
 import { Log } from '../../Logger';
 import { IGitLabMRService } from './IGitLabMRService';
-import { DiffSchema } from '@gitbeaker/core/dist/types/types';
+import { MergeRequestDiffVersionsSchema } from '@gitbeaker/core';
 import { IAnalyzerBot } from '../../AnalyzerBot/@interfaces/IAnalyzerBot';
 
 export class GitLabAdapter implements VCSAdapter {
-  private latestMrVersion: DiffSchema;
+  private latestMrVersion: MergeRequestDiffVersionsSchema;
   constructor(private readonly mrService: IGitLabMRService) {}
 
   async init(): Promise<void> {
