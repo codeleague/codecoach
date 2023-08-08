@@ -31,6 +31,12 @@ export class GitHubPRService implements IGitHubPRService {
       userAgent: USER_AGENT,
       timeZone: TIME_ZONE,
       baseUrl: GitHubPRService.getApiBase(repoUrlObj),
+      log: {
+        debug: (message: string) => console.log('debug', message),
+        error: (message: string) => console.log('error', message),
+        info: (message: string) => console.log('info', message),
+        warn: (message: string) => console.log('warn', message),
+      },
     });
 
     const [, owner, repo] = repoUrlObj.pathname.replace(/\.git$/gi, '').split('/');

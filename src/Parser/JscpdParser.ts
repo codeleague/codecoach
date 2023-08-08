@@ -28,17 +28,15 @@ export class JscpdParser extends Parser {
         line: log.secondFile.startLoc.line,
         lineOffset: log.secondFile.startLoc.column ?? 0,
         nLines: log.lines,
-        msg: `
-Found code duplication from \`${log.firstFile.name}:${log.firstFile.startLoc.line}\`
-
-<details>
-  <summary>Click to see duplicated code</summary>
-
-  \`\`\`
-  ${log.fragment}
-  \`\`\`
-</details>
-        `,
+        msg:
+          `Found code duplication from \`${log.firstFile.name}:${log.firstFile.startLoc.line}\`\r\n` +
+          `\r\n` +
+          `<details>\r\n` +
+          `<summary>Click to see duplicated code</summary>\r\n` +
+          `\`\`\`\r\n` +
+          `${log.fragment}\r\n` +
+          `\`\`\`\r\n` +
+          `</details>`,
         source: log.secondFile.name,
         severity: LogSeverity.warning,
         valid: true,
@@ -50,17 +48,15 @@ Found code duplication from \`${log.firstFile.name}:${log.firstFile.startLoc.lin
         line: log.firstFile.startLoc.line,
         lineOffset: log.firstFile.startLoc.column ?? 0,
         nLines: log.lines,
-        msg: `
-Found code duplication from \`${log.secondFile.name}:${log.secondFile.startLoc.line}\`
-
-<details>
-  <summary>Click to see duplicated code</summary>
-
-  \`\`\`
-  ${log.fragment}
-  \`\`\`
-</details>
-        `,
+        msg:
+          `Found code duplication from \`${log.secondFile.name}:${log.secondFile.startLoc.line}\`\r\n` +
+          `\r\n` +
+          `<details>\r\n` +
+          `<summary>Click to see duplicated code</summary>\r\n` +
+          `\`\`\`\r\n` +
+          `${log.fragment}\r\n` +
+          `\`\`\`\r\n` +
+          `</details>`,
         source: log.firstFile.name,
         severity: LogSeverity.warning,
         valid: true,

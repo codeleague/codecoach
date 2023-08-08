@@ -97,7 +97,6 @@ describe('VCS: GitLab', () => {
       touchFileError.source,
       touchFileError.line,
       expect.any(String),
-      touchFileError.nLines ?? 1,
     );
 
     expect(service.createMRDiscussion).toHaveBeenNthCalledWith(
@@ -106,7 +105,6 @@ describe('VCS: GitLab', () => {
       touchFileWarning.source,
       touchFileWarning.line,
       expect.any(String),
-      touchFileWarning.nLines ?? 1,
     );
 
     expect(service.createNote).toHaveBeenCalledTimes(1);
