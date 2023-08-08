@@ -62,6 +62,7 @@ describe('JscpdParser tests', () => {
         `\r\n` +
         `<details>\r\n` +
         `<summary>Click to see duplicated code</summary>\r\n` +
+        `\r\n` +
         `\`\`\`\r\n` +
         `${mockedContent.duplicates[0].fragment}\r\n` +
         `\`\`\`\r\n` +
@@ -82,6 +83,7 @@ describe('JscpdParser tests', () => {
         `\r\n` +
         `<details>\r\n` +
         `<summary>Click to see duplicated code</summary>\r\n` +
+        `\r\n` +
         `\`\`\`\r\n` +
         `${mockedContent.duplicates[0].fragment}\r\n` +
         `\`\`\`\r\n` +

@@ -33,6 +33,7 @@ export class JscpdParser extends Parser {
           `\r\n` +
           `<details>\r\n` +
           `<summary>Click to see duplicated code</summary>\r\n` +
+          `\r\n` +
           `\`\`\`\r\n` +
           `${log.fragment}\r\n` +
           `\`\`\`\r\n` +
@@ -53,6 +54,7 @@ export class JscpdParser extends Parser {
           `\r\n` +
           `<details>\r\n` +
           `<summary>Click to see duplicated code</summary>\r\n` +
+          `\r\n` +
           `\`\`\`\r\n` +
           `${log.fragment}\r\n` +
           `\`\`\`\r\n` +
