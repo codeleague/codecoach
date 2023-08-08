@@ -57,16 +57,16 @@ describe('JscpdParser tests', () => {
       line: 1,
       lineOffset: 1,
       nLines: 11,
-      msg:
-        `Found code duplication from \`src/WebApi/Controllers/HController.cs:1\`\r\n` +
-        `\r\n` +
-        `<details>\r\n` +
-        `<summary>Click to see duplicated code</summary>\r\n` +
-        `\r\n` +
-        `\`\`\`\r\n` +
-        `${mockedContent.duplicates[0].fragment}\r\n` +
-        `\`\`\`\r\n` +
-        `</details>`,
+      msg: `Found code duplication from \`src/WebApi/Controllers/HController.cs:1\`
+
+<details>
+<summary>Click to see duplicated code</summary>
+
+\`\`\`
+${mockedContent.duplicates[0].fragment}
+\`\`\`
+
+</details>`,
       log: JSON.stringify(mockedContent.duplicates[0]),
       valid: true,
       type: 'jscpd',
@@ -78,16 +78,16 @@ describe('JscpdParser tests', () => {
       line: 1,
       lineOffset: 2,
       nLines: 11,
-      msg:
-        `Found code duplication from \`src/WebApi/Controllers/GController.cs:1\`\r\n` +
-        `\r\n` +
-        `<details>\r\n` +
-        `<summary>Click to see duplicated code</summary>\r\n` +
-        `\r\n` +
-        `\`\`\`\r\n` +
-        `${mockedContent.duplicates[0].fragment}\r\n` +
-        `\`\`\`\r\n` +
-        `</details>`,
+      msg: `Found code duplication from \`src/WebApi/Controllers/GController.cs:1\`
+
+<details>
+<summary>Click to see duplicated code</summary>
+
+\`\`\`
+${mockedContent.duplicates[0].fragment}
+\`\`\`
+
+</details>`,
       log: JSON.stringify(mockedContent.duplicates[0]),
       valid: true,
       type: 'jscpd',
