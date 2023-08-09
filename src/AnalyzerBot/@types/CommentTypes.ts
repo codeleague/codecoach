@@ -1,6 +1,7 @@
 export interface Comment {
   file: string;
   line: number;
+  nLines?: number;
   text: string;
   errors: number;
   warnings: number;

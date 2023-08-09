@@ -1,4 +1,5 @@
 export enum ProjectType {
+  // linters
   dotnetbuild = 'dotnetbuild',
   msbuild = 'msbuild',
   tslint = 'tslint',
@@ -7,4 +8,7 @@ export enum ProjectType {
   androidlint = 'androidlint',
   dartlint = 'dartlint',
   swiftlint = 'swiftlint',
+
+  // copy paste detector
+  jscpd = 'jscpd',
 }

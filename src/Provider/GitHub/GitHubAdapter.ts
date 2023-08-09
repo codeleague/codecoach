@@ -33,8 +33,13 @@ export class GitHubAdapter implements VCSAdapter {
     return this.prService.createComment(comment);
   }
 
-  createReviewComment(text: string, file: string, line: number): Promise<void> {
-    return this.prService.createReviewComment(this.commitId, text, file, line);
+  createReviewComment(
+    text: string,
+    file: string,
+    line: number,
+    nLines: number,
+  ): Promise<void> {
+    return this.prService.createReviewComment(this.commitId, text, file, line, nLines);
   }
 
   async removeExistingComments(): Promise<void> {

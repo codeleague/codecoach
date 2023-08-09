@@ -4,11 +4,11 @@ import { MessageUtil } from './message.util';
 
 export function groupComments(logs: LogType[], suppressRules: Array<string>): Comment[] {
   const commentMap = logs.reduce((state: CommentStructure, log) => {
-    const { source: file, line } = log;
+    const { source: file, line, nLines } = log;
 
     if (!line) return state;
 
-    const currentComment = getOrInitComment(state, file, line);
+    const currentComment = getOrInitComment(state, file, line, nLines);
     const updatedComment = updateComment(currentComment, log, suppressRules);
     return updateCommentStructure(state, updatedComment);
   }, {});
@@ -16,7 +16,12 @@ export function groupComments(logs: LogType[], suppressRules: Array<string>): Co
   return Object.values(commentMap).flatMap((file) => Object.values(file));
 }
 
-function getOrInitComment(map: CommentStructure, file: string, line: number): Comment {
+function getOrInitComment(
+  map: CommentStructure,
+  file: string,
+  line: number,
+  nLines = 1,
+): Comment {
   return (
     map?.[file]?.[line] ?? {
       text: '',
@@ -25,6 +30,7 @@ function getOrInitComment(map: CommentStructure, file: string, line: number): Co
       suppresses: 0,
       file,
       line,
+      nLines,
     }
   );
 }
@@ -79,6 +85,7 @@ function updateComment(
     suppresses: calculateSuppresses(currentComment, isSuppressed),
     file: currentComment.file,
     line: currentComment.line,
+    nLines: currentComment.nLines,
   };
 }
 

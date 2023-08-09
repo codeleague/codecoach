@@ -58,9 +58,14 @@ export class VCSEngine implements VCS {
   }
 
   private async createReviewComment(comment: Comment): Promise<Comment> {
-    const { text, file, line } = comment;
-    await this.adapter.createReviewComment(text, file, line);
-    Log.debug(`${this.adapter.getName()} create review success`, { text, file, line });
+    const { text, file, line, nLines } = comment;
+    await this.adapter.createReviewComment(text, file, line, nLines);
+    Log.debug(`${this.adapter.getName()} create review success`, {
+      text,
+      file,
+      line,
+      nLines,
+    });
     return comment;
   }
 }

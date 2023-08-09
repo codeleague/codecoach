@@ -24,6 +24,7 @@ export const touchFileWarning: LogType = {
   source: mockTouchFile,
   line: file2TouchLine,
   lineOffset: 44,
+  nLines: 2,
   valid: true,
   type: ProjectType.eslint,
 };

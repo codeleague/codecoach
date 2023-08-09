@@ -9,6 +9,7 @@ export type LogType = {
   source: string;
   line?: number;
   lineOffset?: number;
+  nLines?: number;
   valid: boolean;
   type: ProjectType;
 };

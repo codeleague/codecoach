@@ -16,6 +16,7 @@ export interface IGitHubPRService {
     body: string,
     path: string,
     line?: number,
+    nLines?: number,
   ): Promise<void>;
   getCurrentUserId(): Promise<number>;
   getLatestCommitSha(): Promise<string>;

@@ -35,6 +35,7 @@ describe('AnalyzerBot', () => {
         {
           file: mockTouchFile,
           line: file1TouchLine,
+          nLines: 1,
           text:
             MessageUtil.createMessageWithEmoji(
               touchFileError.msg,
@@ -47,6 +48,7 @@ describe('AnalyzerBot', () => {
         {
           file: mockTouchFile,
           line: file2TouchLine,
+          nLines: 2,
           text:
             MessageUtil.createMessageWithEmoji(
               touchFileWarning.msg,
