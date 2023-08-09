@@ -1,0 +1,164 @@
+# createMRDiscussion
+- request:
+    path:
+      matcher: ShouldMatch
+      value: \/projects\/[^\/]+\/merge_requests\/[^\/]+\/discussions\/?$
+    method: POST
+    headers:
+      Private-Token: privatetoken
+  response:
+    status: 200
+
+# getCurrentUserId
+- request:
+    path:
+      matcher: ShouldMatch
+      value: /user
+    method: GET
+    headers:
+      Private-Token: privatetoken
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |-
+      {
+        "id": 99,
+        "username": "codecoach-bro",
+        "name": "codecoach-bro",
+        "state": "active",
+        "avatar_url": "http://localhost:3000/uploads/user/avatar/2656/avatar.png",
+        "web_url": "https://gitlab.agodadev.io/codecoach-bro",
+        "created_at": "2022-05-23T08:00:58Z"
+      }
+
+# listAllNotes
+- request:
+    path:
+      matcher: ShouldMatch
+      value: \/projects\/[^\/]+\/merge_requests\/[^\/]+\/notes\/?$
+    method: GET
+    headers:
+      Private-Token: privatetoken
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |-
+      [
+        {
+          "id": 987655,
+          "body": "## CodeCoach reports 1 issue\n:rotating_light: 1 error\n:warning: 0 warning",
+          "attachment": null,
+          "author": {
+            "id": 99,
+            "username": "codecoach-bro",
+            "name": "codecoach-bro",
+            "state": "active",
+            "avatar_url": "http://localhost:3000/uploads/user/avatar/2656/avatar.png",
+            "web_url": "https://gitlab.agodadev.io/codecoach-bro"
+          },
+          "created_at": "2023-07-25T08:35:38.675Z",
+          "updated_at": "2023-07-25T08:35:38.675Z",
+          "system": false,
+          "noteable_id": 859214,
+          "noteable_type": "MergeRequest",
+          "project_id": 37985,
+          "resolvable": false
+        },
+        {
+          "id": 987654,
+          "body": ":rotating_light: React Hook \"useEffect\" is called conditionally. React Hooks must be called in the exact same order in every component render.",
+          "attachment": null,
+          "author": {
+            "id": 99,
+            "username": "codecoach-bro",
+            "name": "codecoach-bro",
+            "state": "active",
+            "avatar_url": "http://localhost:3000/uploads/user/avatar/2656/avatar.png",
+            "web_url": "https://gitlab.agodadev.io/codecoach-bro"
+          },
+          "created_at": "2023-07-25T08:35:38.418Z",
+          "updated_at": "2023-07-25T08:35:38.418Z",
+          "system": false,
+          "noteable_id": 859214,
+          "noteable_type": "MergeRequest",
+          "resolvable": true
+        }
+      ]
+
+# deleteNote
+- request:
+    path:
+      matcher: ShouldMatch
+      value: \/projects\/[^\/]+\/merge_requests\/[^\/]+\/notes\/[^\/]+
+    method: DELETE
+    headers:
+      Private-Token: privatetoken
+  response:
+    status: 200
+
+# createNote
+- request:
+    path:
+      matcher: ShouldMatch
+      value: \/projects\/[^\/]+\/merge_requests\/[^\/]+\/notes\/?$
+    method: POST
+    headers:
+      Private-Token: privatetoken
+  response:
+    status: 200
+
+# diff
+- request:
+    path:
+      matcher: ShouldMatch
+      value: \/projects\/[^\/]+\/merge_requests\/[^\/]+\/changes\/?$
+    method: GET
+    headers:
+      Private-Token: privatetoken
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |-
+      {
+        "changes": [
+          {
+            "diff": "@@ -4,12 +4,14 @@ import viteLogo from \"/vite.svg\";\n import \"./App.css\";\n \n function App() {\n-  const [count, setCount] = useState(0);\n-  const name = '';\n-  useEffect(function persistForm() {\n-    localStorage.setItem('formData',name);\n-  });\n+  const [count, setCount] = useState(0)\n \n+  const name = '';\n+  if (name !== '') {\n+    useEffect(function persistForm() {\n+      localStorage.setItem('formData',name);\n+    });\n+  }\n \n   return (\n     <>\n",
+            "new_path": "src/App.tsx",
+            "old_path": "src/App.tsx",
+            "a_mode": "100644",
+            "b_mode": "100644",
+            "new_file": false,
+            "renamed_file": false,
+            "deleted_file": false
+          }
+        ]
+      }
+
+# getLatestVersion
+- request:
+    path:
+      matcher: ShouldMatch
+      value: \/projects\/[^\/]+\/merge_requests\/[^\/]+\/versions\/?$
+    method: GET
+    headers:
+      Private-Token: privatetoken
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |-
+      [
+        {
+          "id": 3712211,
+          "head_commit_sha": "3a01be0ebd483c7fa5d1fa166d27956cd5becc9b",
+          "base_commit_sha": "28ab14718546dc00d20b8f56b2732ac4281fc1ab",
+          "start_commit_sha": "28ab14718546dc00d20b8f56b2732ac4281fc1ab",
+          "created_at": "2023-07-25T08:33:48.665Z",
+          "merge_request_id": 859214,
+          "state": "collected",
+          "real_size": "1"
+        }
+      ]

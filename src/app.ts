@@ -1,6 +1,4 @@
-#!/usr/bin/env node
-
-import { BuildLogFile, configs, ProjectType } from './Config';
+import { BuildLogFile, ConfigArgument, ProjectType } from './Config';
 import { File } from './File';
 import { Log } from './Logger';
 import {
@@ -23,47 +21,59 @@ import { VCSEngine } from './Provider/CommonVCS/VCSEngine';
 import { GitLabAdapter } from './Provider/GitLab/GitLabAdapter';
 import { VCSAdapter } from './Provider/@interfaces/VCSAdapter';
 import { AnalyzerBot } from './AnalyzerBot/AnalyzerBot';
+import CodeCoachError from './CodeCoachError';
 
-class App {
-  private vcs: VCS | null = null;
+export class App {
+  private vcs: VCS;
+  private readonly configs: ConfigArgument;
+
+  constructor(configs: ConfigArgument) {
+    this.configs = configs;
+  }
 
   async start(): Promise<void> {
-    if (!configs.dryRun) {
-      const adapter = App.getAdapter();
+    if (!this.configs.dryRun) {
+      const adapter = this.getAdapter();
       if (!adapter) {
-        Log.error('VCS adapter is not found');
-        process.exit(1);
+        throw new CodeCoachError('VCS adapter is not found');
       }
-      const analyzer = new AnalyzerBot(configs);
-      this.vcs = new VCSEngine(configs, analyzer, adapter);
+      const analyzer = new AnalyzerBot(this.configs);
+      this.vcs = new VCSEngine(this.configs, analyzer, adapter);
     }
 
-    const logs = await this.parseBuildData(configs.buildLogFile);
+    const logs = await this.parseBuildData(this.configs.buildLogFile);
     Log.info('Build data parsing completed');
 
     const reportToVcs = this.reportToVcs(logs);
-    const logToFile = App.writeLogToFile(logs);
+    const logToFile = this.writeLogToFile(logs);
     const [passed] = await Promise.all([reportToVcs, logToFile]);
     if (!passed) {
-      Log.error('There are some linting error and exit code reporting is enabled');
-      process.exit(1);
+      throw new CodeCoachError(
+        'There are some linting error and exit code reporting is enabled',
+      );
     }
   }
 
-  private static getAdapter(): VCSAdapter | undefined {
-    if (configs.vcs === 'github') {
+  private getAdapter(): VCSAdapter | undefined {
+    if (this.configs.vcs === 'github') {
       const githubPRService = new GitHubPRService(
-        configs.githubToken,
-        configs.githubRepoUrl,
-        configs.githubPr,
+        this.configs.githubToken,
+        this.configs.githubRepoUrl,
+        this.configs.githubPr,
       );
       return new GitHubAdapter(githubPRService);
-    } else if (configs.vcs === 'gitlab') {
-      return new GitLabAdapter(new GitLabMRService());
+    } else if (this.configs.vcs === 'gitlab') {
+      const gitlabMRService = new GitLabMRService(
+        this.configs.gitlabHost,
+        this.configs.gitlabProjectId,
+        this.configs.gitlabMrIid,
+        this.configs.gitlabToken,
+      );
+      return new GitLabAdapter(gitlabMRService);
     }
   }
 
-  private static getParser(type: ProjectType, cwd: string): Parser {
+  private getParser(type: ProjectType, cwd: string): Parser {
     switch (type) {
       case ProjectType.dotnetbuild:
         return new DotnetBuildParser(cwd);
@@ -90,7 +100,7 @@ class App {
     const logsTasks = files.map(async ({ type, path, cwd }) => {
       Log.debug('Parsing', { type, path, cwd });
       const content = await File.readFileHelper(path);
-      const parser = App.getParser(type, cwd);
+      const parser = this.getParser(type, cwd);
       return parser.parse(content);
     });
 
@@ -98,7 +108,7 @@ class App {
   }
 
   private async reportToVcs(logs: LogType[]): Promise<boolean> {
-    if (!this.vcs) {
+    if (this.configs.dryRun) {
       Log.info('Dry run enabled, skip reporting');
       return true;
     }
@@ -113,9 +123,9 @@ class App {
     }
   }
 
-  private static async writeLogToFile(logs: LogType[]): Promise<void> {
+  private async writeLogToFile(logs: LogType[]): Promise<void> {
     try {
-      await File.writeFileHelper(configs.output, JSON.stringify(logs, null, 2));
+      await File.writeFileHelper(this.configs.output, JSON.stringify(logs, null, 2));
       Log.info('Write output completed');
     } catch (error) {
       Log.error('Write output failed', { error });
@@ -123,12 +133,3 @@ class App {
     }
   }
 }
-
-new App().start().catch((error) => {
-  if (error instanceof Error) {
-    const { stack, message } = error;
-    Log.error('Unexpected error', { stack, message });
-  }
-  Log.error('Unexpected error', { error });
-  process.exit(2);
-});

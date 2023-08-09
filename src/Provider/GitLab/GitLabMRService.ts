@@ -9,20 +9,27 @@ import {
 import * as Resources from '@gitbeaker/core';
 import { Gitlab } from '@gitbeaker/rest';
 
-import { configs } from '../../Config';
-
 export class GitLabMRService implements IGitLabMRService {
-  private readonly projectId: number;
-  private readonly mrIid: number;
-  private readonly api: Resources.Gitlab;
+  private readonly gitlabHost: string;
+  private readonly gitlabProjectId: number;
+  private readonly gitlabMrIid: number;
+  private readonly gitlabToken: string;
+  private readonly api: Resource.Gitlab;
 
-  constructor() {
-    this.projectId = configs.gitlabProjectId;
-    this.mrIid = configs.gitlabMrIid;
+  constructor(
+    gitlabHost: string,
+    gitlabProjectId: number,
+    gitlabMrIid: number,
+    gitlabToken: string,
+  ) {
+    this.gitlabHost = gitlabHost;
+    this.gitlabProjectId = gitlabProjectId;
+    this.gitlabMrIid = gitlabMrIid;
+    this.gitlabToken = gitlabToken;
 
     this.api = new Gitlab({
-      host: configs.gitlabHost,
-      token: configs.gitlabToken,
+      host: this.gitlabHost,
+      token: this.gitlabToken,
     });
   }
 
@@ -43,9 +50,14 @@ export class GitLabMRService implements IGitLabMRService {
       newLine: line.toString(),
     };
 
-    await this.api.MergeRequestDiscussions.create(this.projectId, this.mrIid, body, {
-      position,
-    });
+    await this.api.MergeRequestDiscussions.create(
+      this.gitlabProjectId,
+      this.gitlabMrIid,
+      body,
+      {
+        position,
+      },
+    );
   }
 
   async getCurrentUserId(): Promise<number> {
@@ -54,20 +66,24 @@ export class GitLabMRService implements IGitLabMRService {
   }
 
   async listAllNotes(): Promise<MergeRequestNoteSchema[]> {
-    return await this.api.MergeRequestNotes.all(this.projectId, this.mrIid);
+    return await this.api.MergeRequestNotes.all(this.gitlabProjectId, this.gitlabMrIid);
   }
 
   async deleteNote(noteId: number): Promise<void> {
-    await this.api.MergeRequestNotes.remove(this.projectId, this.mrIid, noteId);
+    await this.api.MergeRequestNotes.remove(
+      this.gitlabProjectId,
+      this.gitlabMrIid,
+      noteId,
+    );
   }
 
   // github can do someone fancy shit here we cant
   async createNote(note: string): Promise<void> {
-    await this.api.MergeRequestNotes.create(this.projectId, this.mrIid, note);
+    await this.api.MergeRequestNotes.create(this.gitlabProjectId, this.gitlabMrIid, note);
   }
 
   async diff(): Promise<Diff[]> {
-    const changes = await this.api.MergeRequests.allDiffs(this.projectId, this.mrIid);
+    const changes = await this.api.MergeRequests.allDiffs(this.gitlabProjectId, this.gitlabMrIid);
 
     if (!changes) {
       return [];
@@ -81,8 +97,8 @@ export class GitLabMRService implements IGitLabMRService {
 
   async getLatestVersion(): Promise<MergeRequestDiffVersionsSchema> {
     const versions = await this.api.MergeRequests.allDiffVersions(
-      this.projectId,
-      this.mrIid,
+      this.gitlabProjectId,
+      this.gitlabMrIid,
     );
     const collected = versions.filter((v) => v.state === 'collected');
 

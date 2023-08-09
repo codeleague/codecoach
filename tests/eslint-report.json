@@ -1,0 +1,25 @@
+[
+  {
+    "filePath": "/Users/codeleague/example/src/App.tsx",
+    "messages": [
+      {
+        "ruleId": "react-hooks/rules-of-hooks",
+        "severity": 2,
+        "message": "React Hook \"useEffect\" is called conditionally. React Hooks must be called in the exact same order in every component render.",
+        "line": 11,
+        "column": 5,
+        "nodeType": "Identifier",
+        "endLine": 11,
+        "endColumn": 14
+      }
+    ],
+    "suppressedMessages": [],
+    "errorCount": 1,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "source": "import { useEffect, useState } from \"react\";\nimport reactLogo from \"./assets/react.svg\";\nimport viteLogo from \"/vite.svg\";\nimport \"./App.css\";\n\nfunction App() {\n  const [count, setCount] = useState(0)\n\n  const name = '';\n  if (name !== '') {\n    useEffect(function persistForm() {\n      localStorage.setItem('formData',name);\n    });\n  }\n\n  return (\n    <>\n      <div>\n        <a href=\"https://vitejs.dev\" target=\"_blank\">\n          <img src={viteLogo} className=\"logo\" alt=\"Vite logo\" />\n        </a>\n        <a href=\"https://react.dev\" target=\"_blank\">\n          <img src={reactLogo} className=\"logo react\" alt=\"React logo\" />\n        </a>\n      </div>\n      <h1>Vite + React</h1>\n      <div className=\"card\">\n        <button onClick={() => setCount((count) => count + 1)}>\n          count is {count}\n        </button>\n        <p>\n          Edit <code>src/App.tsx</code> and save to test HMR\n        </p>\n      </div>\n      <p className=\"read-the-docs\">\n        Click on the Vite and React logos to learn more\n      </p>\n    </>\n  );\n}\n\nexport default App;\n",
+    "usedDeprecatedRules": []
+  }
+]

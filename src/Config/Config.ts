@@ -123,7 +123,7 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
   })
   .strict()
   .help()
-  .wrap(120)
-  .parse(process.argv.slice(1)) as ConfigArgument;
+  .wrap(120);
 
-export const configs = args;
+export const ConfigParser = (argv: string[]): ConfigArgument =>
+  args.parse(argv) as ConfigArgument;
