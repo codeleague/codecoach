@@ -23,7 +23,11 @@ import { VCSEngine } from './Provider/CommonVCS/VCSEngine';
 import { GitLabAdapter } from './Provider/GitLab/GitLabAdapter';
 import { VCSAdapter } from './Provider/@interfaces/VCSAdapter';
 import { AnalyzerBot } from './AnalyzerBot/AnalyzerBot';
-import { defaultFormatter, gitLab, OutputFormatter } from './OutputFormatter/outputFormatter';
+import {
+  defaultFormatter,
+  gitLab,
+  OutputFormatter,
+} from './OutputFormatter/outputFormatter';
 
 class App {
   private vcs: VCS | null = null;
@@ -39,7 +43,7 @@ class App {
       const analyzer = new AnalyzerBot(configs);
       this.vcs = new VCSEngine(configs, analyzer, adapter);
     }
-    
+
     this.outputFormatter = App.getOutputFormatter();
 
     const logs = await this.parseBuildData(configs.buildLogFile);

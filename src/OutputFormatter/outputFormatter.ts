@@ -1,5 +1,5 @@
-import { LogSeverity, LogType } from "../Parser";
-import { createHash } from "crypto";
+import { LogSeverity, LogType } from '../Parser';
+import { createHash } from 'crypto';
 
 export type OutputFormatter = (logs: LogType[]) => string;
 
@@ -15,9 +15,9 @@ type GitLabOutputFormat = {
     lines: {
       begin?: number;
       end?: number;
-    }
+    };
   };
-}
+};
 
 const mapGitLabSeverity = (severity: LogSeverity): GitLabSeverity => {
   switch (severity) {
@@ -28,7 +28,7 @@ const mapGitLabSeverity = (severity: LogSeverity): GitLabSeverity => {
     default:
       return 'info';
   }
-}
+};
 
 export const gitLab: OutputFormatter = (logs: LogType[]) => {
   const gitlabReport = logs.map((log) => {
@@ -44,15 +44,15 @@ export const gitLab: OutputFormatter = (logs: LogType[]) => {
         path: log.source,
         lines: {
           begin: log.line ?? 1,
-        }
-      }
-    }
+        },
+      },
+    };
     return format;
-  })
+  });
 
   return JSON.stringify(gitlabReport, null, 2);
-}
+};
 
 export const defaultFormatter: OutputFormatter = (logs: LogType[]) => {
   return JSON.stringify(logs, null, 2);
-}
+};
