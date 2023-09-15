@@ -23,9 +23,11 @@ import { VCSEngine } from './Provider/CommonVCS/VCSEngine';
 import { GitLabAdapter } from './Provider/GitLab/GitLabAdapter';
 import { VCSAdapter } from './Provider/@interfaces/VCSAdapter';
 import { AnalyzerBot } from './AnalyzerBot/AnalyzerBot';
+import { defaultFormatter, gitLab, OutputFormatter } from './OutputFormatter/outputFormatter';
 
 class App {
   private vcs: VCS | null = null;
+  private outputFormatter: OutputFormatter;
 
   async start(): Promise<void> {
     if (!configs.dryRun) {
@@ -37,13 +39,15 @@ class App {
       const analyzer = new AnalyzerBot(configs);
       this.vcs = new VCSEngine(configs, analyzer, adapter);
     }
+    
+    this.outputFormatter = App.getOutputFormatter();
 
     const logs = await this.parseBuildData(configs.buildLogFile);
     Log.info('Build data parsing completed');
 
     const reportToVcs = this.reportToVcs(logs);
-    const logToFile = App.writeLogToFile(logs);
-    const [passed] = await Promise.all([reportToVcs, logToFile]);
+    const writeOutputFile = this.writeOutputFile(logs);
+    const [passed] = await Promise.all([reportToVcs, writeOutputFile]);
     if (!passed) {
       Log.error('There are some linting error and exit code reporting is enabled');
       process.exit(1);
@@ -86,6 +90,15 @@ class App {
     }
   }
 
+  private static getOutputFormatter(): OutputFormatter {
+    switch (configs.outputFormat) {
+      case 'default':
+        return defaultFormatter;
+      case 'gitlab':
+        return gitLab;
+    }
+  }
+
   private async parseBuildData(files: BuildLogFile[]): Promise<LogType[]> {
     const logsTasks = files.map(async ({ type, path, cwd }) => {
       Log.debug('Parsing', { type, path, cwd });
@@ -113,9 +126,9 @@ class App {
     }
   }
 
-  private static async writeLogToFile(logs: LogType[]): Promise<void> {
+  private async writeOutputFile(logs: LogType[]): Promise<void> {
     try {
-      await File.writeFileHelper(configs.output, JSON.stringify(logs, null, 2));
+      await File.writeFileHelper(configs.output, this.outputFormatter(logs));
       Log.info('Write output completed');
     } catch (error) {
       Log.error('Write output failed', { error });
