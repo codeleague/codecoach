@@ -1,4 +1,5 @@
 import { LogSeverity, LogType } from "../Parser";
+import { createHash } from "crypto";
 
 export type OutputFormatter = (logs: LogType[]) => string;
 
@@ -30,14 +31,14 @@ const mapGitLabSeverity = (severity: LogSeverity): GitLabSeverity => {
 }
 
 export const gitLab: OutputFormatter = (logs: LogType[]) => {
-  // create fingerprint by take ruleId + source + line + lineOffset and hash she it
-  const 
-
   const gitlabReport = logs.map((log) => {
+    const fingerprint = createHash('sha256');
+    fingerprint.update(`${log.ruleId}${log.source}${log.line}${log.lineOffset}`);
+
     const format: GitLabOutputFormat = {
       description: log.msg,
       check_name: log.ruleId,
-      fingerprint: log.ruleId,
+      fingerprint: fingerprint.digest('hex'),
       severity: mapGitLabSeverity(log.severity),
       location: {
         path: log.source,
