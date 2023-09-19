@@ -1,4 +1,4 @@
-import { LogSeverity, LintItem } from '../Parser';
+import { LintSeverity, LintItem } from '../Parser';
 import { Diff } from '../Git/@types/PatchTypes';
 import { onlyIn, onlySeverity } from './utils/filter.util';
 import { groupComments } from './utils/commentUtil';
@@ -17,7 +17,7 @@ export class AnalyzerBot implements IAnalyzerBot {
 
   analyze(items: LintItem[], touchedDiff: Diff[]): void {
     this.touchedFileItem = items
-      .filter(onlySeverity(LogSeverity.error, LogSeverity.warning))
+      .filter(onlySeverity(LintSeverity.error, LintSeverity.warning))
       .filter(onlyIn(touchedDiff));
     this.comments = groupComments(this.touchedFileItem, this.config.suppressRules);
     this.nError = this.comments.reduce((sum, comment) => sum + comment.errors, 0);

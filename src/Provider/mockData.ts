@@ -1,5 +1,5 @@
 import { ProjectType } from '../Config/@enums';
-import { LogSeverity, LintItem } from '../Parser';
+import { LintSeverity, LintItem } from '../Parser';
 
 export const mockTouchFile = 'file1.cs';
 export const file1TouchLine = 11;
@@ -9,7 +9,7 @@ export const touchFileError: LintItem = {
   ruleId: '',
   log: '',
   msg: 'msg1',
-  severity: LogSeverity.error,
+  severity: LintSeverity.error,
   source: mockTouchFile,
   line: file1TouchLine,
   lineOffset: 22,
@@ -20,7 +20,7 @@ export const touchFileWarning: LintItem = {
   ruleId: '',
   log: '',
   msg: 'msg3',
-  severity: LogSeverity.warning,
+  severity: LintSeverity.warning,
   source: mockTouchFile,
   line: file2TouchLine,
   lineOffset: 44,
@@ -32,7 +32,7 @@ export const untouchedError: LintItem = {
   ruleId: '',
   log: '',
   msg: 'msg2',
-  severity: LogSeverity.error,
+  severity: LintSeverity.error,
   source: 'otherfile.cs',
   line: 55,
   lineOffset: 66,
@@ -43,7 +43,7 @@ export const untouchedWarning: LintItem = {
   ruleId: '',
   log: '',
   msg: 'msg4',
-  severity: LogSeverity.warning,
+  severity: LintSeverity.warning,
   source: 'otherfile.cs',
   line: 77,
   lineOffset: 88,

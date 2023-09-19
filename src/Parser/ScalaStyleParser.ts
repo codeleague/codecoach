@@ -1,6 +1,6 @@
 import { Log } from '../Logger';
 import { getRelativePath } from './utils/path.util';
-import { LogSeverity } from './@enums/log.severity.enum';
+import { LintSeverity } from './@enums/LintSeverity';
 import { Parser } from './@interfaces/parser.interface';
 import { LintItem } from './@types';
 import { xml2js } from 'xml-js';
@@ -59,16 +59,16 @@ export class ScalaStyleParser extends Parser {
     };
   }
 
-  private static getSeverity(ScalaStyleLevel: string): LogSeverity {
+  private static getSeverity(ScalaStyleLevel: string): LintSeverity {
     switch (ScalaStyleLevel) {
       case 'info':
-        return LogSeverity.info;
+        return LintSeverity.info;
       case 'warning':
-        return LogSeverity.warning;
+        return LintSeverity.warning;
       case 'error':
-        return LogSeverity.error;
+        return LintSeverity.error;
       default:
-        return LogSeverity.unknown;
+        return LintSeverity.unknown;
     }
   }
 }

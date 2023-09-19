@@ -1,5 +1,5 @@
 import { ProjectType } from '../Config/@enums/projectType';
-import { LintItem, LogSeverity } from '../Parser';
+import { LintItem, LintSeverity } from '../Parser';
 import { gitLabFormatter } from './OutputFormatter';
 
 describe('OutputFormatter', () => {
@@ -9,7 +9,7 @@ describe('OutputFormatter', () => {
         ruleId: 'id',
         log: 'log',
         msg: 'msg',
-        severity: LogSeverity.error,
+        severity: LintSeverity.error,
         source: 'src',
         line: 2,
         lineOffset: 1,

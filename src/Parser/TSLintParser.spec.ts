@@ -1,4 +1,4 @@
-import { LogSeverity } from './@enums/log.severity.enum';
+import { LintSeverity } from './@enums/LintSeverity';
 import { TSLintParser } from './TSLintParser';
 
 describe('TSLintParser tests', () => {
@@ -30,7 +30,7 @@ describe('TSLintParser tests', () => {
     expect(result[0]).toEqual({
       ruleId: 'prefer-const',
       source: `src/app/mobile/component/Layout/Layout.tsx`,
-      severity: LogSeverity.error,
+      severity: LintSeverity.error,
       line: 56,
       lineOffset: 4,
       msg: `Identifier 'a' is never reassigned; use 'const' instead of 'let'.`,

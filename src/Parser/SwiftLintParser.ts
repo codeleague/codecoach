@@ -4,7 +4,7 @@ import { Parser } from './@interfaces/parser.interface';
 import { LintItem } from './@types';
 import { ProjectType } from '../Config/@enums';
 import { SwiftLintLog } from './@types/SwiftLintLog';
-import { LogSeverity } from './@enums/log.severity.enum';
+import { LintSeverity } from './@enums/LintSeverity';
 
 export class SwiftLintParser extends Parser {
   parse(content: string): LintItem[] {
@@ -27,7 +27,7 @@ export class SwiftLintParser extends Parser {
       lineOffset: log.character ?? 0,
       msg: log.reason,
       source: '',
-      severity: log.severity.toLowerCase() as LogSeverity,
+      severity: log.severity.toLowerCase() as LintSeverity,
       valid: true,
       type: ProjectType.swiftlint,
     };

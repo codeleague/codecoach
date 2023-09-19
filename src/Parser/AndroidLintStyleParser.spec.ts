@@ -1,4 +1,4 @@
-import { LogSeverity } from './@enums/log.severity.enum';
+import { LintSeverity } from './@enums/LintSeverity';
 import { AndroidLintStyleParser } from './AndroidLintStyleParser';
 
 describe('AndroidLintStyleParser', () => {
@@ -11,7 +11,7 @@ describe('AndroidLintStyleParser', () => {
     expect(result[0]).toEqual({
       ruleId: 'GradleDependency',
       source: 'app/build.gradle',
-      severity: LogSeverity.warning,
+      severity: LintSeverity.warning,
       line: 42,
       lineOffset: 5,
       msg: `A newer version of org.jetbrains.kotlin:kotlin-stdlib than 1.3.72 is available: 1.4.20`,
@@ -23,7 +23,7 @@ describe('AndroidLintStyleParser', () => {
     expect(result[1]).toEqual({
       ruleId: 'MissingTranslation',
       source: `app/src/main/res/values/strings.xml`,
-      severity: LogSeverity.error,
+      severity: LintSeverity.error,
       line: 4,
       lineOffset: 13,
       msg: `esp is not translated in (Thai)`,
@@ -35,7 +35,7 @@ describe('AndroidLintStyleParser', () => {
     expect(result[2]).toEqual({
       ruleId: 'SetJavaScriptEnabled',
       source: `app/src/main/java/com/example/app/MainActivity.kt`,
-      severity: LogSeverity.warning,
+      severity: LintSeverity.warning,
       line: 16,
       lineOffset: 9,
       msg: `Using \`setJavaScriptEnabled\` can introduce XSS vulnerabilities into your application, review carefully`,

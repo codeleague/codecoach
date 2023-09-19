@@ -1,6 +1,6 @@
 import { Parser } from './@interfaces/parser.interface';
 import { LintItem } from './@types';
-import { LogSeverity } from './@enums/log.severity.enum';
+import { LintSeverity } from './@enums/LintSeverity';
 import { splitByLine } from './utils/lineBreak.util';
 import { ProjectType } from '../Config/@enums';
 
@@ -33,16 +33,16 @@ export class DartLintParser extends Parser {
     };
   }
 
-  private static stringToSeverity(levelText: string): LogSeverity {
+  private static stringToSeverity(levelText: string): LintSeverity {
     switch (levelText) {
       case 'error':
-        return LogSeverity.error;
+        return LintSeverity.error;
       case 'warning':
-        return LogSeverity.warning;
+        return LintSeverity.warning;
       case 'info':
-        return LogSeverity.info;
+        return LintSeverity.info;
       default:
-        return LogSeverity.unknown;
+        return LintSeverity.unknown;
     }
   }
 
@@ -50,7 +50,7 @@ export class DartLintParser extends Parser {
     ruleId: '',
     log: '',
     msg: '',
-    severity: LogSeverity.unknown,
+    severity: LintSeverity.unknown,
     source: '',
     valid: false,
     type: ProjectType.dartlint,

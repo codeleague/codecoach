@@ -9,4 +9,4 @@ export { SwiftLintParser } from './SwiftLintParser';
 export { JscpdParser } from './JscpdParser';
 export { Parser } from './@interfaces/parser.interface';
 export { LintItem } from './@types';
-export { LogSeverity } from './@enums/log.severity.enum';
+export { LintSeverity } from './@enums/LintSeverity';

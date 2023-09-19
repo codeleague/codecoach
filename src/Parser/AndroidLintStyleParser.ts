@@ -1,5 +1,5 @@
 import { Log } from '../Logger';
-import { LogSeverity } from './@enums/log.severity.enum';
+import { LintSeverity } from './@enums/LintSeverity';
 import { Parser } from './@interfaces/parser.interface';
 import { LintItem } from './@types';
 import { xml2js } from 'xml-js';
@@ -46,16 +46,16 @@ export class AndroidLintStyleParser extends Parser {
     };
   }
 
-  private static getSeverity(levelText: string): LogSeverity {
+  private static getSeverity(levelText: string): LintSeverity {
     switch (levelText) {
       case 'info':
-        return LogSeverity.info;
+        return LintSeverity.info;
       case 'warning':
-        return LogSeverity.warning;
+        return LintSeverity.warning;
       case 'error':
-        return LogSeverity.error;
+        return LintSeverity.error;
       default:
-        return LogSeverity.unknown;
+        return LintSeverity.unknown;
     }
   }
 

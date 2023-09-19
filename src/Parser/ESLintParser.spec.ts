@@ -1,4 +1,4 @@
-import { LogSeverity } from './@enums/log.severity.enum';
+import { LintSeverity } from './@enums/LintSeverity';
 import { ESLintParser } from './ESLintParser';
 
 describe('ESLintParser', () => {
@@ -56,7 +56,7 @@ describe('ESLintParser', () => {
     expect(result[0]).toEqual({
       ruleId: '',
       source: '',
-      severity: LogSeverity.error,
+      severity: LintSeverity.error,
       line: 59,
       lineOffset: 8,
       msg: `Parsing error: ')' expected.`,
@@ -68,7 +68,7 @@ describe('ESLintParser', () => {
     expect(result[1]).toEqual({
       ruleId: '@typescript-eslint/no-unused-vars',
       source: `src/app.ts`,
-      severity: LogSeverity.warning,
+      severity: LintSeverity.warning,
       line: 24,
       lineOffset: 15,
       msg: `'content' is defined but never used.`,

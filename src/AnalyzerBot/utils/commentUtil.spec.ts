@@ -1,4 +1,4 @@
-import { LogSeverity, LintItem } from '../../Parser';
+import { LintSeverity, LintItem } from '../../Parser';
 import {
   file1TouchLine,
   file2TouchLine,
@@ -42,7 +42,7 @@ describe('groupComments', () => {
         {
           ...touchFileError,
           msg: 'additional warning',
-          severity: LogSeverity.warning,
+          severity: LintSeverity.warning,
           lineOffset: 33,
         },
       ],
@@ -78,7 +78,7 @@ describe('groupComments', () => {
         {
           ...touchFileError,
           msg: 'additional warning',
-          severity: LogSeverity.warning,
+          severity: LintSeverity.warning,
           lineOffset: 33,
           ruleId: 'UNIMPORTANT_RULE2',
         },
@@ -119,7 +119,7 @@ describe('groupComments', () => {
         {
           ...touchFileError,
           msg: 'additional warning',
-          severity: LogSeverity.warning,
+          severity: LintSeverity.warning,
           lineOffset: 33,
           ruleId: 'UNIMPORTANT_RULE/RULE2',
         },

@@ -1,4 +1,4 @@
-import { LogSeverity, LintItem } from '../Parser';
+import { LintSeverity, LintItem } from '../Parser';
 import { createHash } from 'crypto';
 
 export type OutputFormatter = (items: LintItem[]) => string;
@@ -20,7 +20,7 @@ type GitLabOutputFormat = {
   };
 };
 
-const mapGitLabSeverity = (severity: LogSeverity): GitLabSeverity => {
+const mapGitLabSeverity = (severity: LintSeverity): GitLabSeverity => {
   switch (severity) {
     case 'error':
       return 'blocker';

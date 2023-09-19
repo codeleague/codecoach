@@ -1,7 +1,7 @@
 import { ProjectType } from '../Config/@enums';
 import { Log } from '../Logger';
 import { getRelativePath } from './utils/path.util';
-import { LogSeverity } from './@enums/log.severity.enum';
+import { LintSeverity } from './@enums/LintSeverity';
 import { Parser } from './@interfaces/parser.interface';
 import { LintItem, TSLintLog } from './@types';
 
@@ -27,7 +27,7 @@ export class TSLintParser extends Parser {
       // there are no code portion present in tslint output
       msg: log.failure,
       source: '',
-      severity: log.ruleSeverity.toLowerCase() as LogSeverity,
+      severity: log.ruleSeverity.toLowerCase() as LintSeverity,
       valid: true,
       type: ProjectType.tslint,
     };

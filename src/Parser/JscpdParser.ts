@@ -3,7 +3,7 @@ import { Parser } from './@interfaces/parser.interface';
 import { LintItem } from './@types';
 import { ProjectType } from '../Config/@enums';
 import { JscpdLog } from './@types/JscpdLog';
-import { LogSeverity } from './@enums/log.severity.enum';
+import { LintSeverity } from './@enums/LintSeverity';
 
 export class JscpdParser extends Parser {
   private readonly ruleId = 'jscpd';
@@ -39,7 +39,7 @@ ${log.fragment}
 
 </details>`,
         source: log.secondFile.name,
-        severity: LogSeverity.warning,
+        severity: LintSeverity.warning,
         valid: true,
         type: ProjectType.jscpd,
       },
@@ -60,7 +60,7 @@ ${log.fragment}
 
 </details>`,
         source: log.firstFile.name,
-        severity: LogSeverity.warning,
+        severity: LintSeverity.warning,
         valid: true,
         type: ProjectType.jscpd,
       },

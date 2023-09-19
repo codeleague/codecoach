@@ -1,4 +1,4 @@
-import { LogSeverity, LintItem } from '../../Parser';
+import { LintSeverity, LintItem } from '../../Parser';
 import { Comment, CommentStructure } from '../@types/CommentTypes';
 import { MessageUtil } from './message.util';
 
@@ -57,7 +57,7 @@ function calculateErrors(
 ): number {
   if (isSuppressed) return currentComment.errors;
   const { severity } = item;
-  return currentComment.errors + (severity === LogSeverity.error ? 1 : 0);
+  return currentComment.errors + (severity === LintSeverity.error ? 1 : 0);
 }
 
 function calculateWarnings(
@@ -67,7 +67,7 @@ function calculateWarnings(
 ): number {
   if (isSuppressed) return currentComment.warnings;
   const { severity } = item;
-  return currentComment.warnings + (severity === LogSeverity.warning ? 1 : 0);
+  return currentComment.warnings + (severity === LintSeverity.warning ? 1 : 0);
 }
 
 function calculateSuppresses(currentComment: Comment, isSuppressed: boolean): number {

@@ -1,7 +1,7 @@
 import { ProjectType } from '../Config/@enums';
 import { Log } from '../Logger';
 import { getRelativePath } from './utils/path.util';
-import { LogSeverity } from './@enums/log.severity.enum';
+import { LintSeverity } from './@enums/LintSeverity';
 import { Parser } from './@interfaces/parser.interface';
 import { ESLintIssue, ESLintLog, LintItem } from './@types';
 
@@ -37,16 +37,16 @@ export class ESLintParser extends Parser {
     };
   }
 
-  private static getSeverity(esLevel: number): LogSeverity {
+  private static getSeverity(esLevel: number): LintSeverity {
     switch (esLevel) {
       case 0:
-        return LogSeverity.ignore;
+        return LintSeverity.ignore;
       case 1:
-        return LogSeverity.warning;
+        return LintSeverity.warning;
       case 2:
-        return LogSeverity.error;
+        return LintSeverity.error;
       default:
-        return LogSeverity.unknown;
+        return LintSeverity.unknown;
     }
   }
 }

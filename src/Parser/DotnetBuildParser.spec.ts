@@ -1,4 +1,4 @@
-import { LogSeverity } from './@enums/log.severity.enum';
+import { LintSeverity } from './@enums/LintSeverity';
 import { LintItem } from './@types';
 import { DotnetBuildParser } from './DotnetBuildParser';
 
@@ -18,7 +18,7 @@ describe('DotnetBuildParser tests', () => {
     expect(result[0]).toEqual({
       ruleId: 'AG0030',
       source: `Broken.cs`,
-      severity: LogSeverity.warning,
+      severity: LintSeverity.warning,
       line: 6,
       lineOffset: 8,
       msg: `AG0030: Prevent use of dynamic`,
@@ -34,7 +34,7 @@ describe('DotnetBuildParser tests', () => {
     expect(result[0]).toEqual({
       ruleId: 'CS5001',
       source: `Broken.csproj`,
-      severity: LogSeverity.error,
+      severity: LintSeverity.error,
       line: NaN,
       lineOffset: NaN,
       msg: `CS5001: Program does not contain a static 'Main' method suitable for an entry point`,
@@ -50,7 +50,7 @@ describe('DotnetBuildParser tests', () => {
     expect(result[0]).toEqual({
       ruleId: 'MSB3277',
       source: `project.csproj`,
-      severity: LogSeverity.warning,
+      severity: LintSeverity.warning,
       line: 2084,
       lineOffset: 5,
       msg: `MSB3277: some message`,
