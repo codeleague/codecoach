@@ -14,11 +14,11 @@ export class AndroidLintStyleParser extends Parser {
       if (!content) return [];
 
       return (
-        AndroidLintStyleParser.xmlToAndroidLintStyleLog(content).issues[0]?.issue?.flatMap(
-          (issue: AndroidLintStyleIssue) => {
-            return AndroidLintStyleParser.toLintItem(issue, issue.location[0], this.cwd);
-          },
-        ) ?? []
+        AndroidLintStyleParser.xmlToAndroidLintStyleLog(
+          content,
+        ).issues[0]?.issue?.flatMap((issue: AndroidLintStyleIssue) => {
+          return AndroidLintStyleParser.toLintItem(issue, issue.location[0], this.cwd);
+        }) ?? []
       );
     } catch (err) {
       Log.warn('AndroidStyle Parser: parse with content error', content);
