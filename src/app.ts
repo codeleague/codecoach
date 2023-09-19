@@ -25,9 +25,9 @@ import { VCSAdapter } from './Provider/@interfaces/VCSAdapter';
 import { AnalyzerBot } from './AnalyzerBot/AnalyzerBot';
 import {
   defaultFormatter,
-  gitLab,
+  gitLabFormatter,
   OutputFormatter,
-} from './OutputFormatter/outputFormatter';
+} from './OutputFormatter/OutputFormatter';
 
 class App {
   private vcs: VCS | null = null;
@@ -99,7 +99,7 @@ class App {
       case 'default':
         return defaultFormatter;
       case 'gitlab':
-        return gitLab;
+        return gitLabFormatter;
     }
   }
 
@@ -121,7 +121,7 @@ class App {
     }
 
     try {
-      const passed = await this.vcs.report(logs);
+      const passed = await this.vcs.report(items);
       Log.info('Report to VCS completed');
       return passed;
     } catch (error) {
@@ -132,7 +132,7 @@ class App {
 
   private async writeOutputFile(items: LintItem[]): Promise<void> {
     try {
-      await File.writeFileHelper(configs.output, this.outputFormatter(logs));
+      await File.writeFileHelper(configs.output, this.outputFormatter(items));
       Log.info('Write output completed');
     } catch (error) {
       Log.error('Write output failed', { error });

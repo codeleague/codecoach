@@ -25,7 +25,7 @@ function createMockAdapter(): VCSAdapter {
 
 function createMockAnalyzerBot(): IAnalyzerBot {
   return {
-    touchedFileLog: [],
+    touchedFileItem: [],
     getCommitDescription: jest.fn(),
     isSuccess: jest.fn(),
     analyze: jest.fn(),

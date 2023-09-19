@@ -11,8 +11,8 @@ import { groupComments } from './commentUtil';
 describe('groupComments', () => {
   const items: LintItem[] = [touchFileError, touchFileWarning];
 
-  it('returns comments based on lint logs', () => {
-    const comments = groupComments(logs, []);
+  it('returns comments based on lint items', () => {
+    const comments = groupComments(items, []);
     expect(comments).toEqual([
       {
         file: mockTouchFile,
@@ -35,10 +35,10 @@ describe('groupComments', () => {
     ]);
   });
 
-  it('group multiple logs on the same line to the same comment', () => {
+  it('group multiple items on the same line to the same comment', () => {
     const comments = groupComments(
       [
-        ...logs,
+        ...items,
         {
           ...touchFileError,
           msg: 'additional warning',
@@ -74,7 +74,7 @@ describe('groupComments', () => {
   it('suppress errors and warnings according to provided suppressRules', () => {
     const comments = groupComments(
       [
-        ...logs,
+        ...items,
         {
           ...touchFileError,
           msg: 'additional warning',
@@ -115,7 +115,7 @@ describe('groupComments', () => {
   it('support regexp in suppressRules', () => {
     const comments = groupComments(
       [
-        ...logs,
+        ...items,
         {
           ...touchFileError,
           msg: 'additional warning',

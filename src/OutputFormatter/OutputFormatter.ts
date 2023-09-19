@@ -31,20 +31,20 @@ const mapGitLabSeverity = (severity: LogSeverity): GitLabSeverity => {
   }
 };
 
-export const gitLab: OutputFormatter = (items: LintItem[]) => {
-  const gitlabReport = logs.map((log) => {
+export const gitLabFormatter: OutputFormatter = (items: LintItem[]) => {
+  const gitlabReport = items.map((item) => {
     const fingerprint = createHash('sha256');
-    fingerprint.update(`${log.ruleId}${log.source}${log.line}${log.lineOffset}`);
+    fingerprint.update(`${item.ruleId}${item.source}${item.line}${item.lineOffset}`);
 
     const format: GitLabOutputFormat = {
-      description: log.msg,
-      check_name: log.ruleId,
+      description: item.msg,
+      check_name: item.ruleId,
       fingerprint: fingerprint.digest('hex'),
-      severity: mapGitLabSeverity(log.severity),
+      severity: mapGitLabSeverity(item.severity),
       location: {
-        path: log.source,
+        path: item.source,
         lines: {
-          begin: log.line ?? 1,
+          begin: item.line ?? 1,
         },
       },
     };
@@ -55,5 +55,5 @@ export const gitLab: OutputFormatter = (items: LintItem[]) => {
 };
 
 export const defaultFormatter: OutputFormatter = (items: LintItem[]) => {
-  return JSON.stringify(logs, null, 2);
+  return JSON.stringify(items, null, 2);
 };

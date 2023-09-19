@@ -2,10 +2,10 @@
 
        Log.debug(`Commit SHA ${commitId}`);
        Log.debug('Touched files', touchedFiles);
--      Log.debug('Touched file log', touchedFileLog);
+-      Log.debug('Touched file log', touchedFileItem);
 
        const reviewResults = await Promise.all(
-         touchedFileLog.map((log) => this.toCreateReviewComment(commitId, log)),
+         touchedFileItem.map((log) => this.toCreateReviewComment(commitId, log)),
 @@ -83,10 +82,12 @@ ${issuesTableContent}
          log.source,
          log.line,

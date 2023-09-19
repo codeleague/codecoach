@@ -8,12 +8,14 @@ export class DartLintParser extends Parser {
   parse(content: string): LintItem[] {
     return splitByLine(content)
       .map((line: string) => DartLintParser.linetoLintItem(line))
-      .filter((f: LintItem) => f != DartLintParser.emptyLog);
+      .filter((f: LintItem) => f != DartLintParser.emptyItem);
   }
 
   private static linetoLintItem(line: string): LintItem {
     const lineMatch = line.match(/^(.*) • (.*) • (.*):(\d+):(\d+) • (.*)/);
-    return lineMatch ? DartLintParser.lineMatchtoLintItem(lineMatch) : DartLintParser.emptyLog;
+    return lineMatch
+      ? DartLintParser.lineMatchtoLintItem(lineMatch)
+      : DartLintParser.emptyItem;
   }
 
   private static lineMatchtoLintItem(lineMatch: RegExpMatchArray): LintItem {

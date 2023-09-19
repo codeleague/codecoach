@@ -21,10 +21,10 @@ describe('AnalyzerBot', () => {
   const diff = [mockTouchDiff];
   const analyzer = new AnalyzerBot(config);
 
-  describe('.touchedFileLog', () => {
+  describe('.touchedFileItem', () => {
     it('should return only logs that are in touchedDiff', () => {
       analyzer.analyze(logs, diff);
-      expect(analyzer.touchedFileLog).toEqual([touchFileError, touchFileWarning]);
+      expect(analyzer.touchedFileItem).toEqual([touchFileError, touchFileWarning]);
     });
   });
 
