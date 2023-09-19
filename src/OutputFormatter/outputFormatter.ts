@@ -5,6 +5,7 @@ export type OutputFormatter = (logs: LogType[]) => string;
 
 type GitLabSeverity = 'info' | 'minor' | 'major' | 'critical' | 'blocker';
 
+// https://docs.gitlab.com/ee/ci/testing/code_quality.html#implement-a-custom-tool
 type GitLabOutputFormat = {
   description: string;
   check_name: string;
