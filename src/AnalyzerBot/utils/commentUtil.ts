@@ -1,8 +1,8 @@
-import { LogSeverity, LogType } from '../../Parser';
+import { LogSeverity, LintItem } from '../../Parser';
 import { Comment, CommentStructure } from '../@types/CommentTypes';
 import { MessageUtil } from './message.util';
 
-export function groupComments(logs: LogType[], suppressRules: Array<string>): Comment[] {
+export function groupComments(items: LintItem[], suppressRules: Array<string>): Comment[] {
   const commentMap = logs.reduce((state: CommentStructure, log) => {
     const { source: file, line, nLines } = log;
 
@@ -35,7 +35,7 @@ function getOrInitComment(
   );
 }
 
-function buildText(currentComment: Comment, log: LogType, isSuppressed: boolean): string {
+function buildText(currentComment: Comment, item: LintItem, isSuppressed: boolean): string {
   const { severity, msg } = log;
   const { text: currentText } = currentComment;
   const msgWithSuppression = isSuppressed ? `(SUPPRESSED) ${msg}` : msg;
@@ -45,7 +45,7 @@ function buildText(currentComment: Comment, log: LogType, isSuppressed: boolean)
 
 function calculateErrors(
   currentComment: Comment,
-  log: LogType,
+  item: LintItem,
   isSuppressed: boolean,
 ): number {
   if (isSuppressed) return currentComment.errors;
@@ -55,7 +55,7 @@ function calculateErrors(
 
 function calculateWarnings(
   currentComment: Comment,
-  log: LogType,
+  item: LintItem,
   isSuppressed: boolean,
 ): number {
   if (isSuppressed) return currentComment.warnings;
@@ -67,14 +67,14 @@ function calculateSuppresses(currentComment: Comment, isSuppressed: boolean): nu
   return currentComment.suppresses + (isSuppressed ? 1 : 0);
 }
 
-function shouldBeSuppressed(log: LogType, suppressRules: Array<string>): boolean {
+function shouldBeSuppressed(item: LintItem, suppressRules: Array<string>): boolean {
   const suppressRegexps: Array<RegExp> = suppressRules.map((rule) => new RegExp(rule));
   return suppressRegexps.some((regexp) => regexp.test(log.ruleId));
 }
 
 function updateComment(
   currentComment: Comment,
-  log: LogType,
+  item: LintItem,
   suppressRules: Array<string>,
 ): Comment {
   const isSuppressed = shouldBeSuppressed(log, suppressRules);

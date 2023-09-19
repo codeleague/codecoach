@@ -1,7 +1,7 @@
-import { LogSeverity, LogType } from '../Parser';
+import { LogSeverity, LintItem } from '../Parser';
 import { createHash } from 'crypto';
 
-export type OutputFormatter = (logs: LogType[]) => string;
+export type OutputFormatter = (items: LintItem[]) => string;
 
 type GitLabSeverity = 'info' | 'minor' | 'major' | 'critical' | 'blocker';
 
@@ -31,7 +31,7 @@ const mapGitLabSeverity = (severity: LogSeverity): GitLabSeverity => {
   }
 };
 
-export const gitLab: OutputFormatter = (logs: LogType[]) => {
+export const gitLab: OutputFormatter = (items: LintItem[]) => {
   const gitlabReport = logs.map((log) => {
     const fingerprint = createHash('sha256');
     fingerprint.update(`${log.ruleId}${log.source}${log.line}${log.lineOffset}`);
@@ -54,6 +54,6 @@ export const gitLab: OutputFormatter = (logs: LogType[]) => {
   return JSON.stringify(gitlabReport, null, 2);
 };
 
-export const defaultFormatter: OutputFormatter = (logs: LogType[]) => {
+export const defaultFormatter: OutputFormatter = (items: LintItem[]) => {
   return JSON.stringify(logs, null, 2);
 };

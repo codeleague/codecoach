@@ -2,14 +2,14 @@ import { Log } from '../Logger';
 import { getRelativePath } from './utils/path.util';
 import { LogSeverity } from './@enums/log.severity.enum';
 import { Parser } from './@interfaces/parser.interface';
-import { LogType } from './@types';
+import { LintItem } from './@types';
 import { xml2js } from 'xml-js';
 import { ScalaStyleLog } from './@types/ScalaStyleLog';
 import { ScalaStyleError } from './@types/ScalaStyleError';
 import { ProjectType } from '../Config/@enums';
 
 export class ScalaStyleParser extends Parser {
-  parse(content: string): LogType[] {
+  parse(content: string): LintItem[] {
     try {
       if (!content) return [];
 
@@ -31,7 +31,7 @@ export class ScalaStyleParser extends Parser {
           const source = getRelativePath(this.cwd, f._attributes.name);
 
           return f.error.map((log) =>
-            ScalaStyleParser.toLog(log, source, rawError[rawIndex++]),
+            ScalaStyleParser.toLintItem(log, source, rawError[rawIndex++]),
           );
         }) ?? []
       );
@@ -41,11 +41,11 @@ export class ScalaStyleParser extends Parser {
     }
   }
 
-  private static toLog(
+  private static toLintItem(
     log: ScalaStyleError,
     source: string | null,
     raw: string | null,
-  ): LogType {
+  ): LintItem {
     return {
       ruleId: log._attributes.source ?? '',
       log: raw ?? '',

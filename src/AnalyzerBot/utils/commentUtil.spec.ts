@@ -1,4 +1,4 @@
-import { LogSeverity, LogType } from '../../Parser';
+import { LogSeverity, LintItem } from '../../Parser';
 import {
   file1TouchLine,
   file2TouchLine,
@@ -9,7 +9,7 @@ import {
 import { groupComments } from './commentUtil';
 
 describe('groupComments', () => {
-  const logs: LogType[] = [touchFileError, touchFileWarning];
+  const items: LintItem[] = [touchFileError, touchFileWarning];
 
   it('returns comments based on lint logs', () => {
     const comments = groupComments(logs, []);

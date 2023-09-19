@@ -7,7 +7,7 @@ import {
   AndroidLintStyleParser,
   DotnetBuildParser,
   ESLintParser,
-  LogType,
+  LintItem,
   MSBuildParser,
   Parser,
   ScalaStyleParser,
@@ -103,7 +103,7 @@ class App {
     }
   }
 
-  private async parseBuildData(files: BuildLogFile[]): Promise<LogType[]> {
+  private async parseBuildData(files: BuildLogFile[]): Promise<LintItem[]> {
     const logsTasks = files.map(async ({ type, path, cwd }) => {
       Log.debug('Parsing', { type, path, cwd });
       const content = await File.readFileHelper(path);
@@ -114,7 +114,7 @@ class App {
     return (await Promise.all(logsTasks)).flatMap((x) => x);
   }
 
-  private async reportToVcs(logs: LogType[]): Promise<boolean> {
+  private async reportToVcs(items: LintItem[]): Promise<boolean> {
     if (!this.vcs) {
       Log.info('Dry run enabled, skip reporting');
       return true;
@@ -130,7 +130,7 @@ class App {
     }
   }
 
-  private async writeOutputFile(logs: LogType[]): Promise<void> {
+  private async writeOutputFile(items: LintItem[]): Promise<void> {
     try {
       await File.writeFileHelper(configs.output, this.outputFormatter(logs));
       Log.info('Write output completed');

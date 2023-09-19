@@ -1,11 +1,11 @@
 import { ProjectType } from '../Config/@enums';
-import { LogSeverity, LogType } from '../Parser';
+import { LogSeverity, LintItem } from '../Parser';
 
 export const mockTouchFile = 'file1.cs';
 export const file1TouchLine = 11;
 export const file2TouchLine = 33;
 
-export const touchFileError: LogType = {
+export const touchFileError: LintItem = {
   ruleId: '',
   log: '',
   msg: 'msg1',
@@ -16,7 +16,7 @@ export const touchFileError: LogType = {
   valid: true,
   type: ProjectType.eslint,
 };
-export const touchFileWarning: LogType = {
+export const touchFileWarning: LintItem = {
   ruleId: '',
   log: '',
   msg: 'msg3',
@@ -28,7 +28,7 @@ export const touchFileWarning: LogType = {
   valid: true,
   type: ProjectType.eslint,
 };
-export const untouchedError: LogType = {
+export const untouchedError: LintItem = {
   ruleId: '',
   log: '',
   msg: 'msg2',
@@ -39,7 +39,7 @@ export const untouchedError: LogType = {
   valid: true,
   type: ProjectType.eslint,
 };
-export const untouchedWarning: LogType = {
+export const untouchedWarning: LintItem = {
   ruleId: '',
   log: '',
   msg: 'msg4',

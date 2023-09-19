@@ -1,5 +1,5 @@
 import { VCS } from '../@interfaces/VCS';
-import { LogType } from '../../Parser';
+import { LintItem } from '../../Parser';
 import { Log } from '../../Logger';
 import { Comment } from '../../AnalyzerBot/@types/CommentTypes';
 import { VCSEngineConfig } from '../@interfaces/VCSEngineConfig';
@@ -13,7 +13,7 @@ export class VCSEngine implements VCS {
     private readonly adapter: VCSAdapter,
   ) {}
 
-  async report(logs: LogType[]): Promise<boolean> {
+  async report(items: LintItem[]): Promise<boolean> {
     try {
       await this.adapter.init();
       await this.setup(logs);
@@ -35,7 +35,7 @@ export class VCSEngine implements VCS {
     return await this.adapter.wrapUp(this.analyzerBot);
   }
 
-  private async setup(logs: LogType[]) {
+  private async setup(items: LintItem[]) {
     const touchedDiff = await this.adapter.diff();
     this.analyzerBot.analyze(logs, touchedDiff);
 

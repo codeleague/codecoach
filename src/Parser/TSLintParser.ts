@@ -3,23 +3,23 @@ import { Log } from '../Logger';
 import { getRelativePath } from './utils/path.util';
 import { LogSeverity } from './@enums/log.severity.enum';
 import { Parser } from './@interfaces/parser.interface';
-import { LogType, TSLintLog } from './@types';
+import { LintItem, TSLintLog } from './@types';
 
 export class TSLintParser extends Parser {
-  parse(content: string): LogType[] {
+  parse(content: string): LintItem[] {
     try {
       if (!content) return [];
 
       const logsJson = JSON.parse(content) as TSLintLog[];
-      return logsJson.map((el) => this.toLog(el));
+      return logsJson.map((el) => this.toLintItem(el));
     } catch (err) {
       Log.warn('TSLint Parser: parse with content via JSON error', content);
       throw err;
     }
   }
 
-  private toLog(log: TSLintLog): LogType {
-    const parsed: LogType = {
+  private toLintItem(log: TSLintLog): LintItem {
+    const parsed: LintItem = {
       ruleId: log.ruleName,
       log: JSON.stringify(log),
       line: log.startPosition.line + 1,

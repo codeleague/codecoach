@@ -1,6 +1,6 @@
 import { Log } from '../Logger';
 import { Parser } from './@interfaces/parser.interface';
-import { LogType } from './@types';
+import { LintItem } from './@types';
 import { ProjectType } from '../Config/@enums';
 import { JscpdLog } from './@types/JscpdLog';
 import { LogSeverity } from './@enums/log.severity.enum';
@@ -8,19 +8,19 @@ import { LogSeverity } from './@enums/log.severity.enum';
 export class JscpdParser extends Parser {
   private readonly ruleId = 'jscpd';
 
-  parse(content: string): LogType[] {
+  parse(content: string): LintItem[] {
     try {
       if (!content) return [];
 
       const logsJson = JSON.parse(content) as JscpdLog;
-      return logsJson.duplicates.flatMap((el) => this.toLog(el));
+      return logsJson.duplicates.flatMap((el) => this.toLintItem(el));
     } catch (err) {
       Log.warn('jscpd Parser: parse with content via JSON error', content);
       throw err;
     }
   }
 
-  private toLog(log: JscpdLog['duplicates'][number]): LogType[] {
+  private toLintItem(log: JscpdLog['duplicates'][number]): LintItem[] {
     return [
       {
         ruleId: this.ruleId,

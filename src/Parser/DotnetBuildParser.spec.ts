@@ -1,5 +1,5 @@
 import { LogSeverity } from './@enums/log.severity.enum';
-import { LogType } from './@types';
+import { LintItem } from './@types';
 import { DotnetBuildParser } from './DotnetBuildParser';
 
 describe('DotnetBuildParser tests', () => {
@@ -25,7 +25,7 @@ describe('DotnetBuildParser tests', () => {
       log: logWithSource,
       valid: true,
       type: 'dotnetbuild',
-    } as LogType);
+    } as LintItem);
   });
 
   it('Should parse log without source path correctly and flag as invalid and use csproj as source', () => {
@@ -41,7 +41,7 @@ describe('DotnetBuildParser tests', () => {
       log: logWithNoSource,
       valid: false,
       type: 'dotnetbuild',
-    } as LogType);
+    } as LintItem);
   });
 
   it('Should parse log unrelated source path correctly and flag as invalid and use csproj as source', () => {
@@ -57,7 +57,7 @@ describe('DotnetBuildParser tests', () => {
       log: logWithUnrelatedSource,
       valid: false,
       type: 'dotnetbuild',
-    } as LogType);
+    } as LintItem);
   });
 
   it('Should do nothing if put empty string', () => {

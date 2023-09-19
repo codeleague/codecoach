@@ -1,7 +1,7 @@
 import { Log } from '../Logger';
 import { LogSeverity } from './@enums/log.severity.enum';
 import { Parser } from './@interfaces/parser.interface';
-import { LogType } from './@types';
+import { LintItem } from './@types';
 import { xml2js } from 'xml-js';
 import { AndroidLintStyleIssue } from './@types/AndroidLintStyleIssue';
 import { AndroidLintStyleLog } from './@types/AndroidLintStyleLog';
@@ -9,14 +9,14 @@ import { AndroidLintStyleLocation } from './@types/AndroidLintStyleLocation';
 import { ProjectType } from '../Config/@enums';
 
 export class AndroidLintStyleParser extends Parser {
-  parse(content: string): LogType[] {
+  parse(content: string): LintItem[] {
     try {
       if (!content) return [];
 
       return (
-        AndroidLintStyleParser.xmlToLog(content).issues[0]?.issue?.flatMap(
+        AndroidLintStyleParser.xmltoLintItem(content).issues[0]?.issue?.flatMap(
           (issue: AndroidLintStyleIssue) => {
-            return AndroidLintStyleParser.toLog(issue, issue.location[0], this.cwd);
+            return AndroidLintStyleParser.toLintItem(issue, issue.location[0], this.cwd);
           },
         ) ?? []
       );
@@ -26,11 +26,11 @@ export class AndroidLintStyleParser extends Parser {
     }
   }
 
-  private static toLog(
+  private static toLintItem(
     issue: AndroidLintStyleIssue,
     location: AndroidLintStyleLocation,
     cwd: string,
-  ): LogType {
+  ): LintItem {
     return {
       ruleId: issue._attributes.id,
       log: issue._attributes.errorLine1?.trim(),
@@ -59,7 +59,7 @@ export class AndroidLintStyleParser extends Parser {
     }
   }
 
-  private static xmlToLog(xmlContent: string): AndroidLintStyleLog {
+  private static xmltoLintItem(xmlContent: string): AndroidLintStyleLog {
     return xml2js(xmlContent, convertOption) as AndroidLintStyleLog;
   }
 }

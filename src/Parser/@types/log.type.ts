@@ -1,7 +1,7 @@
 import { LogSeverity } from '..';
 import { ProjectType } from '../../Config';
 
-export type LogType = {
+export type LintItem = {
   ruleId: string;
   log: string;
   msg: string;

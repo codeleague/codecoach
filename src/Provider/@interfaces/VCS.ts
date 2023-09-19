@@ -1,6 +1,6 @@
-import { LogType } from '../../Parser';
+import { LintItem } from '../../Parser';
 
 export interface VCS {
   // returns boolean indicating process return code. true = zero (pass), false = non-zero (failure)
-  report(logs: LogType[]): Promise<boolean>;
+  report(items: LintItem[]): Promise<boolean>;
 }
