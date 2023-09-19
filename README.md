@@ -103,6 +103,7 @@ Will do the same thing.
 | `failOnWarnings`          | no                        | `true` or `false`                         | Fail the job when warnings are found                                                   |
 | `dryRun`                  | no                        | `true` or `false`                         | Running CodeCoach without reporting to VCS                                             |
 | `suppressRules`           | no                        | `rule-group-1/.*` `rule-id-1` `rule-id-2` | Rule IDs that CodeCoach will still comment but no longer treated as errors or warnings |
+| `outputFormat`            | no                        | `default`, `gitlab`                       | Output file format                                                                     |
 
 
 ##### `--buildLogFile` or `-f`
