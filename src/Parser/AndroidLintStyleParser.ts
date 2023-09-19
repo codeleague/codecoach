@@ -14,7 +14,7 @@ export class AndroidLintStyleParser extends Parser {
       if (!content) return [];
 
       return (
-        AndroidLintStyleParser.xmltoLintItem(content).issues[0]?.issue?.flatMap(
+        AndroidLintStyleParser.xmlToAndroidLintStyleLog(content).issues[0]?.issue?.flatMap(
           (issue: AndroidLintStyleIssue) => {
             return AndroidLintStyleParser.toLintItem(issue, issue.location[0], this.cwd);
           },
@@ -59,7 +59,7 @@ export class AndroidLintStyleParser extends Parser {
     }
   }
 
-  private static xmltoLintItem(xmlContent: string): AndroidLintStyleLog {
+  private static xmlToAndroidLintStyleLog(xmlContent: string): AndroidLintStyleLog {
     return xml2js(xmlContent, convertOption) as AndroidLintStyleLog;
   }
 }
