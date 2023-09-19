@@ -4,19 +4,19 @@ import slash from 'slash';
 import { Log } from '../Logger';
 import { getRelativePath } from './utils/path.util';
 import { Parser } from './@interfaces/parser.interface';
-import { LogType } from './@types';
+import { LintItem } from './@types';
 import { mapSeverity } from './utils/dotnetSeverityMap';
 import { splitByLine } from './utils/lineBreak.util';
 import { ProjectType } from '../Config/@enums';
 
 export class MSBuildParser extends Parser {
-  parse(content: string): LogType[] {
+  parse(content: string): LintItem[] {
     return splitByLine(content)
-      .map((log) => this.toLog(log))
+      .map((log) => this.toLintItem(log))
       .filter((log) => log);
   }
 
-  private toLog(log: string): LogType {
+  private toLintItem(log: string): LintItem {
     const structureMatch = log.match(
       /^([\\/\w\d.:_ ()-]+)(?:\((\d+),(\d+)\))? ?: (\w+) (\w+): ([^\[]+)(?:\[(.+)])?$/,
     );

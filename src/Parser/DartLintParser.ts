@@ -1,22 +1,24 @@
 import { Parser } from './@interfaces/parser.interface';
-import { LogType } from './@types';
-import { LogSeverity } from './@enums/log.severity.enum';
+import { LintItem } from './@types';
+import { LintSeverity } from './@enums/LintSeverity';
 import { splitByLine } from './utils/lineBreak.util';
 import { ProjectType } from '../Config/@enums';
 
 export class DartLintParser extends Parser {
-  parse(content: string): LogType[] {
+  parse(content: string): LintItem[] {
     return splitByLine(content)
-      .map((line: string) => DartLintParser.lineToLog(line))
-      .filter((f: LogType) => f != DartLintParser.emptyLog);
+      .map((line: string) => DartLintParser.linetoLintItem(line))
+      .filter((f: LintItem) => f != DartLintParser.emptyItem);
   }
 
-  private static lineToLog(line: string): LogType {
+  private static linetoLintItem(line: string): LintItem {
     const lineMatch = line.match(/^(.*) • (.*) • (.*):(\d+):(\d+) • (.*)/);
-    return lineMatch ? DartLintParser.lineMatchToLog(lineMatch) : DartLintParser.emptyLog;
+    return lineMatch
+      ? DartLintParser.lineMatchtoLintItem(lineMatch)
+      : DartLintParser.emptyItem;
   }
 
-  private static lineMatchToLog(lineMatch: RegExpMatchArray): LogType {
+  private static lineMatchtoLintItem(lineMatch: RegExpMatchArray): LintItem {
     const [, severityText, message, source, line, offset, log] = lineMatch;
     return {
       ruleId: log,
@@ -31,24 +33,24 @@ export class DartLintParser extends Parser {
     };
   }
 
-  private static stringToSeverity(levelText: string): LogSeverity {
+  private static stringToSeverity(levelText: string): LintSeverity {
     switch (levelText) {
       case 'error':
-        return LogSeverity.error;
+        return LintSeverity.error;
       case 'warning':
-        return LogSeverity.warning;
+        return LintSeverity.warning;
       case 'info':
-        return LogSeverity.info;
+        return LintSeverity.info;
       default:
-        return LogSeverity.unknown;
+        return LintSeverity.unknown;
     }
   }
 
-  private static emptyLog: LogType = {
+  private static emptyItem: LintItem = {
     ruleId: '',
     log: '',
     msg: '',
-    severity: LogSeverity.unknown,
+    severity: LintSeverity.unknown,
     source: '',
     valid: false,
     type: ProjectType.dartlint,

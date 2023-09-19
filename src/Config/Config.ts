@@ -92,6 +92,11 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
     type: 'string',
     default: DEFAULT_OUTPUT_FILE,
   })
+  .option('outputFormat', {
+    describe: 'Output format',
+    choices: ['default', 'gitlab'],
+    default: 'default',
+  })
   .option('removeOldComment', {
     alias: 'r',
     type: 'boolean',

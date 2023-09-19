@@ -1,4 +1,4 @@
-import { LogSeverity } from './@enums/log.severity.enum';
+import { LintSeverity } from './@enums/LintSeverity';
 import { ScalaStyleParser } from './ScalaStyleParser';
 
 describe('ScalaStyleParser', () => {
@@ -32,7 +32,7 @@ describe('ScalaStyleParser', () => {
     expect(result[0]).toEqual({
       ruleId: 'some.gibberish.text.that.i.dont.wanna.keep.it',
       source: '',
-      severity: LogSeverity.error,
+      severity: LintSeverity.error,
       line: 53,
       lineOffset: 4,
       msg: `Avoid mutable fields`,
@@ -44,7 +44,7 @@ describe('ScalaStyleParser', () => {
     expect(result[1]).toEqual({
       ruleId: '',
       source: `src/main/scala/code/dir/subdir/code-a.scala`,
-      severity: LogSeverity.error,
+      severity: LintSeverity.error,
       line: undefined,
       lineOffset: undefined,
       msg: `illegal start of definition: Token(VARID,yplTaxWithValue,1704,yplTaxWithValue)`,
@@ -56,7 +56,7 @@ describe('ScalaStyleParser', () => {
     expect(result[2]).toEqual({
       ruleId: 'some.gibberish.text.that.i.dont.wanna.keep.it',
       source: `src/main/scala/code/dir/subdir/code-a.scala`,
-      severity: LogSeverity.error,
+      severity: LintSeverity.error,
       line: 7,
       lineOffset: 7,
       msg: `Number of methods in class exceeds 30`,
@@ -68,7 +68,7 @@ describe('ScalaStyleParser', () => {
     expect(result[3]).toEqual({
       ruleId: 'some.gibberish.text.that.i.dont.wanna.keep.it',
       source: `src/main/scala/code/code-c.scala`,
-      severity: LogSeverity.warning,
+      severity: LintSeverity.warning,
       line: 207,
       lineOffset: 6,
       msg: `Avoid mutable local variables`,

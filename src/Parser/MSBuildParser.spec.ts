@@ -1,4 +1,4 @@
-import { LogSeverity } from './@enums/log.severity.enum';
+import { LintSeverity } from './@enums/LintSeverity';
 import { MSBuildParser } from './MSBuildParser';
 
 describe('MSBuildParser tests', () => {
@@ -13,7 +13,7 @@ describe('MSBuildParser tests', () => {
     expect(result[0]).toEqual({
       ruleId: 'CS0414',
       source: `Project/Service/Provider.cs`,
-      severity: LogSeverity.warning,
+      severity: LintSeverity.warning,
       line: 67,
       lineOffset: 29,
       msg: `CS0414: The field 'Data.field' is assigned but its value is never used`,

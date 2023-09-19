@@ -11,6 +11,7 @@ export type ConfigArgument = {
   gitlabToken: string;
   buildLogFile: BuildLogFile[];
   output: string; // =logFilePath
+  outputFormat: 'default' | 'gitlab';
   removeOldComment: boolean;
   failOnWarnings: boolean;
   suppressRules: string[];

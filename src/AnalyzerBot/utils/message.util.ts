@@ -1,16 +1,16 @@
-import { LogSeverity } from '../../Parser';
+import { LintSeverity } from '../../Parser';
 
 const EMOJI_ERROR = ':rotating_light:';
 const EMOJI_WARNING = ':warning:';
 
 export class MessageUtil {
-  static createMessageWithEmoji(msg: string, severity: LogSeverity): string {
+  static createMessageWithEmoji(msg: string, severity: LintSeverity): string {
     let emoji = '';
     switch (severity) {
-      case LogSeverity.error:
+      case LintSeverity.error:
         emoji = EMOJI_ERROR;
         break;
-      case LogSeverity.warning:
+      case LintSeverity.warning:
         emoji = EMOJI_WARNING;
         break;
     }
@@ -24,11 +24,11 @@ export class MessageUtil {
     const issueCountMsg = this.pluralize('issue', nOfErrors + nOfWarnings);
     const errorMsg = MessageUtil.createMessageWithEmoji(
       MessageUtil.pluralize('error', nOfErrors),
-      LogSeverity.error,
+      LintSeverity.error,
     );
     const warningMsg = MessageUtil.createMessageWithEmoji(
       MessageUtil.pluralize('warning', nOfWarnings),
-      LogSeverity.warning,
+      LintSeverity.warning,
     );
 
     return `## CodeCoach reports ${issueCountMsg}

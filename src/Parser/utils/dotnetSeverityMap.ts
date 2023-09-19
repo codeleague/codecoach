@@ -1,17 +1,17 @@
-import { LogSeverity } from '../@enums/log.severity.enum';
+import { LintSeverity } from '../@enums/LintSeverity';
 
-export function mapSeverity(levelText: string): LogSeverity {
+export function mapSeverity(levelText: string): LintSeverity {
   switch (levelText) {
     case 'fatal':
     case 'error':
-      return LogSeverity.error;
+      return LintSeverity.error;
     case 'warning':
-      return LogSeverity.warning;
+      return LintSeverity.warning;
     case 'info':
-      return LogSeverity.info;
+      return LintSeverity.info;
     case 'hidden':
-      return LogSeverity.ignore;
+      return LintSeverity.ignore;
     default:
-      return LogSeverity.unknown;
+      return LintSeverity.unknown;
   }
 }

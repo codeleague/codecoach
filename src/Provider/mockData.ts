@@ -1,26 +1,26 @@
 import { ProjectType } from '../Config/@enums';
-import { LogSeverity, LogType } from '../Parser';
+import { LintSeverity, LintItem } from '../Parser';
 
 export const mockTouchFile = 'file1.cs';
 export const file1TouchLine = 11;
 export const file2TouchLine = 33;
 
-export const touchFileError: LogType = {
+export const touchFileError: LintItem = {
   ruleId: '',
   log: '',
   msg: 'msg1',
-  severity: LogSeverity.error,
+  severity: LintSeverity.error,
   source: mockTouchFile,
   line: file1TouchLine,
   lineOffset: 22,
   valid: true,
   type: ProjectType.eslint,
 };
-export const touchFileWarning: LogType = {
+export const touchFileWarning: LintItem = {
   ruleId: '',
   log: '',
   msg: 'msg3',
-  severity: LogSeverity.warning,
+  severity: LintSeverity.warning,
   source: mockTouchFile,
   line: file2TouchLine,
   lineOffset: 44,
@@ -28,22 +28,22 @@ export const touchFileWarning: LogType = {
   valid: true,
   type: ProjectType.eslint,
 };
-export const untouchedError: LogType = {
+export const untouchedError: LintItem = {
   ruleId: '',
   log: '',
   msg: 'msg2',
-  severity: LogSeverity.error,
+  severity: LintSeverity.error,
   source: 'otherfile.cs',
   line: 55,
   lineOffset: 66,
   valid: true,
   type: ProjectType.eslint,
 };
-export const untouchedWarning: LogType = {
+export const untouchedWarning: LintItem = {
   ruleId: '',
   log: '',
   msg: 'msg4',
-  severity: LogSeverity.warning,
+  severity: LintSeverity.warning,
   source: 'otherfile.cs',
   line: 77,
   lineOffset: 88,

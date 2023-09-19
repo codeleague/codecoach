@@ -9,10 +9,10 @@ const mockGitLabProjectId = 1234;
 const mockGitLabMrIid = 69;
 const mockGitLabToken = 'mockGitLabToken';
 
-const mockLogType = 'dotnetbuild';
+const mockLintItem = 'dotnetbuild';
 const mockLogFile = './sample/dotnetbuild/build.content';
 const mockLogCwd = '/repo/src';
-const mockBuildLogFile = `${mockLogType};${mockLogFile};${mockLogCwd}`;
+const mockBuildLogFile = `${mockLintItem};${mockLogFile};${mockLogCwd}`;
 const mockOutput = './tmp/out.json';
 
 const GITHUB_ENV_ARGS = [
@@ -64,7 +64,7 @@ describe('Config parsing Test', () => {
 
   const validateBuildLog = (buildLog: BuildLogFile[]) => {
     expect(buildLog).toHaveLength(1);
-    expect(buildLog[0].type).toBe(mockLogType);
+    expect(buildLog[0].type).toBe(mockLintItem);
     expect(buildLog[0].path).toBe(mockLogFile);
     expect(buildLog[0].cwd).toBe(mockLogCwd);
   };

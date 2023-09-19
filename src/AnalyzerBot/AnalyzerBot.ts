@@ -1,4 +1,4 @@
-import { LogSeverity, LogType } from '../Parser';
+import { LintSeverity, LintItem } from '../Parser';
 import { Diff } from '../Git/@types/PatchTypes';
 import { onlyIn, onlySeverity } from './utils/filter.util';
 import { groupComments } from './utils/commentUtil';
@@ -8,18 +8,18 @@ import { Comment } from './@types/CommentTypes';
 import { IAnalyzerBot } from './@interfaces/IAnalyzerBot';
 
 export class AnalyzerBot implements IAnalyzerBot {
-  touchedFileLog: LogType[];
+  touchedFileItem: LintItem[];
   comments: Comment[];
   nError: number;
   nWarning: number;
 
   constructor(private readonly config: AnalyzerBotConfig) {}
 
-  analyze(logs: LogType[], touchedDiff: Diff[]): void {
-    this.touchedFileLog = logs
-      .filter(onlySeverity(LogSeverity.error, LogSeverity.warning))
+  analyze(items: LintItem[], touchedDiff: Diff[]): void {
+    this.touchedFileItem = items
+      .filter(onlySeverity(LintSeverity.error, LintSeverity.warning))
       .filter(onlyIn(touchedDiff));
-    this.comments = groupComments(this.touchedFileLog, this.config.suppressRules);
+    this.comments = groupComments(this.touchedFileItem, this.config.suppressRules);
     this.nError = this.comments.reduce((sum, comment) => sum + comment.errors, 0);
     this.nWarning = this.comments.reduce((sum, comment) => sum + comment.warnings, 0);
   }

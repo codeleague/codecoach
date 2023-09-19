@@ -1,15 +1,18 @@
-import { LogSeverity, LogType } from '../../Parser';
+import { LintSeverity, LintItem } from '../../Parser';
 import { Comment, CommentStructure } from '../@types/CommentTypes';
 import { MessageUtil } from './message.util';
 
-export function groupComments(logs: LogType[], suppressRules: Array<string>): Comment[] {
-  const commentMap = logs.reduce((state: CommentStructure, log) => {
-    const { source: file, line, nLines } = log;
+export function groupComments(
+  items: LintItem[],
+  suppressRules: Array<string>,
+): Comment[] {
+  const commentMap = items.reduce((state: CommentStructure, item) => {
+    const { source: file, line, nLines } = item;
 
     if (!line) return state;
 
     const currentComment = getOrInitComment(state, file, line, nLines);
-    const updatedComment = updateComment(currentComment, log, suppressRules);
+    const updatedComment = updateComment(currentComment, item, suppressRules);
     return updateCommentStructure(state, updatedComment);
   }, {});
 
@@ -35,8 +38,12 @@ function getOrInitComment(
   );
 }
 
-function buildText(currentComment: Comment, log: LogType, isSuppressed: boolean): string {
-  const { severity, msg } = log;
+function buildText(
+  currentComment: Comment,
+  item: LintItem,
+  isSuppressed: boolean,
+): string {
+  const { severity, msg } = item;
   const { text: currentText } = currentComment;
   const msgWithSuppression = isSuppressed ? `(SUPPRESSED) ${msg}` : msg;
   const text = MessageUtil.createMessageWithEmoji(msgWithSuppression, severity);
@@ -45,43 +52,43 @@ function buildText(currentComment: Comment, log: LogType, isSuppressed: boolean)
 
 function calculateErrors(
   currentComment: Comment,
-  log: LogType,
+  item: LintItem,
   isSuppressed: boolean,
 ): number {
   if (isSuppressed) return currentComment.errors;
-  const { severity } = log;
-  return currentComment.errors + (severity === LogSeverity.error ? 1 : 0);
+  const { severity } = item;
+  return currentComment.errors + (severity === LintSeverity.error ? 1 : 0);
 }
 
 function calculateWarnings(
   currentComment: Comment,
-  log: LogType,
+  item: LintItem,
   isSuppressed: boolean,
 ): number {
   if (isSuppressed) return currentComment.warnings;
-  const { severity } = log;
-  return currentComment.warnings + (severity === LogSeverity.warning ? 1 : 0);
+  const { severity } = item;
+  return currentComment.warnings + (severity === LintSeverity.warning ? 1 : 0);
 }
 
 function calculateSuppresses(currentComment: Comment, isSuppressed: boolean): number {
   return currentComment.suppresses + (isSuppressed ? 1 : 0);
 }
 
-function shouldBeSuppressed(log: LogType, suppressRules: Array<string>): boolean {
+function shouldBeSuppressed(item: LintItem, suppressRules: Array<string>): boolean {
   const suppressRegexps: Array<RegExp> = suppressRules.map((rule) => new RegExp(rule));
-  return suppressRegexps.some((regexp) => regexp.test(log.ruleId));
+  return suppressRegexps.some((regexp) => regexp.test(item.ruleId));
 }
 
 function updateComment(
   currentComment: Comment,
-  log: LogType,
+  item: LintItem,
   suppressRules: Array<string>,
 ): Comment {
-  const isSuppressed = shouldBeSuppressed(log, suppressRules);
+  const isSuppressed = shouldBeSuppressed(item, suppressRules);
   return {
-    text: buildText(currentComment, log, isSuppressed),
-    errors: calculateErrors(currentComment, log, isSuppressed),
-    warnings: calculateWarnings(currentComment, log, isSuppressed),
+    text: buildText(currentComment, item, isSuppressed),
+    errors: calculateErrors(currentComment, item, isSuppressed),
+    warnings: calculateWarnings(currentComment, item, isSuppressed),
     suppresses: calculateSuppresses(currentComment, isSuppressed),
     file: currentComment.file,
     line: currentComment.line,

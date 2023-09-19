@@ -1,4 +1,4 @@
-export enum LogSeverity {
+export enum LintSeverity {
   warning = 'warning',
   error = 'error',
   ignore = 'ignore',

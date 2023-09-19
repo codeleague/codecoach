@@ -1,4 +1,4 @@
-import { LogSeverity } from '../../Parser';
+import { LintSeverity } from '../../Parser';
 import { MessageUtil } from './message.util';
 
 describe('createMessageWithEmoji', () => {
@@ -6,10 +6,10 @@ describe('createMessageWithEmoji', () => {
     // ¯\_(ツ)_/¯
     const msg = 'test';
 
-    expect(MessageUtil.createMessageWithEmoji(msg, LogSeverity.error)).toBe(
+    expect(MessageUtil.createMessageWithEmoji(msg, LintSeverity.error)).toBe(
       `:rotating_light: ${msg}`,
     );
-    expect(MessageUtil.createMessageWithEmoji(msg, LogSeverity.warning)).toBe(
+    expect(MessageUtil.createMessageWithEmoji(msg, LintSeverity.warning)).toBe(
       `:warning: ${msg}`,
     );
   });

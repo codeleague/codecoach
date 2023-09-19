@@ -1,4 +1,4 @@
-import { LogSeverity } from './@enums/log.severity.enum';
+import { LintSeverity } from './@enums/LintSeverity';
 import { SwiftLintParser } from './SwiftLintParser';
 
 describe('SwiftLintParser tests', () => {
@@ -34,7 +34,7 @@ describe('SwiftLintParser tests', () => {
     expect(result[0]).toEqual({
       ruleId: 'line_length',
       source: `Folder1/SubFolder1/File5.swift`,
-      severity: LogSeverity.warning,
+      severity: LintSeverity.warning,
       line: 130,
       lineOffset: 0,
       msg: `Line should be 120 characters or less; currently it has 125 characters`,
@@ -45,7 +45,7 @@ describe('SwiftLintParser tests', () => {
     expect(result[1]).toEqual({
       ruleId: 'type_body_length',
       source: ``,
-      severity: LogSeverity.error,
+      severity: LintSeverity.error,
       line: 9,
       lineOffset: 7,
       msg: `Type body should span 400 lines or less excluding comments and whitespace: currently spans 448 lines`,

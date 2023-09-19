@@ -1,4 +1,4 @@
-import { LogSeverity } from './@enums/log.severity.enum';
+import { LintSeverity } from './@enums/LintSeverity';
 import { JscpdParser } from './JscpdParser';
 
 describe('JscpdParser tests', () => {
@@ -53,7 +53,7 @@ describe('JscpdParser tests', () => {
     expect(result[0]).toEqual({
       ruleId: 'jscpd',
       source: `src/WebApi/Controllers/GController.cs`,
-      severity: LogSeverity.warning,
+      severity: LintSeverity.warning,
       line: 1,
       lineOffset: 1,
       nLines: 11,
@@ -74,7 +74,7 @@ ${mockedContent.duplicates[0].fragment}
     expect(result[1]).toEqual({
       ruleId: 'jscpd',
       source: `src/WebApi/Controllers/HController.cs`,
-      severity: LogSeverity.warning,
+      severity: LintSeverity.warning,
       line: 1,
       lineOffset: 2,
       nLines: 11,

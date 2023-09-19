@@ -1,4 +1,4 @@
-import { LogSeverity, LogType } from '../../Parser';
+import { LintSeverity, LintItem } from '../../Parser';
 import {
   file1TouchLine,
   file2TouchLine,
@@ -9,10 +9,10 @@ import {
 import { groupComments } from './commentUtil';
 
 describe('groupComments', () => {
-  const logs: LogType[] = [touchFileError, touchFileWarning];
+  const items: LintItem[] = [touchFileError, touchFileWarning];
 
-  it('returns comments based on lint logs', () => {
-    const comments = groupComments(logs, []);
+  it('returns comments based on lint items', () => {
+    const comments = groupComments(items, []);
     expect(comments).toEqual([
       {
         file: mockTouchFile,
@@ -35,14 +35,14 @@ describe('groupComments', () => {
     ]);
   });
 
-  it('group multiple logs on the same line to the same comment', () => {
+  it('group multiple items on the same line to the same comment', () => {
     const comments = groupComments(
       [
-        ...logs,
+        ...items,
         {
           ...touchFileError,
           msg: 'additional warning',
-          severity: LogSeverity.warning,
+          severity: LintSeverity.warning,
           lineOffset: 33,
         },
       ],
@@ -74,11 +74,11 @@ describe('groupComments', () => {
   it('suppress errors and warnings according to provided suppressRules', () => {
     const comments = groupComments(
       [
-        ...logs,
+        ...items,
         {
           ...touchFileError,
           msg: 'additional warning',
-          severity: LogSeverity.warning,
+          severity: LintSeverity.warning,
           lineOffset: 33,
           ruleId: 'UNIMPORTANT_RULE2',
         },
@@ -115,11 +115,11 @@ describe('groupComments', () => {
   it('support regexp in suppressRules', () => {
     const comments = groupComments(
       [
-        ...logs,
+        ...items,
         {
           ...touchFileError,
           msg: 'additional warning',
-          severity: LogSeverity.warning,
+          severity: LintSeverity.warning,
           lineOffset: 33,
           ruleId: 'UNIMPORTANT_RULE/RULE2',
         },

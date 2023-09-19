@@ -7,7 +7,7 @@ import {
   AndroidLintStyleParser,
   DotnetBuildParser,
   ESLintParser,
-  LogType,
+  LintItem,
   MSBuildParser,
   Parser,
   ScalaStyleParser,
@@ -23,9 +23,15 @@ import { VCSEngine } from './Provider/CommonVCS/VCSEngine';
 import { GitLabAdapter } from './Provider/GitLab/GitLabAdapter';
 import { VCSAdapter } from './Provider/@interfaces/VCSAdapter';
 import { AnalyzerBot } from './AnalyzerBot/AnalyzerBot';
+import {
+  defaultFormatter,
+  gitLabFormatter,
+  OutputFormatter,
+} from './OutputFormatter/OutputFormatter';
 
 class App {
   private vcs: VCS | null = null;
+  private outputFormatter: OutputFormatter;
 
   async start(): Promise<void> {
     if (!configs.dryRun) {
@@ -38,12 +44,14 @@ class App {
       this.vcs = new VCSEngine(configs, analyzer, adapter);
     }
 
+    this.outputFormatter = App.getOutputFormatter();
+
     const logs = await this.parseBuildData(configs.buildLogFile);
     Log.info('Build data parsing completed');
 
     const reportToVcs = this.reportToVcs(logs);
-    const logToFile = App.writeLogToFile(logs);
-    const [passed] = await Promise.all([reportToVcs, logToFile]);
+    const writeOutputFile = this.writeOutputFile(logs);
+    const [passed] = await Promise.all([reportToVcs, writeOutputFile]);
     if (!passed) {
       Log.error('There are some linting error and exit code reporting is enabled');
       process.exit(1);
@@ -86,7 +94,16 @@ class App {
     }
   }
 
-  private async parseBuildData(files: BuildLogFile[]): Promise<LogType[]> {
+  private static getOutputFormatter(): OutputFormatter {
+    switch (configs.outputFormat) {
+      case 'default':
+        return defaultFormatter;
+      case 'gitlab':
+        return gitLabFormatter;
+    }
+  }
+
+  private async parseBuildData(files: BuildLogFile[]): Promise<LintItem[]> {
     const logsTasks = files.map(async ({ type, path, cwd }) => {
       Log.debug('Parsing', { type, path, cwd });
       const content = await File.readFileHelper(path);
@@ -97,14 +114,14 @@ class App {
     return (await Promise.all(logsTasks)).flatMap((x) => x);
   }
 
-  private async reportToVcs(logs: LogType[]): Promise<boolean> {
+  private async reportToVcs(items: LintItem[]): Promise<boolean> {
     if (!this.vcs) {
       Log.info('Dry run enabled, skip reporting');
       return true;
     }
 
     try {
-      const passed = await this.vcs.report(logs);
+      const passed = await this.vcs.report(items);
       Log.info('Report to VCS completed');
       return passed;
     } catch (error) {
@@ -113,9 +130,9 @@ class App {
     }
   }
 
-  private static async writeLogToFile(logs: LogType[]): Promise<void> {
+  private async writeOutputFile(items: LintItem[]): Promise<void> {
     try {
-      await File.writeFileHelper(configs.output, JSON.stringify(logs, null, 2));
+      await File.writeFileHelper(configs.output, this.outputFormatter(items));
       Log.info('Write output completed');
     } catch (error) {
       Log.error('Write output failed', { error });

@@ -1,5 +1,5 @@
-import { LogSeverity } from './@enums/log.severity.enum';
-import { LogType } from './@types';
+import { LintSeverity } from './@enums/LintSeverity';
+import { LintItem } from './@types';
 import { DotnetBuildParser } from './DotnetBuildParser';
 
 describe('DotnetBuildParser tests', () => {
@@ -18,14 +18,14 @@ describe('DotnetBuildParser tests', () => {
     expect(result[0]).toEqual({
       ruleId: 'AG0030',
       source: `Broken.cs`,
-      severity: LogSeverity.warning,
+      severity: LintSeverity.warning,
       line: 6,
       lineOffset: 8,
       msg: `AG0030: Prevent use of dynamic`,
       log: logWithSource,
       valid: true,
       type: 'dotnetbuild',
-    } as LogType);
+    } as LintItem);
   });
 
   it('Should parse log without source path correctly and flag as invalid and use csproj as source', () => {
@@ -34,14 +34,14 @@ describe('DotnetBuildParser tests', () => {
     expect(result[0]).toEqual({
       ruleId: 'CS5001',
       source: `Broken.csproj`,
-      severity: LogSeverity.error,
+      severity: LintSeverity.error,
       line: NaN,
       lineOffset: NaN,
       msg: `CS5001: Program does not contain a static 'Main' method suitable for an entry point`,
       log: logWithNoSource,
       valid: false,
       type: 'dotnetbuild',
-    } as LogType);
+    } as LintItem);
   });
 
   it('Should parse log unrelated source path correctly and flag as invalid and use csproj as source', () => {
@@ -50,14 +50,14 @@ describe('DotnetBuildParser tests', () => {
     expect(result[0]).toEqual({
       ruleId: 'MSB3277',
       source: `project.csproj`,
-      severity: LogSeverity.warning,
+      severity: LintSeverity.warning,
       line: 2084,
       lineOffset: 5,
       msg: `MSB3277: some message`,
       log: logWithUnrelatedSource,
       valid: false,
       type: 'dotnetbuild',
-    } as LogType);
+    } as LintItem);
   });
 
   it('Should do nothing if put empty string', () => {

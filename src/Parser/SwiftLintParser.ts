@@ -1,33 +1,33 @@
 import { Log } from '../Logger';
 import { getRelativePath } from './utils/path.util';
 import { Parser } from './@interfaces/parser.interface';
-import { LogType } from './@types';
+import { LintItem } from './@types';
 import { ProjectType } from '../Config/@enums';
 import { SwiftLintLog } from './@types/SwiftLintLog';
-import { LogSeverity } from './@enums/log.severity.enum';
+import { LintSeverity } from './@enums/LintSeverity';
 
 export class SwiftLintParser extends Parser {
-  parse(content: string): LogType[] {
+  parse(content: string): LintItem[] {
     try {
       if (!content) return [];
 
       const logsJson = JSON.parse(content) as SwiftLintLog[];
-      return logsJson.map((el) => this.toLog(el));
+      return logsJson.map((el) => this.toLintItem(el));
     } catch (err) {
       Log.warn('SwiftLint Parser: parse with content via JSON error', content);
       throw err;
     }
   }
 
-  private toLog(log: SwiftLintLog): LogType {
-    const parsed: LogType = {
+  private toLintItem(log: SwiftLintLog): LintItem {
+    const parsed: LintItem = {
       ruleId: log.rule_id,
       log: JSON.stringify(log),
       line: log.line ?? 0,
       lineOffset: log.character ?? 0,
       msg: log.reason,
       source: '',
-      severity: log.severity.toLowerCase() as LogSeverity,
+      severity: log.severity.toLowerCase() as LintSeverity,
       valid: true,
       type: ProjectType.swiftlint,
     };
