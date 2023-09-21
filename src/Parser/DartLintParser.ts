@@ -3,6 +3,7 @@ import { LintItem } from './@types';
 import { LintSeverity } from './@enums/LintSeverity';
 import { splitByLine } from './utils/lineBreak.util';
 import { ProjectType } from '../Config/@enums';
+import { NoNaN } from './utils/number.util';
 
 export class DartLintParser extends Parser {
   parse(content: string): LintItem[] {
@@ -23,8 +24,8 @@ export class DartLintParser extends Parser {
     return {
       ruleId: log,
       log: log,
-      line: Number(line),
-      lineOffset: Number(offset),
+      line: NoNaN(line),
+      lineOffset: NoNaN(offset),
       msg: message,
       source: source,
       severity: DartLintParser.stringToSeverity(severityText),

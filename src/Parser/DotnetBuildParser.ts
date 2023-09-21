@@ -8,6 +8,7 @@ import { LintItem } from './@types';
 import { mapSeverity } from './utils/dotnetSeverityMap';
 import { splitByLine } from './utils/lineBreak.util';
 import { ProjectType } from '../Config/@enums';
+import { NoNaN } from './utils/number.util';
 
 export class DotnetBuildParser extends Parser {
   parse(content: string): LintItem[] {
@@ -48,8 +49,8 @@ export class DotnetBuildParser extends Parser {
     return {
       ruleId: errorCode,
       log,
-      line: Number(_line),
-      lineOffset: Number(_lineOffset),
+      line: NoNaN(_line),
+      lineOffset: NoNaN(_lineOffset),
       msg: `${errorCode.trim()}: ${content.trim()}`,
       source: relativeSrcPath ?? basename(slash(_csproj)),
       severity: mapSeverity(severityText),
