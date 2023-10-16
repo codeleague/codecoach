@@ -10,6 +10,7 @@ import * as Resources from '@gitbeaker/core';
 import { Gitlab } from '@gitbeaker/rest';
 
 import { configs } from '../../Config';
+import { Log } from '../../Logger';
 
 export class GitLabMRService implements IGitLabMRService {
   private readonly projectId: number;
@@ -86,7 +87,12 @@ export class GitLabMRService implements IGitLabMRService {
     );
     const collected = versions.filter((v) => v.state === 'collected');
 
-    if (collected.length === 0) throw new Error('No collected version in MR');
+    if (collected.length === 0) {
+      Log.warn(
+        'No collected version in this MR, will use SHA from the latest commit instead.',
+      );
+      return versions[0];
+    }
 
     return collected[0];
   }
