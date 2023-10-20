@@ -32,9 +32,7 @@ describe('addRuleIdToMessage', () => {
     const msg = 'test';
     const ruleId = 'id';
 
-    expect(MessageUtil.addRuleIdToMessage(msg, ruleId)).toBe(
-      `${msg}  \n(rule: ${ruleId})`,
-    );
+    expect(MessageUtil.addRuleIdToMessage(msg, ruleId)).toBe(`${msg} (rule: ${ruleId})`);
   });
   it('should not add ruleId to message if ruleId is empty', () => {
     const msg = 'test';

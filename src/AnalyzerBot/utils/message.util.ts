@@ -48,6 +48,6 @@ ${warningMsg}`;
   }
 
   static addRuleIdToMessage(msg: string, ruleId: string): string {
-    return `${msg}` + (ruleId ? `  \n(rule: ${ruleId})` : '');
+    return `${msg}` + (ruleId ? ` (rule: ${ruleId})` : '');
   }
 }
