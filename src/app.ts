@@ -66,7 +66,7 @@ class App {
         configs.githubPr,
       );
       return new GitHubAdapter(githubPRService);
-    } else if (configs.vcs === 'gitlab') {
+    } else if (configs.vcs == "gitlab") {
       return new GitLabAdapter(new GitLabMRService());
     }
   }
@@ -78,7 +78,7 @@ class App {
       case ProjectType.msbuild:
         return new MSBuildParser(cwd);
       case ProjectType.tslint:
-        return new TSLintParser(cwd);
+        return new TSLintParser(cwd)
       case ProjectType.eslint:
         return new ESLintParser(cwd);
       case ProjectType.scalastyle:
