@@ -46,7 +46,8 @@ function buildText(
   const { severity, msg } = item;
   const { text: currentText } = currentComment;
   const msgWithSuppression = isSuppressed ? `(SUPPRESSED) ${msg}` : msg;
-  const text = MessageUtil.createMessageWithEmoji(msgWithSuppression, severity);
+  const msgWithRuleId = MessageUtil.addRuleIdToMessage(msgWithSuppression, item.ruleId);
+  const text = MessageUtil.createMessageWithEmoji(msgWithRuleId, severity);
   return `${currentText}${text}  \n`;
 }
 

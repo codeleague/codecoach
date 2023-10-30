@@ -8,9 +8,9 @@
   "homepage": "https://github.com/codeleague/codecoach",
   "license": "MIT",
   "scripts": {
-    "lint": "eslint 'src/**/*.{js,ts}' --quiet --fix",
-    "lint-ci": "eslint 'src/**/*.{js,ts}'",
-    "format": "prettier --write 'src/**/*.{js,ts}'",
+    "lint": "eslint \"src/**/*.{js,ts}\" --quiet --fix",
+    "lint-ci": "eslint \"src/**/*.{js,ts}\"",
+    "format": "prettier --write \"src/**/*.{js,ts}\"",
     "test": "jest",
     "build": "tsc --project tsconfig.build.json",
     "dev": "nodemon --inspect=5858 --config ./nodemon.json -- --config=\"config-test.json\"",

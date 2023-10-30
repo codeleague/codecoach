@@ -46,4 +46,8 @@ ${warningMsg}`;
       ? `CodeCoach report ${nOfErrors} errors`
       : 'CodeCoach report no critical issue, good job!';
   }
+
+  static addRuleIdToMessage(msg: string, ruleId: string): string {
+    return `${msg}` + (ruleId ? ` (rule: ${ruleId})` : '');
+  }
 }

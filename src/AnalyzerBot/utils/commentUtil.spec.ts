@@ -97,7 +97,7 @@ describe('groupComments', () => {
         text:
           ':rotating_light: msg1' +
           '  \n' +
-          ':warning: (SUPPRESSED) additional warning' +
+          ':warning: (SUPPRESSED) additional warning (rule: UNIMPORTANT_RULE2)' +
           '  \n',
       },
       {
@@ -138,7 +138,7 @@ describe('groupComments', () => {
         text:
           ':rotating_light: msg1' +
           '  \n' +
-          ':warning: (SUPPRESSED) additional warning' +
+          ':warning: (SUPPRESSED) additional warning (rule: UNIMPORTANT_RULE/RULE2)' +
           '  \n',
       },
       {
