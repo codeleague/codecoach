@@ -22,12 +22,16 @@ export class VCSEngine implements VCS {
         await this.adapter.removeExistingComments();
       }
 
-      await Promise.all(
-        this.analyzerBot.comments.map((c) => this.createReviewComment(c)),
-      );
-      await this.createSummaryComment();
+      if (!this.config.silent) {
+        await Promise.all(
+          this.analyzerBot.comments.map((c) => this.createReviewComment(c)),
+        );
+        await this.createSummaryComment();
 
-      Log.info('Report commit status completed');
+        Log.info('Report commit status completed');
+      } else {
+        Log.info('Silent mode is on. No inline comment nor summary will be produced.');
+      }
     } catch (err) {
       Log.error(`${this.adapter.getName()} report failed`, err);
       throw err;

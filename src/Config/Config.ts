@@ -121,6 +121,11 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
     type: 'boolean',
     default: false,
   })
+  .option('silent', {
+    describe: 'Disable the comment but still report job status to the VCS',
+    type: 'boolean',
+    default: false,
+  })
   .check((options) => {
     if (options.dryRun) return true;
     if (typeof options.vcs === 'undefined') throw 'VCS type is required';

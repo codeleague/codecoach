@@ -16,4 +16,5 @@ export type ConfigArgument = {
   failOnWarnings: boolean;
   suppressRules: string[];
   dryRun: boolean;
+  silent: boolean;
 };
