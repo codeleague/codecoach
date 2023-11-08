@@ -88,14 +88,15 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
   })
   .option('output', {
     alias: 'o',
-    describe: 'Output parsed log file',
+    describe: 'Default output file name',
     type: 'string',
     default: DEFAULT_OUTPUT_FILE,
   })
   .option('outputFormat', {
-    describe: 'Output format',
+    type: 'array',
+    describe: 'Output formats',
     choices: ['default', 'gitlab'],
-    default: 'default',
+    default: ['default'],
   })
   .option('removeOldComment', {
     alias: 'r',
