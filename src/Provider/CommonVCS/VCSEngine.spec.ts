@@ -8,6 +8,7 @@ import { Comment } from '../../AnalyzerBot/@types/CommentTypes';
 const config: VCSEngineConfig = {
   removeOldComment: false,
   failOnWarnings: false,
+  silent: false,
 };
 
 function createMockAdapter(): VCSAdapter {
@@ -123,6 +124,16 @@ describe('VCSEngine', () => {
       const { adapter, analyzer, vcs } = setup();
       await vcs.report([]);
       expect(adapter.wrapUp).toBeCalledWith(analyzer);
+    });
+
+    it('should not call adapter to add comments when silent mode is on', async () => {
+      const { adapter, analyzer, vcs } = setup({ ...config, silent: true });
+      analyzer.shouldGenerateOverview = jest.fn().mockReturnValue(true);
+      analyzer.comments = [comment1, comment2];
+
+      await vcs.report([]);
+      expect(adapter.createReviewComment).not.toBeCalled();
+      expect(adapter.createComment).not.toBeCalled();
     });
   });
 });

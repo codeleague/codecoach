@@ -102,6 +102,7 @@ Will do the same thing.
 | `removeOldComment` / `-r` | no                        | `true` or `false`                         | Remove CodeCoach's old comments before adding new one                                  |
 | `failOnWarnings`          | no                        | `true` or `false`                         | Fail the job when warnings are found                                                   |
 | `dryRun`                  | no                        | `true` or `false`                         | Running CodeCoach without reporting to VCS                                             |
+| `silent`                  | no                        | `true` or `false`                         | Disable the comment but still report job status to the VCS                             |
 | `suppressRules`           | no                        | `rule-group-1/.*` `rule-id-1` `rule-id-2` | Rule IDs that CodeCoach will still comment but no longer treated as errors or warnings |
 | `outputFormat`            | no                        | `default`, `gitlab`                       | Output file format                                                                     |
 
