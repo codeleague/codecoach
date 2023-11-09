@@ -19,7 +19,7 @@ export class DotnetBuildParser extends Parser {
 
   private toLintItem(log: string): LintItem {
     const structureMatch = log.match(
-      /(?:[\d:>]+)?([^ ()]+)(?:\((\d+),(\d+)\))? *: *(\w+) *(\w+) *: *([^\[]+)(?:\[(.+)])?$/,
+      /(?:[\d:>]+)?([^>()]+)(?:\((\d+),(\d+)\))? *: *(\w+) *(\w+) *: *([^\[]+)(?:\[(.+)])?$/,
     );
     if (!structureMatch) {
       const message = "DotnetBuildParser Error: log structure doesn't match";
