@@ -47,16 +47,6 @@ const args = yargs
   .group(['vcs', 'buildLogFile', 'output', 'removeOldComment'], 'Parsing options:')
   .group(GITLAB_ARGS, 'GitLab options:')
   .group(GITHUB_ARGS, 'GitHub options:')
-  .check((options) => {
-    // validate VCS configs
-    if (options.vcs === 'github' && GITHUB_ARGS.some((arg) => !options[arg]))
-      throw `GitHub requires [${GITHUB_ARGS.map((a) => `--${a}`).join(', ')}] to be set`;
-
-    if (options.vcs === 'gitlab' && GITLAB_ARGS.some((arg) => !options[arg]))
-      throw `GitLab requires [${GITLAB_ARGS.map((a) => `--${a}`).join(', ')}] to be set`;
-
-    return true;
-  })
   .option('buildLogFile', {
     alias: 'f',
     describe: `Build log content files formatted in '<type>;<path>[;<cwd>]'
@@ -128,7 +118,14 @@ and <cwd> is build root directory (optional (Will use current context as cwd)).
   })
   .check((options) => {
     if (options.dryRun) return true;
+
+    // validate VCS configs
     if (typeof options.vcs === 'undefined') throw 'VCS type is required';
+    if (options.vcs === 'github' && GITHUB_ARGS.some((arg) => !options[arg]))
+      throw `GitHub requires [${GITHUB_ARGS.map((a) => `--${a}`).join(', ')}] to be set`;
+    if (options.vcs === 'gitlab' && GITLAB_ARGS.some((arg) => !options[arg]))
+      throw `GitLab requires [${GITLAB_ARGS.map((a) => `--${a}`).join(', ')}] to be set`;
+
     return true;
   })
   .strict()
