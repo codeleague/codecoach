@@ -5,16 +5,16 @@ import { File } from './File';
 import { Log } from './Logger';
 import {
   AndroidLintStyleParser,
+  DartLintParser,
   DotnetBuildParser,
   ESLintParser,
+  JscpdParser,
   LintItem,
   MSBuildParser,
   Parser,
   ScalaStyleParser,
-  TSLintParser,
-  DartLintParser,
   SwiftLintParser,
-  JscpdParser,
+  TSLintParser,
 } from './Parser';
 import { GitHubPRService, VCS } from './Provider';
 import { GitLabMRService } from './Provider/GitLab/GitLabMRService';
@@ -23,15 +23,16 @@ import { VCSEngine } from './Provider/CommonVCS/VCSEngine';
 import { GitLabAdapter } from './Provider/GitLab/GitLabAdapter';
 import { VCSAdapter } from './Provider/@interfaces/VCSAdapter';
 import { AnalyzerBot } from './AnalyzerBot/AnalyzerBot';
-import {
-  defaultFormatter,
-  gitLabFormatter,
-  OutputFormatter,
-} from './OutputFormatter/OutputFormatter';
+import { defaultFormatter, gitLabFormatter } from './OutputFormatter/OutputFormatter';
+
+type OutputFileMeta = {
+  formatter: (items: LintItem[]) => string;
+  filename: string;
+};
 
 class App {
   private vcs: VCS | null = null;
-  private outputFormatter: OutputFormatter;
+  private outputFileMeta: OutputFileMeta[];
 
   async start(): Promise<void> {
     if (!configs.dryRun) {
@@ -44,14 +45,14 @@ class App {
       this.vcs = new VCSEngine(configs, analyzer, adapter);
     }
 
-    this.outputFormatter = App.getOutputFormatter();
+    this.outputFileMeta = App.getOutputFileMetas();
 
     const logs = await this.parseBuildData(configs.buildLogFile);
     Log.info('Build data parsing completed');
 
     const reportToVcs = this.reportToVcs(logs);
-    const writeOutputFile = this.writeOutputFile(logs);
-    const [passed] = await Promise.all([reportToVcs, writeOutputFile]);
+    const writeOutputFiles = this.writeOutputFiles(logs);
+    const [passed] = await Promise.all([reportToVcs, writeOutputFiles]);
     if (!passed) {
       Log.error('There are some linting error and exit code reporting is enabled');
       process.exit(1);
@@ -94,13 +95,19 @@ class App {
     }
   }
 
-  private static getOutputFormatter(): OutputFormatter {
-    switch (configs.outputFormat) {
-      case 'default':
-        return defaultFormatter;
-      case 'gitlab':
-        return gitLabFormatter;
+  private static getOutputFileMetas(): OutputFileMeta[] {
+    const outputFileMetas: OutputFileMeta[] = [];
+    if (configs.outputFormat.includes('default')) {
+      outputFileMetas.push({ formatter: defaultFormatter, filename: configs.output });
     }
+    if (configs.outputFormat.includes('gitlab')) {
+      outputFileMetas.push({
+        formatter: gitLabFormatter,
+        filename: 'gl-code-quality-report.json',
+      });
+    }
+
+    return outputFileMetas;
   }
 
   private async parseBuildData(files: BuildLogFile[]): Promise<LintItem[]> {
@@ -130,9 +137,15 @@ class App {
     }
   }
 
-  private async writeOutputFile(items: LintItem[]): Promise<void> {
+  private async writeOutputFiles(items: LintItem[]): Promise<void> {
     try {
-      await File.writeFileHelper(configs.output, this.outputFormatter(items));
+      await Promise.all(
+        this.outputFileMeta.map((meta) => {
+          Log.info('Write output to ' + meta.filename, { meta });
+          return File.writeFileHelper(meta.filename, meta.formatter(items));
+        }),
+      );
+
       Log.info('Write output completed');
     } catch (error) {
       Log.error('Write output failed', { error });
