@@ -17,7 +17,10 @@ export class ESLintParser extends Parser {
           logs
             .filter((log) => log.suppressedMessages.length !== 0)
             .map((log) => {
-              const messages = log.messages.map((msg) => ({ ...msg, severity: 0 }));
+              const messages = log.suppressedMessages.map((msg) => ({
+                ...msg,
+                severity: 0,
+              }));
               return { ...log, messages: messages };
             }),
         )
