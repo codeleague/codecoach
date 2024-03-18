@@ -13,6 +13,14 @@ export class ESLintParser extends Parser {
       const logs = JSON.parse(content) as ESLintLog[];
       return logs
         .filter((log) => log.messages.length !== 0)
+        .concat(
+          logs
+            .filter((log) => log.suppressedMessages.length !== 0)
+            .map((log) => {
+              const messages = log.messages.map((msg) => ({ ...msg, severity: 0 }));
+              return { ...log, messages: messages };
+            }),
+        )
         .flatMap((log) => {
           const source = getRelativePath(this.cwd, log.filePath);
           return log.messages.map((msg) => ESLintParser.toLintItem(msg, source));
