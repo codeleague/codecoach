@@ -16,6 +16,7 @@ describe('ESLintParser', () => {
           column: 8,
         },
       ],
+      suppressedMessages: [],
       errorCount: 1,
       warningCount: 0,
       fixableErrorCount: 0,
@@ -26,6 +27,19 @@ describe('ESLintParser', () => {
     {
       filePath: 'C:/src/github.com/codeleague/codecoach/src/app.ts',
       messages: [
+        {
+          ruleId: '@typescript-eslint/no-unused-vars',
+          severity: 1,
+          message: "'content' is defined but never used.",
+          line: 24,
+          column: 15,
+          nodeType: 'Identifier',
+          messageId: 'unusedVar',
+          endLine: 24,
+          endColumn: 30,
+        },
+      ],
+      suppressedMessages: [
         {
           ruleId: '@typescript-eslint/no-unused-vars',
           severity: 1,
@@ -51,7 +65,7 @@ describe('ESLintParser', () => {
 
   it('Should parse correctly', () => {
     const result = new ESLintParser(cwd).parse(mockedContentString);
-    expect(result).toHaveLength(2);
+    expect(result).toHaveLength(3);
 
     expect(result[0]).toEqual({
       ruleId: '',
@@ -76,6 +90,18 @@ describe('ESLintParser', () => {
       valid: true,
       type: 'eslint',
     });
+
+    expect(result[2]).toEqual({
+      ruleId: '@typescript-eslint/no-unused-vars',
+      source: `src/app.ts`,
+      severity: LintSeverity.ignore,
+      line: 24,
+      lineOffset: 15,
+      msg: `'content' is defined but never used.`,
+      log: JSON.stringify({ ...mockedContent[1].messages[0], severity: 0 }),
+      valid: true,
+      type: 'eslint',
+    });
   });
 
   it('Should do nothing if put empty string', () => {
@@ -87,8 +113,18 @@ describe('ESLintParser', () => {
     const result = new ESLintParser(cwd).parse(mockedContentString);
     const valid = result.filter((el) => el.valid);
     const invalid = result.filter((el) => !el.valid);
-    expect(valid).toHaveLength(1);
+    expect(valid).toHaveLength(2);
     expect(invalid).toHaveLength(1);
+  });
+
+  it('Should parse with severity correctly', () => {
+    const result = new ESLintParser(cwd).parse(mockedContentString);
+    const resultWithError = result.filter((el) => el.severity === LintSeverity.error);
+    const resultWithWarning = result.filter((el) => el.severity === LintSeverity.warning);
+    const ignoredResult = result.filter((el) => el.severity === LintSeverity.ignore);
+    expect(resultWithError).toHaveLength(1);
+    expect(resultWithWarning).toHaveLength(1);
+    expect(ignoredResult).toHaveLength(1);
   });
 
   it('Should throw error if the line not match the rule', () => {

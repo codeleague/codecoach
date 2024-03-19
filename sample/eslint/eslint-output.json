@@ -2,6 +2,7 @@
   {
     "filePath": "C:\\src\\github.com\\codeleague\\codecoach\\src\\app.constants.ts",
     "messages": [],
+    "suppressedMessages": [],
     "errorCount": 0,
     "warningCount": 0,
     "fixableErrorCount": 0,
@@ -29,6 +30,20 @@
         "messageId": "unusedVar",
         "endLine": 24,
         "endColumn": 30
+      }
+    ],
+    "suppressedMessages": [
+      {
+        "ruleId": "@typescript-eslint/no-unused-vars",
+        "severity": 1,
+        "message": "'supContent' is defined but never used.",
+        "line": 30,
+        "column": 10,
+        "nodeType": "Identifier",
+        "messageId": "unusedVar",
+        "endLine": 30,
+        "endColumn": 30,
+        "suppressions": [{ "kind": "directive", "justification": "" }]
       }
     ],
     "errorCount": 1,
