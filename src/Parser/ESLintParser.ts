@@ -1,4 +1,4 @@
-import { ProjectType } from '../Config/@enums';
+import { ProjectType } from '../Config';
 import { Log } from '../Logger';
 import { getRelativePath } from './utils/path.util';
 import { LintSeverity } from './@enums/LintSeverity';
@@ -15,12 +15,13 @@ export class ESLintParser extends Parser {
         .filter((log) => log.messages.length !== 0)
         .concat(
           logs
-            .filter((log) => log.suppressedMessages.length !== 0)
+            .filter((log) => log.suppressedMessages?.length !== 0)
             .map((log) => {
-              const messages = log.suppressedMessages.map((msg) => ({
-                ...msg,
-                severity: 0,
-              }));
+              const messages =
+                log.suppressedMessages?.map((msg) => ({
+                  ...msg,
+                  severity: 0,
+                })) ?? [];
               return { ...log, messages: messages };
             }),
         )

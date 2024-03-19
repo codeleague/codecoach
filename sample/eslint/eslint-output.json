@@ -42,7 +42,8 @@
         "nodeType": "Identifier",
         "messageId": "unusedVar",
         "endLine": 30,
-        "endColumn": 30
+        "endColumn": 30,
+        "suppressions": [{ "kind": "directive", "justification": "" }]
       }
     ],
     "errorCount": 1,

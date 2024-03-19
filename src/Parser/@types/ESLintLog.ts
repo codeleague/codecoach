@@ -4,7 +4,7 @@ import { SuppressedESLintIssue } from './SuppressedESLintIssue';
 export type ESLintLog = {
   filePath: string;
   messages: ESLintIssue[];
-  suppressedMessages: SuppressedESLintIssue[];
+  suppressedMessages?: SuppressedESLintIssue[];
   errorCount: number;
   warningCount: number;
   fixableErrorCount: number;
