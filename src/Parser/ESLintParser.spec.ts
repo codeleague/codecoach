@@ -113,8 +113,18 @@ describe('ESLintParser', () => {
     const result = new ESLintParser(cwd).parse(mockedContentString);
     const valid = result.filter((el) => el.valid);
     const invalid = result.filter((el) => !el.valid);
-    expect(valid).toHaveLength(1);
+    expect(valid).toHaveLength(2);
     expect(invalid).toHaveLength(1);
+  });
+
+  it('Should parse with severity correctly', () => {
+    const result = new ESLintParser(cwd).parse(mockedContentString);
+    const resultWithError = result.filter((el) => el.severity === LintSeverity.error);
+    const resultWithWarning = result.filter((el) => el.severity === LintSeverity.warning);
+    const ignoredResult = result.filter((el) => el.severity === LintSeverity.ignore);
+    expect(resultWithError).toHaveLength(1);
+    expect(resultWithWarning).toHaveLength(1);
+    expect(ignoredResult).toHaveLength(1);
   });
 
   it('Should throw error if the line not match the rule', () => {

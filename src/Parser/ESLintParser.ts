@@ -1,4 +1,4 @@
-import { ProjectType } from '../Config';
+import { ProjectType } from '../Config/@enums';
 import { Log } from '../Logger';
 import { getRelativePath } from './utils/path.util';
 import { LintSeverity } from './@enums/LintSeverity';
