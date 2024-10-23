@@ -155,5 +155,19 @@ Use `-o <filename>` on output lint result created by command `dart analyze > <fi
 Use `--output <filename>` to output lint result to file and `--reporter json` to format logs as JSON.
 (_[ref.](https://github.com/realm/SwiftLint#command-line)_)
 
+#### Kotlin Detekt
+In gradle config
+(_[ref.](https://detekt.dev/docs/gettingstarted/gradle#reports)_)
+
+```kotlin
+tasks.named("detekt").configure {
+    reports {
+       // Enable/Disable SARIF report (default: false)
+        sarif.required.set(true)
+        sarif.outputLocation.set(file("build/reports/detekt.sarif"))
+    }
+}
+```
+
 ### Contribute
 For contribution guidelines and project dev setup. Please see [CONTRIBUTING.md](CONTRIBUTING.md)
