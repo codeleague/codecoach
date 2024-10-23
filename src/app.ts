@@ -28,6 +28,7 @@ import {
   gitLabFormatter,
   OutputFormatter,
 } from './OutputFormatter/OutputFormatter';
+import { SarifParser } from './Parser/SarifParser';
 
 class App {
   private vcs: VCS | null = null;
@@ -91,6 +92,8 @@ class App {
         return new SwiftLintParser(cwd);
       case ProjectType.jscpd:
         return new JscpdParser(cwd);
+      case ProjectType.sarif:
+        return new SarifParser(cwd);
     }
   }
 
