@@ -17,36 +17,36 @@ describe('SarifParser tests', () => {
               {
                 id: 'TEST001',
                 shortDescription: {
-                  text: 'Test rule description'
-                }
-              }
-            ]
-          }
+                  text: 'Test rule description',
+                },
+              },
+            ],
+          },
         },
         results: [
           {
             ruleId: 'TEST001',
             level: 'warning',
             message: {
-              text: 'This is a test warning'
+              text: 'This is a test warning',
             },
             locations: [
               {
                 physicalLocation: {
                   artifactLocation: {
-                    uri: 'C:\\source\\Test.cs'
+                    uri: 'C:\\source\\Test.cs',
                   },
                   region: {
                     startLine: 42,
-                    startColumn: 13
-                  }
-                }
-              }
-            ]
-          }
-        ]
-      }
-    ]
+                    startColumn: 13,
+                  },
+                },
+              },
+            ],
+          },
+        ],
+      },
+    ],
   };
 
   const sarifLogNoLocation = {
@@ -55,20 +55,20 @@ describe('SarifParser tests', () => {
       {
         tool: {
           driver: {
-            name: 'TestAnalyzer'
-          }
+            name: 'TestAnalyzer',
+          },
         },
         results: [
           {
             ruleId: 'TEST002',
             level: 'error',
             message: {
-              text: 'Error without location'
-            }
-          }
-        ]
-      }
-    ]
+              text: 'Error without location',
+            },
+          },
+        ],
+      },
+    ],
   };
 
   const sarifLogMultipleResults = {
@@ -77,53 +77,53 @@ describe('SarifParser tests', () => {
       {
         tool: {
           driver: {
-            name: 'TestAnalyzer'
-          }
+            name: 'TestAnalyzer',
+          },
         },
         results: [
           {
             ruleId: 'TEST003',
             level: 'warning',
             message: {
-              text: 'First warning'
+              text: 'First warning',
             },
             locations: [
               {
                 physicalLocation: {
                   artifactLocation: {
-                    uri: 'C:\\source\\Test1.cs'
+                    uri: 'C:\\source\\Test1.cs',
                   },
                   region: {
                     startLine: 10,
-                    startColumn: 5
-                  }
-                }
-              }
-            ]
+                    startColumn: 5,
+                  },
+                },
+              },
+            ],
           },
           {
             ruleId: 'TEST004',
             level: 'error',
             message: {
-              text: 'Second error'
+              text: 'Second error',
             },
             locations: [
               {
                 physicalLocation: {
                   artifactLocation: {
-                    uri: 'C:\\source\\Test2.cs'
+                    uri: 'C:\\source\\Test2.cs',
                   },
                   region: {
                     startLine: 20,
-                    startColumn: 8
-                  }
-                }
-              }
-            ]
-          }
-        ]
-      }
-    ]
+                    startColumn: 8,
+                  },
+                },
+              },
+            ],
+          },
+        ],
+      },
+    ],
   };
 
   const sarifLogUnrelatedPath = {
@@ -132,33 +132,33 @@ describe('SarifParser tests', () => {
       {
         tool: {
           driver: {
-            name: 'TestAnalyzer'
-          }
+            name: 'TestAnalyzer',
+          },
         },
         results: [
           {
             ruleId: 'TEST005',
             level: 'warning',
             message: {
-              text: 'Warning with unrelated path'
+              text: 'Warning with unrelated path',
             },
             locations: [
               {
                 physicalLocation: {
                   artifactLocation: {
-                    uri: '/usr/share/test/Unrelated.cs'
+                    uri: '/usr/share/test/Unrelated.cs',
                   },
                   region: {
                     startLine: 15,
-                    startColumn: 3
-                  }
-                }
-              }
-            ]
-          }
-        ]
-      }
-    ]
+                    startColumn: 3,
+                  },
+                },
+              },
+            ],
+          },
+        ],
+      },
+    ],
   };
 
   it('Should parse basic SARIF log correctly', () => {
@@ -214,12 +214,12 @@ describe('SarifParser tests', () => {
         {
           tool: {
             driver: {
-              name: 'TestAnalyzer'
-            }
+              name: 'TestAnalyzer',
+            },
           },
-          results: []
-        }
-      ]
+          results: [],
+        },
+      ],
     };
     const result = new SarifParser(cwdWin).parse(JSON.stringify(emptyLog));
     expect(result).toHaveLength(0);
@@ -234,7 +234,9 @@ describe('SarifParser tests', () => {
       version: '2.1.0',
       // missing runs array
     };
-    expect(() => new SarifParser(cwdWin).parse(JSON.stringify(invalidLog))).toThrowError();
+    expect(() =>
+      new SarifParser(cwdWin).parse(JSON.stringify(invalidLog)),
+    ).toThrowError();
   });
 
   it('Should handle missing severity level and default to warning', () => {
@@ -244,32 +246,32 @@ describe('SarifParser tests', () => {
         {
           tool: {
             driver: {
-              name: 'TestAnalyzer'
-            }
+              name: 'TestAnalyzer',
+            },
           },
           results: [
             {
               ruleId: 'TEST006',
               message: {
-                text: 'Message with no severity level'
+                text: 'Message with no severity level',
               },
               locations: [
                 {
                   physicalLocation: {
                     artifactLocation: {
-                      uri: 'C:\\source\\Test.cs'
+                      uri: 'C:\\source\\Test.cs',
                     },
                     region: {
                       startLine: 1,
-                      startColumn: 1
-                    }
-                  }
-                }
-              ]
-            }
-          ]
-        }
-      ]
+                      startColumn: 1,
+                    },
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      ],
     };
     const result = new SarifParser(cwdWin).parse(JSON.stringify(logWithNoLevel));
     expect(result).toHaveLength(1);

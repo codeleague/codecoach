@@ -7,6 +7,7 @@ import { Parser } from './@interfaces/parser.interface';
 import { LintItem } from './@types';
 import { mapSeverity } from './utils/dotnetSeverityMap';
 import { ProjectType } from '../Config/@enums';
+import { LintSeverity } from './@enums/LintSeverity';
 import { NoNaN } from './utils/number.util';
 
 interface SarifLog {
@@ -53,31 +54,44 @@ interface SarifResult {
 export class SarifParser extends Parser {
   parse(content: string): LintItem[] {
     try {
-      const sarifLog: SarifLog = JSON.parse(content);
-      
-      if (!this.isValidSarifLog(sarifLog)) {
-        const message = "SarifParser Error: Invalid SARIF format";
-        Log.error(message, { content });
-        throw new Error(message);
-      }
-
-      const lintItems: LintItem[] = [];
-      
-      for (const run of sarifLog.runs) {
-        const results = run.results || [];
-        for (const result of results) {
-          const lintItem = this.toLintItem(result, run);
-          if (lintItem) {
-            lintItems.push(lintItem);
-          }
-        }
-      }
-
-      return lintItems;
+      const sarifLog = this.parseSarifContent(content);
+      return this.processRuns(sarifLog.runs);
     } catch (error) {
-      const message = "SarifParser Error: Failed to parse SARIF content";
+      const message = 'SarifParser Error: Failed to parse SARIF content';
       Log.error(message, { error, content });
       throw new Error(message);
+    }
+  }
+
+  private parseSarifContent(content: string): SarifLog {
+    const sarifLog: SarifLog = JSON.parse(content);
+
+    if (!this.isValidSarifLog(sarifLog)) {
+      const message = 'SarifParser Error: Invalid SARIF format';
+      Log.error(message, { content });
+      throw new Error(message);
+    }
+
+    return sarifLog;
+  }
+
+  private processRuns(runs: SarifRun[]): LintItem[] {
+    const lintItems: LintItem[] = [];
+
+    for (const run of runs) {
+      this.processResults(run, lintItems);
+    }
+
+    return lintItems;
+  }
+
+  private processResults(run: SarifRun, lintItems: LintItem[]): void {
+    const results = run.results || [];
+    for (const result of results) {
+      const lintItem = this.toLintItem(result, run);
+      if (lintItem) {
+        lintItems.push(lintItem);
+      }
     }
   }
 
@@ -104,29 +118,31 @@ export class SarifParser extends Parser {
       Log.warn(`SarifParser Warning: source path is not relative to root`, { uri });
     }
 
-    // Map SARIF severity levels to your existing severity system
-    const severityMap: Record<string, string> = {
-      'error': 'error',
-      'warning': 'warning',
-      'note': 'info',
-      'none': 'info'
-    };
-
     return {
       ruleId: result.ruleId,
-      log: JSON.stringify(result), // Store the original result for reference
-      line: NoNaN(location.region?.startLine),
-      lineOffset: NoNaN(location.region?.startColumn),
+      log: JSON.stringify(result),
+      line: NoNaN(String(location.region?.startLine || '')),
+      lineOffset: NoNaN(String(location.region?.startColumn || '')),
       msg: `${result.ruleId}: ${result.message.text}`,
       source: relativeSrcPath ?? basename(slash(uri)),
-      severity: mapSeverity(severityMap[result.level ?? 'warning']),
+      severity: this.getSeverity(result.level),
       valid: !!relativeSrcPath,
       type: ProjectType.sarif,
     };
   }
 
-  // Helper method to find rule details if needed
+  private getSeverity(level?: string): LintSeverity {
+    const severityMap: Record<string, string> = {
+      error: 'error',
+      warning: 'warning',
+      note: 'info',
+      none: 'info',
+    };
+
+    return mapSeverity(severityMap[level ?? 'warning']);
+  }
+
   private findRuleDetails(ruleId: string, run: SarifRun): SarifRule | undefined {
-    return run.tool.driver.rules?.find(rule => rule.id === ruleId);
+    return run.tool.driver.rules?.find((rule) => rule.id === ruleId);
   }
 }
