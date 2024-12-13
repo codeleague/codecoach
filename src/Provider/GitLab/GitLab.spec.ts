@@ -15,21 +15,21 @@ import { AnalyzerBot } from '../../AnalyzerBot/AnalyzerBot';
 const mockCurrentUserId = 123456;
 
 // Create helper function to generate consistent comment keys
-const generateCommentKey = (file: string, line: number | undefined, text: string) => 
+const generateCommentKey = (file: string, line: number | undefined, text: string) =>
   `${file}:${line}:${text}`;
 
 const mockNotes = [
-  { 
-    id: 1, 
-    author: { id: mockCurrentUserId }, 
+  {
+    id: 1,
+    author: { id: mockCurrentUserId },
     system: true,
-    body: 'system message' 
+    body: 'system message',
   },
-  { 
-    id: 2, 
-    author: { id: mockCurrentUserId }, 
+  {
+    id: 2,
+    author: { id: mockCurrentUserId },
     system: false,
-    body: 'existing comment' 
+    body: 'existing comment',
   },
 ] as MergeRequestNoteSchema[];
 
@@ -92,29 +92,29 @@ describe('VCS: GitLab', () => {
 
   it('should not create duplicate comments and should create new unique comments', async () => {
     const service = new MrServiceMock();
-    
+
     // Pre-populate with an existing comment for the error
     const existingErrorText = `${touchFileError.source}:${touchFileError.line}::rotating_light: ${touchFileError.msg}  \n`;
-    
+
     service.listAllNotes.mockResolvedValue([
       ...mockNotes,
       {
         id: 4,
         author: { id: mockCurrentUserId },
         system: false,
-        body: existingErrorText
-      }
+        body: existingErrorText,
+      },
     ]);
-  
+
     const gitLab = createGitLab(service, configs);
     await gitLab.report([touchFileError, touchFileWarning]);
-  
+
     expect(service.createMRDiscussion).toHaveBeenCalledTimes(1);
     expect(service.createMRDiscussion).toHaveBeenCalledWith(
       mockVersion,
       touchFileWarning.source,
       touchFileWarning.line,
-      expect.any(String)
+      expect.any(String),
     );
   });
 
@@ -131,16 +131,17 @@ describe('VCS: GitLab', () => {
   it('should not create comments that already exist', async () => {
     const service = new MrServiceMock();
     const gitLab = createGitLab(service, configs);
-    
+
     // Set up mock with existing summary comment
-    const existingSummaryComment = "## CodeCoach reports 1 issue\n:rotating_light: 0 error\n:warning: 1 warning";
+    const existingSummaryComment =
+      '## CodeCoach reports 1 issue\n:rotating_light: 0 error\n:warning: 1 warning';
     service.listAllNotes.mockResolvedValue([
       {
         id: 1,
         author: { id: mockCurrentUserId },
         system: false,
-        body: existingSummaryComment
-      }
+        body: existingSummaryComment,
+      },
     ]);
 
     await gitLab.report([touchFileWarning]);

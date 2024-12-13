@@ -8,7 +8,7 @@ import { IAnalyzerBot } from '../../AnalyzerBot/@interfaces/IAnalyzerBot';
 export class GitLabAdapter implements VCSAdapter {
   private latestMrVersion: MergeRequestDiffVersionsSchema;
   private existingComments: Set<string> = new Set();
-  
+
   constructor(private readonly mrService: IGitLabMRService) {}
 
   async init(): Promise<void> {
@@ -17,18 +17,25 @@ export class GitLabAdapter implements VCSAdapter {
       this.mrService.getCurrentUserId(),
       this.mrService.listAllNotes(),
     ]);
-    
+
     this.latestMrVersion = latestVersion;
-    
+
     // Store existing bot comments
     notes
-      .filter((note: { author: { id: any; }; system: any; }) => note.author.id === userId && !note.system)
-      .forEach((note: { body: string; }) => this.existingComments.add(note.body));
-    
+      .filter(
+        (note: { author: { id: any }; system: any }) =>
+          note.author.id === userId && !note.system,
+      )
+      .forEach((note: { body: string }) => this.existingComments.add(note.body));
+
     Log.debug(`Found ${this.existingComments.size} existing CodeCoach comments`);
   }
 
-  private generateCommentKey(file: string, line: number | undefined, text: string): string {
+  private generateCommentKey(
+    file: string,
+    line: number | undefined,
+    text: string,
+  ): string {
     return `${file}:${line}:${text}`;
   }
 
@@ -43,20 +50,15 @@ export class GitLabAdapter implements VCSAdapter {
   }
 
   async createReviewComment(
-    text: string, 
-    file: string, 
+    text: string,
+    file: string,
     line: number,
-    nLines?: number
+    nLines?: number,
   ): Promise<void> {
     const commentKey = this.generateCommentKey(file, line, text);
-    
+
     if (!this.existingComments.has(commentKey)) {
-      await this.mrService.createMRDiscussion(
-        this.latestMrVersion,
-        file,
-        line,
-        text
-      );
+      await this.mrService.createMRDiscussion(this.latestMrVersion, file, line, text);
       this.existingComments.add(commentKey);
       Log.debug('Created new review comment');
     } else {
