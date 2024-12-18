@@ -7,7 +7,6 @@ export interface IGitLabMRService {
   deleteNote(noteId: number): Promise<void>;
   getCurrentUserId(): Promise<number>;
   diff(): Promise<Diff[]>;
-
   getLatestVersion(): Promise<MergeRequestDiffVersionsSchema>;
   createMRDiscussion(
     latestVersion: MergeRequestDiffVersionsSchema,

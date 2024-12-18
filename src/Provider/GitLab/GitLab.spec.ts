@@ -13,12 +13,24 @@ import { GitLabAdapter } from './GitLabAdapter';
 import { AnalyzerBot } from '../../AnalyzerBot/AnalyzerBot';
 
 const mockCurrentUserId = 123456;
-const mockNoteIdToBeDeleted = 6544321;
+
+// Create helper function to generate consistent comment keys
+const generateCommentKey = (file: string, line: number | undefined, text: string) =>
+  `${file}:${line}:${text}`;
 
 const mockNotes = [
-  { id: 1, author: { id: mockCurrentUserId }, system: true },
-  { id: mockNoteIdToBeDeleted, author: { id: mockCurrentUserId }, system: false }, // only one to be deleted
-  { id: 3, author: { id: 99 }, system: false },
+  {
+    id: 1,
+    author: { id: mockCurrentUserId },
+    system: true,
+    body: 'system message',
+  },
+  {
+    id: 2,
+    author: { id: mockCurrentUserId },
+    system: false,
+    body: 'existing comment',
+  },
 ] as MergeRequestNoteSchema[];
 
 const mockVersionId = 3425234;
@@ -47,7 +59,11 @@ function createGitLab(service: IGitLabMRService, configs: ConfigArgument) {
 }
 
 describe('VCS: GitLab', () => {
-  it('should returns true when there is no error', async () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should return true when there is no error', async () => {
     const service = new MrServiceMock();
     const gitLab = createGitLab(service, configs);
 
@@ -60,7 +76,7 @@ describe('VCS: GitLab', () => {
     expect(result).toBe(true);
   });
 
-  it('should returns false when there is some error', async () => {
+  it('should return false when there is some error', async () => {
     const service = new MrServiceMock();
     const gitLab = createGitLab(service, configs);
 
@@ -74,40 +90,32 @@ describe('VCS: GitLab', () => {
     expect(result).toBe(false);
   });
 
-  it('should remove old self comments and reviews and post new ones', async () => {
+  it('should not create duplicate comments and should create new unique comments', async () => {
     const service = new MrServiceMock();
-    const gitLab = createGitLab(service, { ...configs, removeOldComment: true });
 
-    await gitLab.report([
-      touchFileError,
-      touchFileWarning,
-      untouchedError,
-      untouchedWarning,
+    // Pre-populate with an existing comment for the error
+    const existingErrorText = `${touchFileError.source}:${touchFileError.line}::rotating_light: ${touchFileError.msg}  \n`;
+
+    service.listAllNotes.mockResolvedValue([
+      ...mockNotes,
+      {
+        id: 4,
+        author: { id: mockCurrentUserId },
+        system: false,
+        body: existingErrorText,
+      },
     ]);
 
-    expect(service.listAllNotes).toHaveBeenCalledTimes(1);
-    expect(service.getCurrentUserId).toHaveBeenCalledTimes(1);
+    const gitLab = createGitLab(service, configs);
+    await gitLab.report([touchFileError, touchFileWarning]);
 
-    expect(service.deleteNote).toHaveBeenCalledTimes(1);
-    expect(service.deleteNote).toHaveBeenCalledWith(mockNoteIdToBeDeleted);
-
-    expect(service.createMRDiscussion).toHaveBeenNthCalledWith(
-      1,
-      mockVersion,
-      touchFileError.source,
-      touchFileError.line,
-      expect.any(String),
-    );
-
-    expect(service.createMRDiscussion).toHaveBeenNthCalledWith(
-      2,
+    expect(service.createMRDiscussion).toHaveBeenCalledTimes(1);
+    expect(service.createMRDiscussion).toHaveBeenCalledWith(
       mockVersion,
       touchFileWarning.source,
       touchFileWarning.line,
       expect.any(String),
     );
-
-    expect(service.createNote).toHaveBeenCalledTimes(1);
   });
 
   it('should not comment if there is no relevant lint issue', async () => {
@@ -120,39 +128,58 @@ describe('VCS: GitLab', () => {
     expect(service.createNote).not.toHaveBeenCalled();
   });
 
+  it('should not create comments that already exist', async () => {
+    const service = new MrServiceMock();
+    const gitLab = createGitLab(service, configs);
+
+    // Set up mock with existing summary comment
+    const existingSummaryComment =
+      '## CodeCoach reports 1 issue\n:rotating_light: 0 error\n:warning: 1 warning';
+    service.listAllNotes.mockResolvedValue([
+      {
+        id: 1,
+        author: { id: mockCurrentUserId },
+        system: false,
+        body: existingSummaryComment,
+      },
+    ]);
+
+    await gitLab.report([touchFileWarning]);
+    expect(service.createNote).not.toHaveBeenCalled();
+  });
+
   describe('when failOnWarnings is true', () => {
-    it('should returns true when there is no error or warning', async () => {
+    const warningConfigs = { ...configs, failOnWarnings: true };
+
+    it('should return true when there is no error or warning', async () => {
       const service = new MrServiceMock();
-      const gitLab = createGitLab(service, { ...configs, failOnWarnings: true });
+      const gitLab = createGitLab(service, warningConfigs);
 
       const result = await gitLab.report([untouchedError, untouchedWarning]);
-
       expect(result).toBe(true);
     });
 
-    it('should returns false when there is some error', async () => {
+    it('should return false when there is some error', async () => {
       const service = new MrServiceMock();
-      const gitLab = createGitLab(service, { ...configs, failOnWarnings: true });
+      const gitLab = createGitLab(service, warningConfigs);
 
       const result = await gitLab.report([
         touchFileError,
         untouchedError,
         untouchedWarning,
       ]);
-
       expect(result).toBe(false);
     });
 
-    it('should returns false when there is some warnings', async () => {
+    it('should return false when there is some warnings', async () => {
       const service = new MrServiceMock();
-      const gitLab = createGitLab(service, { ...configs, failOnWarnings: true });
+      const gitLab = createGitLab(service, warningConfigs);
 
       const result = await gitLab.report([
         touchFileWarning,
         untouchedError,
         untouchedWarning,
       ]);
-
       expect(result).toBe(false);
     });
   });
