@@ -4,38 +4,60 @@ import { Log } from '../../Logger';
 import { IGitLabMRService } from './IGitLabMRService';
 import { MergeRequestDiffVersionsSchema, MergeRequestNoteSchema } from '@gitbeaker/core';
 import { IAnalyzerBot } from '../../AnalyzerBot/@interfaces/IAnalyzerBot';
+import { Comment } from '../../AnalyzerBot/@types/CommentTypes';
 
 export class GitLabAdapter implements VCSAdapter {
   private latestMrVersion: MergeRequestDiffVersionsSchema;
   private existingComments: Set<string> = new Set();
+  private existingCommentIds: Map<string, number> = new Map();
+  private existingDiscussionIds: Map<string, string> = new Map();
 
   constructor(private readonly mrService: IGitLabMRService) {}
 
   async init(): Promise<void> {
-    const [latestVersion, userId, notes] = await Promise.all([
+    const [latestVersion, userId, notes, discussions] = await Promise.all([
       this.mrService.getLatestVersion(),
       this.mrService.getCurrentUserId(),
       this.mrService.listAllNotes(),
+      this.mrService.listAllDiscussions(),
     ]);
 
     this.latestMrVersion = latestVersion;
 
-    // Store existing bot comments
+    // Store existing bot comments and their IDs
     notes
       .filter(
         (note: { author: { id: any }; system: any }) =>
           note.author.id === userId && !note.system,
       )
-      .forEach((note: { body: string }) => this.existingComments.add(note.body));
+      .forEach((note: { id: number; body: string }) => {
+        this.existingComments.add(note.body);
+        this.existingCommentIds.set(note.body, note.id);
+      });
+
+    // Store existing discussions and their IDs
+    discussions
+      .filter(
+        (discussion: { notes: any[] }) =>
+          discussion.notes &&
+          discussion.notes.some(
+            (note: { author: { id: any } }) => note.author.id === userId,
+          ),
+      )
+      .forEach((discussion: { id: string; notes: any[] }) => {
+        discussion.notes
+          .filter((note: { author: { id: any } }) => note.author.id === userId)
+          .forEach((note: { body: string }) => {
+            const commentKey = this.generateCommentKey('', 0, note.body);
+            this.existingComments.add(commentKey);
+            this.existingDiscussionIds.set(commentKey, discussion.id);
+          });
+      });
 
     Log.debug(`Found ${this.existingComments.size} existing CodeCoach comments`);
   }
 
-  private generateCommentKey(
-    file: string,
-    line: number | undefined,
-    text: string,
-  ): string {
+  private generateCommentKey(file: string, line: number, text: string): string {
     return `${file}:${line}:${text}`;
   }
 
@@ -82,7 +104,40 @@ export class GitLabAdapter implements VCSAdapter {
     return this.mrService.diff();
   }
 
-  async removeExistingComments(): Promise<void> {
-    Log.debug('Skipping comment removal as we now handle duplicates on creation');
+  async removeExistingComments(currentComments: Comment[]): Promise<void> {
+    // Create a set of current issue keys
+    const currentIssueKeys = new Set<string>();
+    currentComments.forEach((comment) => {
+      const key = this.generateCommentKey(comment.file, comment.line, comment.text);
+      currentIssueKeys.add(key);
+    });
+
+    // Delete comments that are no longer relevant
+    const commentsToDelete: Promise<void>[] = [];
+
+    // Check regular comments
+    this.existingCommentIds.forEach((commentId, commentText) => {
+      if (!currentIssueKeys.has(commentText)) {
+        commentsToDelete.push(this.mrService.deleteNote(commentId));
+        this.existingComments.delete(commentText);
+        this.existingCommentIds.delete(commentText);
+      }
+    });
+
+    // Check discussion comments
+    this.existingDiscussionIds.forEach((discussionId, commentKey) => {
+      if (!currentIssueKeys.has(commentKey)) {
+        commentsToDelete.push(this.mrService.deleteDiscussion(discussionId));
+        this.existingComments.delete(commentKey);
+        this.existingDiscussionIds.delete(commentKey);
+      }
+    });
+
+    if (commentsToDelete.length > 0) {
+      await Promise.all(commentsToDelete);
+      Log.debug(`Deleted ${commentsToDelete.length} outdated comments`);
+    } else {
+      Log.debug('No outdated comments to delete');
+    }
   }
 }

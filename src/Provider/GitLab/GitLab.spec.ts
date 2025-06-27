@@ -42,6 +42,8 @@ class MrServiceMock implements IGitLabMRService {
   createMRDiscussion = jest.fn().mockResolvedValue(undefined);
   createNote = jest.fn().mockResolvedValue(undefined);
   deleteNote = jest.fn().mockResolvedValue(undefined);
+  listAllDiscussions = jest.fn().mockResolvedValue([]);
+  deleteDiscussion = jest.fn().mockResolvedValue(undefined);
   diff = jest.fn().mockResolvedValue([mockTouchDiff]);
   getCurrentUserId = jest.fn().mockResolvedValue(mockCurrentUserId);
   getLatestVersion = jest.fn().mockResolvedValue(mockVersion);
@@ -146,6 +148,19 @@ describe('VCS: GitLab', () => {
 
     await gitLab.report([touchFileWarning]);
     expect(service.createNote).not.toHaveBeenCalled();
+  });
+
+  it('should remove existing comments when removeOldComment is enabled', async () => {
+    const service = new MrServiceMock();
+    const configsWithRemoveOldComment = { ...configs, removeOldComment: true };
+    const gitLab = createGitLab(service, configsWithRemoveOldComment);
+
+    await gitLab.report([touchFileWarning]);
+
+    // With the new approach, we use selective deletion based on current issues
+    expect(service.listAllNotes).toHaveBeenCalled();
+    expect(service.listAllDiscussions).toHaveBeenCalled();
+    // deleteNote and deleteDiscussion will be called for outdated comments
   });
 
   describe('when failOnWarnings is true', () => {

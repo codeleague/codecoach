@@ -19,7 +19,7 @@ export class VCSEngine implements VCS {
       await this.setup(items);
 
       if (this.config.removeOldComment) {
-        await this.adapter.removeExistingComments();
+        await this.adapter.removeExistingComments(this.analyzerBot.comments);
       }
 
       if (!this.config.silent) {

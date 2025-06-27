@@ -1,5 +1,6 @@
 import { Diff } from '../../Git/@types/PatchTypes';
 import { IAnalyzerBot } from '../../AnalyzerBot/@interfaces/IAnalyzerBot';
+import { Comment } from '../../AnalyzerBot/@types/CommentTypes';
 
 export interface VCSAdapter {
   init(): Promise<void>;
@@ -14,5 +15,5 @@ export interface VCSAdapter {
     line: number,
     nLines?: number,
   ): Promise<void>;
-  removeExistingComments(): Promise<void>;
+  removeExistingComments(currentComments: Comment[]): Promise<void>;
 }
