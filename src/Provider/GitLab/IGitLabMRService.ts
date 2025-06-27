@@ -5,6 +5,8 @@ export interface IGitLabMRService {
   createNote(note: string): Promise<void>;
   listAllNotes(): Promise<MergeRequestNoteSchema[]>;
   deleteNote(noteId: number): Promise<void>;
+  listAllDiscussions(): Promise<any[]>;
+  deleteDiscussion(discussionId: string): Promise<void>;
   getCurrentUserId(): Promise<number>;
   diff(): Promise<Diff[]>;
   getLatestVersion(): Promise<MergeRequestDiffVersionsSchema>;

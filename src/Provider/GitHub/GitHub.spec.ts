@@ -22,11 +22,17 @@ const mockedUserId = 1234;
 const mockedSha = '123456';
 
 const mockedReviews = [
-  { id: mockedReviewId, user: { id: mockedUserId } },
+  {
+    id: mockedReviewId,
+    user: { id: mockedUserId },
+    body: 'test review comment',
+    path: 'test.js',
+    line: 1,
+  },
 ] as PullsListReviewCommentsResponseData;
 
 const mockedComments = [
-  { id: mockedCommentId, user: { id: mockedUserId } },
+  { id: mockedCommentId, user: { id: mockedUserId }, body: 'test comment' },
 ] as IssuesListCommentsResponseData;
 
 class PrServiceMock implements IGitHubPRService {

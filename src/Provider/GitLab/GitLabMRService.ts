@@ -62,6 +62,26 @@ export class GitLabMRService implements IGitLabMRService {
     await this.api.MergeRequestNotes.remove(this.projectId, this.mrIid, noteId);
   }
 
+  async listAllDiscussions(): Promise<any[]> {
+    return await this.api.MergeRequestDiscussions.all(this.projectId, this.mrIid);
+  }
+
+  async deleteDiscussion(discussionId: string): Promise<void> {
+    // GitLab discussions are deleted by removing all notes in the discussion
+    // We need to get the discussion and remove its notes
+    const discussion = await this.api.MergeRequestDiscussions.show(
+      this.projectId,
+      this.mrIid,
+      discussionId,
+    );
+    if (discussion.notes && discussion.notes.length > 0) {
+      const deletePromises = discussion.notes.map((note: any) =>
+        this.api.MergeRequestNotes.remove(this.projectId, this.mrIid, note.id),
+      );
+      await Promise.all(deletePromises);
+    }
+  }
+
   // github can do someone fancy shit here we cant
   async createNote(note: string): Promise<void> {
     await this.api.MergeRequestNotes.create(this.projectId, this.mrIid, note);
