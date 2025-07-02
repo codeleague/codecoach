@@ -118,7 +118,12 @@ export class GitLabAdapter implements VCSAdapter {
     // Check regular comments
     this.existingCommentIds.forEach((commentId, commentText) => {
       if (!currentIssueKeys.has(commentText)) {
-        commentsToDelete.push(this.mrService.deleteNote(commentId));
+        // Validate comment ID before attempting deletion
+        if (commentId && typeof commentId === 'number') {
+          commentsToDelete.push(this.mrService.deleteNote(commentId));
+        } else {
+          Log.warn(`Invalid comment ID found: ${commentId}, skipping deletion`);
+        }
         this.existingComments.delete(commentText);
         this.existingCommentIds.delete(commentText);
       }
@@ -127,15 +132,39 @@ export class GitLabAdapter implements VCSAdapter {
     // Check discussion comments
     this.existingDiscussionIds.forEach((discussionId, commentKey) => {
       if (!currentIssueKeys.has(commentKey)) {
-        commentsToDelete.push(this.mrService.deleteDiscussion(discussionId));
+        // Validate discussion ID before attempting deletion
+        if (discussionId && typeof discussionId === 'string') {
+          commentsToDelete.push(this.mrService.deleteDiscussion(discussionId));
+        } else {
+          Log.warn(`Invalid discussion ID found: ${discussionId}, skipping deletion`);
+        }
         this.existingComments.delete(commentKey);
         this.existingDiscussionIds.delete(commentKey);
       }
     });
 
     if (commentsToDelete.length > 0) {
-      await Promise.all(commentsToDelete);
-      Log.debug(`Deleted ${commentsToDelete.length} outdated comments`);
+      // Handle each deletion individually to prevent one failure from stopping all
+      let succeeded = 0;
+      let failed = 0;
+      
+      for (const deletePromise of commentsToDelete) {
+        try {
+          await deletePromise;
+          succeeded++;
+        } catch (error: any) {
+          failed++;
+          Log.debug('Failed to delete individual comment', { 
+            error: error?.message || error 
+          });
+        }
+      }
+      
+      if (failed > 0) {
+        Log.warn(`Deleted ${succeeded}/${commentsToDelete.length} outdated comments, ${failed} failed`);
+      } else {
+        Log.debug(`Deleted ${succeeded} outdated comments`);
+      }
     } else {
       Log.debug('No outdated comments to delete');
     }

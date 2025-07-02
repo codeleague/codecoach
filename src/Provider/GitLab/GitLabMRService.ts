@@ -59,7 +59,20 @@ export class GitLabMRService implements IGitLabMRService {
   }
 
   async deleteNote(noteId: number): Promise<void> {
-    await this.api.MergeRequestNotes.remove(this.projectId, this.mrIid, noteId);
+    await this.deleteNoteWithErrorHandling(noteId);
+  }
+
+  private async deleteNoteWithErrorHandling(noteId: number): Promise<void> {
+    try {
+      await this.api.MergeRequestNotes.remove(this.projectId, this.mrIid, noteId);
+    } catch (error: any) {
+      if (error.message === 'Not Found' || error.status === 404) {
+        Log.warn(`Note ${noteId} not found, skipping deletion`);
+        return;
+      }
+      Log.error(`Failed to delete note ${noteId}`, { error: error.message });
+      throw error;
+    }
   }
 
   async listAllDiscussions(): Promise<any[]> {
@@ -67,18 +80,37 @@ export class GitLabMRService implements IGitLabMRService {
   }
 
   async deleteDiscussion(discussionId: string): Promise<void> {
-    // GitLab discussions are deleted by removing all notes in the discussion
-    // We need to get the discussion and remove its notes
-    const discussion = await this.api.MergeRequestDiscussions.show(
-      this.projectId,
-      this.mrIid,
-      discussionId,
-    );
-    if (discussion.notes && discussion.notes.length > 0) {
-      const deletePromises = discussion.notes.map((note: any) =>
-        this.api.MergeRequestNotes.remove(this.projectId, this.mrIid, note.id),
+    try {
+      // GitLab discussions are deleted by removing all notes in the discussion
+      // We need to get the discussion and remove its notes
+      const discussion = await this.api.MergeRequestDiscussions.show(
+        this.projectId,
+        this.mrIid,
+        discussionId,
       );
-      await Promise.all(deletePromises);
+      if (discussion.notes && discussion.notes.length > 0) {
+        const deletePromises = discussion.notes.map(async (note: any) => {
+          try {
+            await this.deleteNoteWithErrorHandling(note.id);
+            return { success: true };
+          } catch (error) {
+            return { success: false };
+          }
+        });
+        
+        const results = await Promise.all(deletePromises);
+        const failed = results.filter((r: { success: boolean }) => !r.success).length;
+        if (failed > 0) {
+          Log.warn(`Failed to delete ${failed}/${discussion.notes.length} notes in discussion ${discussionId}`);
+        }
+      }
+    } catch (error: any) {
+      if (error.message === 'Not Found' || error.status === 404) {
+        Log.warn(`Discussion ${discussionId} not found, skipping deletion`);
+        return;
+      }
+      Log.error(`Failed to delete discussion ${discussionId}`, { error: error.message });
+      throw error;
     }
   }
 
@@ -93,7 +125,7 @@ export class GitLabMRService implements IGitLabMRService {
     if (!changes) {
       return [];
     } else {
-      return changes.map((d) => ({
+      return changes.map((d: any) => ({
         file: d.new_path,
         patch: getPatch(d.diff),
       }));
@@ -105,7 +137,7 @@ export class GitLabMRService implements IGitLabMRService {
       this.projectId,
       this.mrIid,
     );
-    const collected = versions.filter((v) => v.state === 'collected');
+    const collected = versions.filter((v: any) => v.state === 'collected');
 
     if (collected.length === 0) {
       Log.warn(
