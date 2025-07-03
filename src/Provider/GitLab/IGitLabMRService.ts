@@ -5,7 +5,12 @@ export interface IGitLabMRService {
   createNote(note: string): Promise<void>;
   listAllNotes(): Promise<MergeRequestNoteSchema[]>;
   deleteNote(noteId: number): Promise<void>;
-  listAllDiscussions(): Promise<any[]>;
+  listAllDiscussions(): Promise<
+    Array<{
+      id: string;
+      notes?: Array<{ id: number; author: { id: number }; body: string }>;
+    }>
+  >;
   deleteDiscussion(discussionId: string): Promise<void>;
   getCurrentUserId(): Promise<number>;
   diff(): Promise<Diff[]>;
