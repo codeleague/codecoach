@@ -88,23 +88,28 @@ export class SarifParser extends Parser {
   private processResults(run: SarifRun, lintItems: LintItem[]): void {
     const results = run.results || [];
     for (const result of results) {
-      const lintItem = this.toLintItem(result, run);
+      const lintItem = this.toLintItem(result);
       if (lintItem) {
         lintItems.push(lintItem);
       }
     }
   }
 
-  private isValidSarifLog(log: any): log is SarifLog {
+  private isValidSarifLog(log: unknown): log is SarifLog {
+    if (log == null || typeof log !== 'object') {
+      return false;
+    }
+
+    const obj = log as Record<string, unknown>;
     return (
-      log &&
-      typeof log === 'object' &&
-      typeof log.version === 'string' &&
-      Array.isArray(log.runs)
+      'version' in obj &&
+      typeof obj.version === 'string' &&
+      'runs' in obj &&
+      Array.isArray(obj.runs)
     );
   }
 
-  private toLintItem(result: SarifResult, run: SarifRun): LintItem | null {
+  private toLintItem(result: SarifResult): LintItem | null {
     if (!result.locations?.[0]) {
       Log.warn('SarifParser Warning: Result has no location information', { result });
       return null;
@@ -140,9 +145,5 @@ export class SarifParser extends Parser {
     };
 
     return mapSeverity(severityMap[level ?? 'warning']);
-  }
-
-  private findRuleDetails(ruleId: string, run: SarifRun): SarifRule | undefined {
-    return run.tool.driver.rules?.find((rule) => rule.id === ruleId);
   }
 }

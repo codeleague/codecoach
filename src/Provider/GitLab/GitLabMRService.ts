@@ -65,53 +65,91 @@ export class GitLabMRService implements IGitLabMRService {
   private async deleteNoteWithErrorHandling(noteId: number): Promise<void> {
     try {
       await this.api.MergeRequestNotes.remove(this.projectId, this.mrIid, noteId);
-    } catch (error: any) {
-      if (error.message === 'Not Found' || error.status === 404) {
+    } catch (error: unknown) {
+      const errorObj = error as { message?: string; status?: number };
+      if (errorObj.message === 'Not Found' || errorObj.status === 404) {
         Log.warn(`Note ${noteId} not found, skipping deletion`);
         return;
       }
-      Log.error(`Failed to delete note ${noteId}`, { error: error.message });
+      Log.error(`Failed to delete note ${noteId}`, { error: errorObj.message });
       throw error;
     }
   }
 
-  async listAllDiscussions(): Promise<any[]> {
+  async listAllDiscussions(): Promise<
+    Array<{
+      id: string;
+      notes?: Array<{ id: number; author: { id: number }; body: string }>;
+    }>
+  > {
     return await this.api.MergeRequestDiscussions.all(this.projectId, this.mrIid);
   }
 
   async deleteDiscussion(discussionId: string): Promise<void> {
     try {
-      // GitLab discussions are deleted by removing all notes in the discussion
-      // We need to get the discussion and remove its notes
-      const discussion = await this.api.MergeRequestDiscussions.show(
-        this.projectId,
-        this.mrIid,
-        discussionId,
-      );
-      if (discussion.notes && discussion.notes.length > 0) {
-        const deletePromises = discussion.notes.map(async (note: any) => {
-          try {
-            await this.deleteNoteWithErrorHandling(note.id);
-            return { success: true };
-          } catch (error) {
-            return { success: false };
-          }
-        });
-        
-        const results = await Promise.all(deletePromises);
-        const failed = results.filter((r: { success: boolean }) => !r.success).length;
-        if (failed > 0) {
-          Log.warn(`Failed to delete ${failed}/${discussion.notes.length} notes in discussion ${discussionId}`);
-        }
-      }
-    } catch (error: any) {
-      if (error.message === 'Not Found' || error.status === 404) {
-        Log.warn(`Discussion ${discussionId} not found, skipping deletion`);
-        return;
-      }
-      Log.error(`Failed to delete discussion ${discussionId}`, { error: error.message });
-      throw error;
+      const discussion = await this.getDiscussion(discussionId);
+      await this.deleteDiscussionNotes(discussion, discussionId);
+    } catch (error: unknown) {
+      this.handleDiscussionDeletionError(error, discussionId);
     }
+  }
+
+  private async getDiscussion(
+    discussionId: string,
+  ): Promise<{ notes?: Array<{ id: number }> }> {
+    return await this.api.MergeRequestDiscussions.show(
+      this.projectId,
+      this.mrIid,
+      discussionId,
+    );
+  }
+
+  private async deleteDiscussionNotes(
+    discussion: { notes?: Array<{ id: number }> },
+    discussionId: string,
+  ): Promise<void> {
+    if (!discussion.notes || discussion.notes.length === 0) {
+      return;
+    }
+
+    const deletePromises = discussion.notes.map(async (note: { id: number }) => {
+      try {
+        await this.deleteNoteWithErrorHandling(note.id);
+        return { success: true };
+      } catch (error) {
+        return { success: false };
+      }
+    });
+
+    const results = await Promise.all(deletePromises);
+    this.logDeletionResults(results, discussion.notes.length, discussionId);
+  }
+
+  private logDeletionResults(
+    results: Array<{ success: boolean }>,
+    totalNotes: number,
+    discussionId: string,
+  ): void {
+    const failed = results.filter((r) => !r.success).length;
+    if (failed > 0) {
+      Log.warn(
+        `Failed to delete ${failed}/${totalNotes} notes in discussion ${discussionId}`,
+      );
+    }
+  }
+
+  private handleDiscussionDeletionError(error: unknown, discussionId: string): void {
+    const errorObj = error as { message?: string; status?: number };
+
+    if (errorObj.message === 'Not Found' || errorObj.status === 404) {
+      Log.warn(`Discussion ${discussionId} not found, skipping deletion`);
+      return;
+    }
+
+    Log.error(`Failed to delete discussion ${discussionId}`, {
+      error: errorObj.message || String(error),
+    });
+    throw error;
   }
 
   // github can do someone fancy shit here we cant
@@ -125,7 +163,7 @@ export class GitLabMRService implements IGitLabMRService {
     if (!changes) {
       return [];
     } else {
-      return changes.map((d: any) => ({
+      return changes.map((d: { new_path: string; diff: string }) => ({
         file: d.new_path,
         patch: getPatch(d.diff),
       }));
@@ -137,7 +175,7 @@ export class GitLabMRService implements IGitLabMRService {
       this.projectId,
       this.mrIid,
     );
-    const collected = versions.filter((v: any) => v.state === 'collected');
+    const collected = versions.filter((v: { state: string }) => v.state === 'collected');
 
     if (collected.length === 0) {
       Log.warn(

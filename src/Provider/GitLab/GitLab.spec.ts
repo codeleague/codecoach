@@ -14,10 +14,6 @@ import { AnalyzerBot } from '../../AnalyzerBot/AnalyzerBot';
 
 const mockCurrentUserId = 123456;
 
-// Create helper function to generate consistent comment keys
-const generateCommentKey = (file: string, line: number | undefined, text: string) =>
-  `${file}:${line}:${text}`;
-
 const mockNotes = [
   {
     id: 1,
@@ -167,12 +163,12 @@ describe('VCS: GitLab', () => {
     it('should handle 404 errors gracefully when deleting notes', async () => {
       const service = new MrServiceMock();
       const configsWithRemoveOldComment = { ...configs, removeOldComment: true };
-      
+
       // Mock a 404 error for note deletion
       const notFoundError = new Error('Not Found');
-      (notFoundError as any).status = 404;
+      (notFoundError as Error & { status: number }).status = 404;
       service.deleteNote.mockRejectedValueOnce(notFoundError);
-      
+
       // Add an existing comment that should be deleted
       service.listAllNotes.mockResolvedValue([
         {
@@ -184,7 +180,7 @@ describe('VCS: GitLab', () => {
       ]);
 
       const gitLab = createGitLab(service, configsWithRemoveOldComment);
-      
+
       // Should not throw error even when note deletion fails with 404
       await expect(gitLab.report([touchFileWarning])).resolves.toBe(true);
       expect(service.deleteNote).toHaveBeenCalled();
@@ -193,12 +189,12 @@ describe('VCS: GitLab', () => {
     it('should handle 404 errors gracefully when deleting discussions', async () => {
       const service = new MrServiceMock();
       const configsWithRemoveOldComment = { ...configs, removeOldComment: true };
-      
+
       // Mock a 404 error for discussion deletion
       const notFoundError = new Error('Not Found');
-      (notFoundError as any).status = 404;
+      (notFoundError as Error & { status: number }).status = 404;
       service.deleteDiscussion.mockRejectedValueOnce(notFoundError);
-      
+
       // Add an existing discussion that should be deleted
       service.listAllDiscussions.mockResolvedValue([
         {
@@ -215,7 +211,7 @@ describe('VCS: GitLab', () => {
       ]);
 
       const gitLab = createGitLab(service, configsWithRemoveOldComment);
-      
+
       // Should not throw error even when discussion deletion fails with 404
       await expect(gitLab.report([touchFileWarning])).resolves.toBe(true);
       expect(service.deleteDiscussion).toHaveBeenCalled();
@@ -224,7 +220,7 @@ describe('VCS: GitLab', () => {
     it('should continue processing when some comment deletions fail', async () => {
       const service = new MrServiceMock();
       const configsWithRemoveOldComment = { ...configs, removeOldComment: true };
-      
+
       // Mock multiple notes, some will fail to delete
       service.listAllNotes.mockResolvedValue([
         {
@@ -243,13 +239,13 @@ describe('VCS: GitLab', () => {
 
       // First deletion fails, second succeeds
       const notFoundError = new Error('Not Found');
-      (notFoundError as any).status = 404;
+      (notFoundError as Error & { status: number }).status = 404;
       service.deleteNote
         .mockRejectedValueOnce(notFoundError)
         .mockResolvedValueOnce(undefined);
 
       const gitLab = createGitLab(service, configsWithRemoveOldComment);
-      
+
       // Should complete successfully despite partial failures
       await expect(gitLab.report([touchFileWarning])).resolves.toBe(true);
       expect(service.deleteNote).toHaveBeenCalledTimes(2);
@@ -258,7 +254,7 @@ describe('VCS: GitLab', () => {
     it('should handle invalid comment IDs gracefully', async () => {
       const service = new MrServiceMock();
       const configsWithRemoveOldComment = { ...configs, removeOldComment: true };
-      
+
       // Mock notes with invalid IDs
       service.listAllNotes.mockResolvedValue([
         {
@@ -276,7 +272,7 @@ describe('VCS: GitLab', () => {
       ]);
 
       const gitLab = createGitLab(service, configsWithRemoveOldComment);
-      
+
       // Should handle invalid IDs without attempting deletion
       await expect(gitLab.report([touchFileWarning])).resolves.toBe(true);
       // deleteNote should not be called for invalid IDs
@@ -286,7 +282,7 @@ describe('VCS: GitLab', () => {
     it('should handle discussion deletion with 404 errors on individual notes', async () => {
       const service = new MrServiceMock();
       const configsWithRemoveOldComment = { ...configs, removeOldComment: true };
-      
+
       // Mock a discussion with notes
       const mockDiscussion = {
         id: 'discussion-456',
@@ -295,24 +291,34 @@ describe('VCS: GitLab', () => {
           { id: 20, author: { id: mockCurrentUserId } },
         ],
       };
-      
+
       service.listAllDiscussions.mockResolvedValue([mockDiscussion]);
-      
+
       // Mock discussion show to return the discussion
-      const mockMRService = service as any;
+      const mockMRService = service as MrServiceMock & {
+        api: {
+          MergeRequestDiscussions: {
+            show: jest.Mock;
+          };
+          MergeRequestNotes: {
+            remove: jest.Mock;
+          };
+        };
+      };
       mockMRService.api = {
         MergeRequestDiscussions: {
           show: jest.fn().mockResolvedValue(mockDiscussion),
         },
         MergeRequestNotes: {
-          remove: jest.fn()
+          remove: jest
+            .fn()
             .mockRejectedValueOnce(new Error('Not Found')) // First note fails
             .mockResolvedValueOnce(undefined), // Second note succeeds
         },
       };
 
       const gitLab = createGitLab(service, configsWithRemoveOldComment);
-      
+
       // Should complete successfully despite partial note deletion failures
       await expect(gitLab.report([touchFileWarning])).resolves.toBe(true);
     });
@@ -320,15 +326,15 @@ describe('VCS: GitLab', () => {
     it('should log appropriate warnings for failed deletions', async () => {
       const service = new MrServiceMock();
       const configsWithRemoveOldComment = { ...configs, removeOldComment: true };
-      
+
       // Spy on console to capture log messages
       const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
-      
+
       // Mock a 404 error
       const notFoundError = new Error('Not Found');
-      (notFoundError as any).status = 404;
+      (notFoundError as Error & { status: number }).status = 404;
       service.deleteNote.mockRejectedValueOnce(notFoundError);
-      
+
       service.listAllNotes.mockResolvedValue([
         {
           id: 123,
@@ -340,10 +346,10 @@ describe('VCS: GitLab', () => {
 
       const gitLab = createGitLab(service, configsWithRemoveOldComment);
       await gitLab.report([touchFileWarning]);
-      
+
       // Should log warning about failed deletion
       // Note: The actual log message will depend on the Winston logger configuration
-      
+
       consoleSpy.mockRestore();
     });
   });
